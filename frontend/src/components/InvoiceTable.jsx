@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { FileText, CheckCircle, AlertCircle, Download, Search, XCircle, Edit2, Trash2, Check, X, Tag } from 'lucide-react';
+import { FileText, CheckCircle, AlertCircle, Download, Search, XCircle, Edit2, Trash2, Check, X } from 'lucide-react';
 import { updateInvoice, deleteInvoice } from '../api';
+import { DateInput } from './DateInput';
 
 export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, onDeleteInvoice }) {
     const [filterText, setFilterText] = useState("");
@@ -217,11 +218,10 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                             </td>
                                             <td className="px-6 py-3 text-slate-600">
                                                 {isEditing ? (
-                                                    <input
-                                                        type="date"
+                                                    <DateInput
                                                         value={editForm.invoice_date || ""}
-                                                        onChange={e => setEditForm({ ...editForm, invoice_date: e.target.value || null })}
-                                                        className="border border-slate-300 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                                        onChange={val => setEditForm({ ...editForm, invoice_date: val })}
+                                                        className="border border-slate-300 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
                                                     />
                                                 ) : (
                                                     <span className="font-mono text-xs whitespace-nowrap">

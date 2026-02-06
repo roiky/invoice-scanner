@@ -82,20 +82,20 @@
     "labels": [],
     "status": "Pending"
   },
-  "7b5f8718-3b0b-4042-bae9-cb46a07905e6": {
-    "id": "7b5f8718-3b0b-4042-bae9-cb46a07905e6",
-    "filename": "manual_7b5f8718-3b0b-4042-bae9-cb46a07905e6",
+  "70586c35-cdfe-40cf-a0fe-ee1a64f86957": {
+    "id": "70586c35-cdfe-40cf-a0fe-ee1a64f86957",
+    "filename": "manual_70586c35-cdfe-40cf-a0fe-ee1a64f86957",
     "sender_email": "manual@entry",
-    "subject": "SUB_TEST",
-    "invoice_date": "2026-02-06",
-    "vendor_name": "VEND_TEST",
-    "total_amount": 1234.0,
-    "currency": "EUR",
+    "subject": "DESC",
+    "invoice_date": "2025-12-15",
+    "vendor_name": "PASS",
+    "total_amount": 100.98,
+    "currency": "ILS",
     "vat_amount": 0.0,
-    "download_url": "http://127.0.0.1:8000/files/manual_7b5f8718-3b0b-4042-bae9-cb46a07905e6_הצעת מחיר להפקת סרטון שיווקי.pdf",
+    "download_url": "http://127.0.0.1:8000/files/manual_70586c35-cdfe-40cf-a0fe-ee1a64f86957_Figure_1.png",
     "labels": [
-      "Personal"
+      "עסק"
     ],
-    "status": "Processed"
+    "status": "Pending"
   }
 }
