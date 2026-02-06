@@ -193,10 +193,11 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
             csvRows.push(row.join(","));
         }
 
-        const csvContent = "data:text/csv;charset=utf-8," + csvRows.join("\n");
-        const encodedUri = encodeURI(csvContent);
+        const csvString = csvRows.join("\n");
+        const blob = new Blob(["\uFEFF" + csvString], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
+        link.setAttribute("href", url);
         link.setAttribute("download", "invoices_export.csv");
         document.body.appendChild(link);
         link.click();
