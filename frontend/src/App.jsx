@@ -23,6 +23,9 @@ function AppContent() {
   // Labels state
   const [labels, setLabels] = useState([])
 
+  // User state
+  const [user, setUser] = useState(null)
+
   // Modal State
   const [isManualModalOpen, setIsManualModalOpen] = useState(false)
 
@@ -33,7 +36,22 @@ function AppContent() {
   useEffect(() => {
     fetchHistory()
     fetchLabels()
+    fetchProfile()
   }, [])
+
+  const fetchProfile = async () => {
+    const profile = await api.getProfile()
+    if (profile && profile.email) {
+      setUser(profile)
+    }
+  }
+
+  const handleLogout = async () => {
+    if (confirm(t('auth.logout_confirm'))) {
+      await api.logout()
+      window.location.reload()
+    }
+  }
 
   const fetchHistory = async () => {
     try {
@@ -246,6 +264,41 @@ function AppContent() {
                 </div>
               )}
             </div>
+
+            {/* User Profile & Logout */}
+            {user ? (
+              <div className="flex items-center gap-3 ps-4 border-s border-slate-200">
+                <div className="hidden md:flex flex-col items-end">
+                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{t('auth.connected_as')}</span>
+                  <span className="text-xs font-medium text-slate-700">{user.email}</span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="text-slate-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-all"
+                  title={t('auth.logout')}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" x2="9" y1="12" y2="12" /></svg>
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={async () => {
+                  try {
+                    const profile = await api.login();
+                    if (profile && profile.email) {
+                      setUser(profile);
+                      window.location.reload();
+                    }
+                  } catch (err) {
+                    alert("Login failed! See console for details.");
+                    console.error(err);
+                  }
+                }}
+                className="ms-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm"
+              >
+                {t('auth.connect') || "Connect Gmail"}
+              </button>
+            )}
           </div>
         </div>
       </header>

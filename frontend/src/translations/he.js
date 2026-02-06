@@ -62,6 +62,11 @@ export const he = {
         no_labels: "אין תגיות",
         no_invoices: "לא נמצאו חשבוניות התואמות לחיפוש."
     },
+    auth: {
+        connected_as: "מחובר כ-",
+        logout: "התנתק",
+        logout_confirm: "האם אתה בטוח שברצונך להתנתק? תצטרך להתחבר מחדש דרך גוגל."
+    },
     actions: {
         edit: "ערוך",
         save: "שמור",

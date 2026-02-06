@@ -82,20 +82,41 @@ def convert_html_to_pdf(source_html, output_path):
     return not pisa_status.err
 
 
+import threading
+import logging
+
+logger = logging.getLogger(__name__)
+
 class GmailService:
     def __init__(self):
         self.creds = None
         self.service = None
+        self._lock = threading.Lock()
         
     def authenticate(self):
         """Shows the consent screen and creates a token.json"""
+        with self._lock:
+            self._authenticate_no_lock()
+
+    def _authenticate_no_lock(self):
+        """Internal authentication without locking to avoid recursion if called from within locked block."""
         if os.path.exists('backend/token.json'):
-            self.creds = Credentials.from_authorized_user_file('backend/token.json', SCOPES)
+            try:
+                self.creds = Credentials.from_authorized_user_file('backend/token.json', SCOPES)
+            except Exception as e:
+                logger.error(f"Failed to load credentials: {e}")
+                self.creds = None
             
         if not self.creds or not self.creds.valid:
             if self.creds and self.creds.expired and self.creds.refresh_token:
-                self.creds.refresh(Request())
-            else:
+                try:
+                    self.creds.refresh(Request())
+                except Exception as e:
+                    logger.error(f"Failed to refresh token: {e}")
+                    # If refresh fails, we might need to re-auth. For now, let it fail or handle gracefully.
+                    self.creds = None
+
+            if not self.creds: # Check again after potential refresh failure
                 if not os.path.exists('backend/credentials.json'):
                     raise FileNotFoundError("backend/credentials.json not found! Please invoke setup.")
                     
@@ -110,9 +131,11 @@ class GmailService:
         self.service = build('gmail', 'v1', credentials=self.creds)
 
     def scan_invoices(self, start_date: date, end_date: date) -> ScanResult:
-        if not self.service:
-            self.authenticate()
-            
+        with self._lock:
+            if not self.service:
+                self._authenticate_no_lock()
+            current_service = self.service
+
         # Convert dates to query format (YYYY/MM/DD)
         # after:YYYY/MM/DD before:YYYY/MM/DD
         query = f'after:{start_date.strftime("%Y/%m/%d")} before:{end_date.strftime("%Y/%m/%d")}'
@@ -124,7 +147,7 @@ class GmailService:
         
         print(f"Searching Gmail with query: {full_query}")
         
-        results = self.service.users().messages().list(userId='me', q=full_query, maxResults=20).execute()
+        results = current_service.users().messages().list(userId='me', q=full_query, maxResults=20).execute()
         messages = results.get('messages', [])
         
         invoices = []
@@ -137,7 +160,7 @@ class GmailService:
         for msg in messages:
             # Get full message details
             try:
-                msg_detail = self.service.users().messages().get(userId='me', id=msg['id']).execute()
+                msg_detail = current_service.users().messages().get(userId='me', id=msg['id']).execute()
             except Exception as e:
                 print(f"Error fetching message {msg['id']}: {e}")
                 continue
@@ -170,7 +193,7 @@ class GmailService:
             if pdf_part and 'body' in pdf_part and 'attachmentId' in pdf_part['body']:
                 try:
                     att_id = pdf_part['body']['attachmentId']
-                    att = self.service.users().messages().attachments().get(userId='me', messageId=msg['id'], id=att_id).execute()
+                    att = current_service.users().messages().attachments().get(userId='me', messageId=msg['id'], id=att_id).execute()
                     data = att['data']
                     pdf_data = base64.urlsafe_b64decode(data.encode('UTF-8'))
                     filename = pdf_part['filename']
@@ -215,7 +238,6 @@ class GmailService:
                             
                         if found_text and found_html: break # Found both
                         
-                
                     return found_text, found_html
 
                 text_part, html_part = find_body_content([payload]) # Wrap payload in list for recursion compatibility
@@ -223,7 +245,7 @@ class GmailService:
                 if not body_text:
                     if html_part:
                         soup = BeautifulSoup(html_part, 'html.parser')
-                        body_text = soup.get_text(separator='\n')
+                        body_text = soup.get_text(separator='\\n')
                     elif text_part:
                         body_text = text_part
                     else:
@@ -276,5 +298,54 @@ class GmailService:
             invoices_found=len(invoices),
             invoices=invoices
         )
+
+    def get_user_profile(self) -> Optional[dict]:
+        """Fetches the connected user's profile (email address)."""
+        with self._lock:
+            # Do not force authentication if not already signed in (file doesn't exist)
+            if not self.service:
+                if os.path.exists('backend/token.json'):
+                    try:
+                        self._authenticate_no_lock()
+                    except Exception as e:
+                        logger.error(f"Auth failed during get_profile: {e}")
+                        return None
+                else:
+                    return None
+            
+            # Capture service instance locally safely
+            current_service = self.service
+            
+        if not current_service:
+            return None
+
+        try:
+            profile = current_service.users().getProfile(userId='me').execute()
+            return {"email": profile.get("emailAddress")}
+        except Exception as e:
+            print(f"Error fetching profile: {e}")
+            return None
+
+    def logout(self):
+        """Clears in-memory credentials and deletes the token file."""
+        import time
+        with self._lock:
+            self.creds = None
+            self.service = None
+            
+            if os.path.exists('backend/token.json'):
+                try:
+                    os.remove('backend/token.json')
+                except PermissionError:
+                    # Retry once after a short delay, as antivirus or other processes might lock it momentarily
+                    time.sleep(0.5)
+                    try:
+                        os.remove('backend/token.json')
+                    except Exception as e:
+                        print(f"CRITICAL: Failed to delete token.json on retry: {e}")
+                        raise e # re-raise to notify caller
+                except Exception as e:
+                    print(f"CRITICAL: Failed to delete token.json: {e}")
+                    raise e
 
 gmail_service = GmailService()

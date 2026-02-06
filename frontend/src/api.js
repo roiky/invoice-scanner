@@ -44,6 +44,37 @@ export const deleteInvoice = async (id) => {
 
 // --- Label Management ---
 
+// --- User Auth ---
+
+export const getProfile = async () => {
+    try {
+        const response = await fetch(`${API_URL}/auth/profile`);
+        if (!response.ok) return null;
+        return response.json();
+    } catch (e) {
+        return null;
+    }
+};
+
+export const logout = async () => {
+    try {
+        await fetch(`${API_URL}/auth/logout`, { method: 'POST' });
+        return true;
+    } catch (e) {
+        return false;
+    }
+};
+
+export const login = async () => {
+    const response = await fetch(`${API_URL}/auth/login`, { method: 'POST' });
+    if (!response.ok) {
+        throw new Error('Login failed');
+    }
+    return response.json();
+};
+
+// --- Label Management ---
+
 export const getLabels = async () => {
     const response = await fetch(`${API_URL}/labels`);
     if (!response.ok) {

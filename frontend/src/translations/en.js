@@ -62,6 +62,11 @@ export const en = {
         no_labels: "No labels",
         no_invoices: "No invoices found matching your filters."
     },
+    auth: {
+        connected_as: "Connected as",
+        logout: "Logout",
+        logout_confirm: "Are you sure you want to logout? You will need to re-authenticate with Google."
+    },
     actions: {
         edit: "Edit",
         save: "Save",

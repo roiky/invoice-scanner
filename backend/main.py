@@ -13,6 +13,43 @@ import os
 
 app = FastAPI(title="Gmail Invoice Scanner")
 
+# --- Auth Endpoints ---
+
+@app.post("/auth/logout")
+def logout():
+    """Logs out by clearing credentials."""
+    try:
+        gmail_service.logout()
+        return {"status": "success", "message": "Logged out successfully"}
+    except Exception as e:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/auth/login")
+def login():
+    """Forces authentication flow."""
+    try:
+        gmail_service.authenticate()
+        # After auth, get profile
+        return gmail_service.get_user_profile()
+    except Exception as e:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/auth/profile")
+def get_profile():
+    """Returns the connected user's email."""
+    try:
+        profile = gmail_service.get_user_profile()
+        if not profile:
+             # If no token or check fails, likely not authenticated
+             return {"email": None}
+        return profile
+    except Exception as e:
+        return {"email": None}
+
+# ----------------------
+
 # Ensure static dir exists
 os.makedirs("backend/data", exist_ok=True)
 os.makedirs("backend/static/invoices", exist_ok=True)
