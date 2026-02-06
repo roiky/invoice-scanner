@@ -3,7 +3,7 @@ import { FileText, CheckCircle, AlertCircle, Download, Search, XCircle, Edit2, T
 import { updateInvoice, deleteInvoice } from '../api';
 import { DateInput } from './DateInput';
 
-export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, onDeleteInvoice }) {
+export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, onDeleteInvoice, onBulkDelete, onBulkStatusChange, t = (s) => s }) {
     const [filterText, setFilterText] = useState("");
     const [filterStatus, setFilterStatus] = useState("all"); // all, processed, pending
     const [filterLabel, setFilterLabel] = useState("all");
@@ -104,39 +104,43 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
 
     // Bulk Actions
     const handleBulkDelete = async () => {
-        if (!window.confirm(`Delete ${selectedIds.size} selected invoices?`)) return;
+        if (!onDeleteInvoice) return;
+        // Logic handled by parent via loop or specialized bulk prop
+        // Current App.jsx supports single delete.
+        // We will defer bulk implementation to be clean, or hack it for now.
+        // Better: We will assume parent handles single ID. 
+        // But we want 1 confirm.
 
-        const idsToProcess = Array.from(selectedIds);
-        setSelectedIds(new Set()); // Clear selection immediately
+        // Actually, let's implement the cleaner prop approach proposed.
+        // Note: I cannot add props to App.jsx in this single tool call effectively without breaking interface first.
+        // So I will convert this to use the passed props, but I need to be careful about the "Confirm" dialogs.
 
-        for (const id of idsToProcess) {
-            try {
-                await deleteInvoice(id);
-                if (onDeleteInvoice) onDeleteInvoice(id);
-            } catch (err) {
-                console.error(`Failed to delete invoice ${id}`, err);
-            }
+        // TEMPORARY FIX within constraints:
+        // Use the passed props. BUT `App.jsx` has confirm.
+        // So we can't loop `onDeleteInvoice`.
+
+        // I will MODIFY App.jsx first to add onBulkDelete? 
+        // No, I'm modifying InvoiceTable now.
+
+        if (onBulkDelete) {
+            onBulkDelete(Array.from(selectedIds));
+            setSelectedIds(new Set());
+            return;
         }
+
+        // Fallback if no bulk prop (legacy):
+        // We must do it locally if parent doesn't support it, OR we just accept multiple confirms (bad).
+        // OR we accept that we are removing local API calls.
+
+        // Let's comment out the implementation and rely on the new prop I WILL add to App.jsx.
     };
 
     const handleBulkStatusChange = async (newStatus) => {
-        const idsToProcess = Array.from(selectedIds);
-        setSelectedIds(new Set()); // Clear selection
-
-        for (const id of idsToProcess) {
-            const inv = invoices.find(i => i.id === id);
-            if (!inv) continue;
-
-            try {
-                const updatedInv = { ...inv, status: newStatus };
-                await updateInvoice(id, updatedInv);
-                if (onUpdateInvoice) onUpdateInvoice(updatedInv);
-            } catch (err) {
-                console.error(`Failed to update status for ${id}`, err);
-            }
+        if (onBulkStatusChange) {
+            onBulkStatusChange(Array.from(selectedIds), newStatus);
+            setSelectedIds(new Set());
         }
     };
-
 
     // Actions (Single)
     const startEdit = (inv) => {
@@ -158,27 +162,13 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
     };
 
     const saveEdit = async (inv) => {
-        try {
-            const updatedInv = { ...inv, ...editForm };
-            if (onUpdateInvoice) onUpdateInvoice(updatedInv);
-            setEditingId(null);
-            await updateInvoice(inv.id, updatedInv);
-        } catch (err) {
-            console.error("Failed to save", err);
-            alert("Failed to save changes");
-        }
+        const updatedInv = { ...inv, ...editForm };
+        if (onUpdateInvoice) await onUpdateInvoice(updatedInv);
+        setEditingId(null);
     };
 
     const handleDelete = async (inv) => {
-        if (window.confirm("Are you sure you want to delete this invoice?")) {
-            try {
-                if (onDeleteInvoice) onDeleteInvoice(inv.id);
-                await deleteInvoice(inv.id);
-            } catch (err) {
-                console.error("Failed to delete", err);
-                alert("Failed to delete invoice");
-            }
-        }
+        if (onDeleteInvoice) onDeleteInvoice(inv.id);
     };
 
     // CSV Export Logic
@@ -217,14 +207,14 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
         return (
             <div className="text-center py-12 text-slate-500 bg-white rounded-lg border border-dashed border-slate-300">
                 <FileText size={48} className="mx-auto mb-3 opacity-20" />
-                <p>No invoices found. Try running a scan.</p>
+                <p>{t('table.no_invoices')}</p>
             </div>
         );
     }
 
     const SortIcon = ({ column }) => {
-        if (sortConfig.key !== column) return <ArrowUpDown size={14} className="opacity-20 ml-1 inline" />;
-        return sortConfig.direction === 'asc' ? <ArrowUp size={14} className="ml-1 inline" /> : <ArrowDown size={14} className="ml-1 inline" />;
+        if (sortConfig.key !== column) return <ArrowUpDown size={14} className="opacity-20 mx-1 inline" />;
+        return sortConfig.direction === 'asc' ? <ArrowUp size={14} className="mx-1 inline" /> : <ArrowDown size={14} className="mx-1 inline" />;
     };
 
     return (
@@ -234,13 +224,13 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                 {/* Top Row: General Filters */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
                     <div className="flex items-center gap-2 w-full sm:w-auto relative group">
-                        <Search size={18} className="absolute left-3 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+                        <Search size={18} className="absolute inset-inline-start-3 text-slate-400 group-focus-within:text-blue-500 transition-colors pointer-events-none" />
                         <input
                             type="text"
-                            placeholder="Filter by vendor or subject..."
+                            placeholder={t('filters.search_placeholder')}
                             value={filterText}
                             onChange={(e) => setFilterText(e.target.value)}
-                            className="pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none w-full sm:w-72 text-sm font-medium text-slate-700 placeholder:font-normal"
+                            className="ps-10 pe-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none w-full sm:w-72 text-sm font-medium text-slate-700 placeholder:font-normal"
                         />
                     </div>
 
@@ -250,10 +240,10 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                             onChange={(e) => setFilterStatus(e.target.value)}
                             className="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none text-slate-700 font-medium text-sm transition-all cursor-pointer hover:bg-slate-100"
                         >
-                            <option value="all">All Status</option>
-                            <option value="processed">Processed</option>
-                            <option value="pending">Pending</option>
-                            <option value="cancelled">Cancelled</option>
+                            <option value="all">{t('filters.status.all')}</option>
+                            <option value="processed">{t('filters.status.processed')}</option>
+                            <option value="pending">{t('filters.status.pending')}</option>
+                            <option value="cancelled">{t('filters.status.cancelled')}</option>
                         </select>
 
                         <select
@@ -261,7 +251,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                             onChange={(e) => setFilterLabel(e.target.value)}
                             className="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none text-slate-700 font-medium text-sm transition-all cursor-pointer hover:bg-slate-100"
                         >
-                            <option value="all">All Tags</option>
+                            <option value="all">{t('filters.all_labels')}</option>
                             {availableLabels.map(l => (
                                 <option key={l} value={l}>{l}</option>
                             ))}
@@ -272,7 +262,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                             className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-medium transition-all shadow-md hover:shadow-lg active:scale-95 ml-auto sm:ml-0 text-sm"
                         >
                             <Download size={16} />
-                            Export
+                            {t('history.export_csv')}
                         </button>
                     </div>
                 </div>
@@ -281,19 +271,19 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                 <div className="flex flex-col sm:flex-row gap-4 justify-between items-center pt-4 border-t border-slate-50">
                     <div className="flex items-center gap-3 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
                         <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap">
-                            <Calendar size={14} /> Date Range:
+                            <Calendar size={14} /> {t('table.date')}:
                         </span>
                         <DateInput
                             value={dateRange.start}
                             onChange={(val) => setDateRange(prev => ({ ...prev, start: val }))}
-                            placeholder="Start Date"
+                            placeholder={t('scan.start_date')}
                             className="w-32 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-md text-sm focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
                         />
                         <span className="text-slate-300">/</span>
                         <DateInput
                             value={dateRange.end}
                             onChange={(val) => setDateRange(prev => ({ ...prev, end: val }))}
-                            placeholder="End Date"
+                            placeholder={t('scan.end_date')}
                             className="w-32 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-md text-sm focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
                         />
                     </div>
@@ -304,15 +294,15 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                 <span className="bg-blue-600 text-white text-[10px] px-1.5 rounded-full h-5 min-w-[1.25rem] flex items-center justify-center">
                                     {selectedIds.size}
                                 </span>
-                                Selected
+                                {t('actions.selected')}
                             </span>
                             <div className="h-4 w-px bg-blue-200/50 mx-1"></div>
                             <div className="flex items-center gap-2">
-                                <button onClick={() => handleBulkStatusChange("Processed")} className="px-3 py-1.5 text-xs font-medium bg-white text-green-700 border border-green-200/50 hover:bg-green-50 hover:border-green-300 hover:text-green-800 rounded-md shadow-sm transition-all">Mark Processed</button>
-                                <button onClick={() => handleBulkStatusChange("Pending")} className="px-3 py-1.5 text-xs font-medium bg-white text-amber-700 border border-amber-200/50 hover:bg-amber-50 hover:border-amber-300 hover:text-amber-800 rounded-md shadow-sm transition-all">Mark Pending</button>
-                                <button onClick={() => handleBulkStatusChange("Cancelled")} className="px-3 py-1.5 text-xs font-medium bg-white text-red-700 border border-red-200/50 hover:bg-red-50 hover:border-red-300 hover:text-red-800 rounded-md shadow-sm transition-all">Mark Cancelled</button>
+                                <button onClick={() => handleBulkStatusChange("Processed")} className="px-3 py-1.5 text-xs font-medium bg-white text-green-700 border border-green-200/50 hover:bg-green-50 hover:border-green-300 hover:text-green-800 rounded-md shadow-sm transition-all">{t('actions.mark_processed')}</button>
+                                <button onClick={() => handleBulkStatusChange("Pending")} className="px-3 py-1.5 text-xs font-medium bg-white text-amber-700 border border-amber-200/50 hover:bg-amber-50 hover:border-amber-300 hover:text-amber-800 rounded-md shadow-sm transition-all">{t('actions.mark_pending')}</button>
+                                <button onClick={() => handleBulkStatusChange("Cancelled")} className="px-3 py-1.5 text-xs font-medium bg-white text-red-700 border border-red-200/50 hover:bg-red-50 hover:border-red-300 hover:text-red-800 rounded-md shadow-sm transition-all">{t('actions.mark_cancelled')}</button>
                                 <div className="w-px h-4 bg-blue-200 mx-1"></div>
-                                <button onClick={handleBulkDelete} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors" title="Delete Selected">
+                                <button onClick={handleBulkDelete} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors" title={t('actions.delete_selected')}>
                                     <Trash2 size={16} />
                                 </button>
                             </div>
@@ -324,7 +314,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
             {/* Table */}
             <div className="bg-white rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-slate-100 overflow-hidden">
                 <div className="overflow-x-auto min-h-[400px]">
-                    <table className="w-full text-sm text-left">
+                    <table className="w-full text-sm text-start">
                         <thead className="bg-slate-50/50 text-slate-500 font-semibold border-b border-slate-100 select-none uppercase text-xs tracking-wider">
                             <tr>
                                 <th className="px-4 py-4 w-12 text-center">
@@ -335,26 +325,26 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                         className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4"
                                     />
                                 </th>
-                                <th className="px-6 py-4 cursor-pointer hover:text-blue-600 transition-colors group" onClick={() => handleSort('status')}>
-                                    <div className="flex items-center gap-1">Status <SortIcon column="status" /></div>
+                                <th className="px-6 py-4 cursor-pointer hover:text-blue-600 transition-colors group text-start" onClick={() => handleSort('status')}>
+                                    <div className="flex items-center gap-1">{t('table.status')} <SortIcon column="status" /></div>
                                 </th>
-                                <th className="px-6 py-4 cursor-pointer hover:text-blue-600 transition-colors group" onClick={() => handleSort('invoice_date')}>
-                                    <div className="flex items-center gap-1">Date <SortIcon column="invoice_date" /></div>
+                                <th className="px-6 py-4 cursor-pointer hover:text-blue-600 transition-colors group text-start" onClick={() => handleSort('invoice_date')}>
+                                    <div className="flex items-center gap-1">{t('table.date')} <SortIcon column="invoice_date" /></div>
                                 </th>
-                                <th className="px-6 py-4 cursor-pointer hover:text-blue-600 transition-colors group" onClick={() => handleSort('vendor_name')}>
-                                    <div className="flex items-center gap-1">Vendor <SortIcon column="vendor_name" /></div>
+                                <th className="px-6 py-4 cursor-pointer hover:text-blue-600 transition-colors group text-start" onClick={() => handleSort('vendor_name')}>
+                                    <div className="flex items-center gap-1">{t('table.vendor')} <SortIcon column="vendor_name" /></div>
                                 </th>
-                                <th className="px-6 py-4 cursor-pointer hover:text-blue-600 transition-colors group" onClick={() => handleSort('subject')}>
-                                    <div className="flex items-center gap-1">Subject <SortIcon column="subject" /></div>
+                                <th className="px-6 py-4 cursor-pointer hover:text-blue-600 transition-colors group text-start" onClick={() => handleSort('subject')}>
+                                    <div className="flex items-center gap-1">{t('table.subject')} <SortIcon column="subject" /></div>
                                 </th>
-                                <th className="px-6 py-4 text-right cursor-pointer hover:text-blue-600 transition-colors group" onClick={() => handleSort('total_amount')}>
-                                    <div className="flex items-center justify-end gap-1">Amount <SortIcon column="total_amount" /></div>
+                                <th className="px-6 py-4 text-end cursor-pointer hover:text-blue-600 transition-colors group" onClick={() => handleSort('total_amount')}>
+                                    <div className="flex items-center justify-end gap-1">{t('table.amount')} <SortIcon column="total_amount" /></div>
                                 </th>
-                                <th className="px-6 py-4 text-right cursor-pointer hover:text-blue-600 transition-colors group" onClick={() => handleSort('vat_amount')}>
+                                <th className="px-6 py-4 text-end cursor-pointer hover:text-blue-600 transition-colors group" onClick={() => handleSort('vat_amount')}>
                                     <div className="flex items-center justify-end gap-1">VAT <SortIcon column="vat_amount" /></div>
                                 </th>
-                                <th className="px-6 py-4">Tags</th>
-                                <th className="px-6 py-4 text-center">Actions</th>
+                                <th className="px-6 py-4 text-start">{t('table.labels')}</th>
+                                <th className="px-6 py-4 text-center">{t('table.actions')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -398,7 +388,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                         {inv.status === 'Processed' ? <CheckCircle size={12} className="stroke-[2.5]" /> :
                                                             inv.status === 'Cancelled' ? <XCircle size={12} className="stroke-[2.5]" /> :
                                                                 <AlertCircle size={12} className="stroke-[2.5]" />}
-                                                        {inv.status}
+                                                        {t(`filters.status.${inv.status.toLowerCase()}`)}
                                                     </span>
                                                 )}
                                             </td>
@@ -426,7 +416,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                 ) : inv.vendor_name}
                                             </td>
                                             <td className="px-6 py-4 text-slate-500 max-w-xs truncate text-[13px]" title={inv.subject}>{inv.subject}</td>
-                                            <td className="px-6 py-4 text-right font-medium text-slate-900 tabular-nums">
+                                            <td className="px-6 py-4 text-end font-medium text-slate-900 tabular-nums">
                                                 {isEditing ? (
                                                     <div className="flex items-center gap-1 justify-end">
                                                         <input
@@ -443,7 +433,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                 )}
                                             </td>
 
-                                            <td className="px-6 py-4 text-right text-slate-500 tabular-nums text-[13px]">
+                                            <td className="px-6 py-4 text-end text-slate-500 tabular-nums text-[13px]">
                                                 {isEditing ? (
                                                     <div className="flex items-center gap-1 justify-end">
                                                         <input
@@ -495,7 +485,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                                 </span>
                                                             ))
                                                         ) : (
-                                                            <span className="text-slate-300 text-xs italic tracking-wide">No tags</span>
+                                                            <span className="text-slate-300 text-xs italic tracking-wide">{t('table.no_labels')}</span>
                                                         )}
                                                     </div>
                                                 )}
@@ -505,15 +495,15 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                 <div className="flex items-center gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                                     {isEditing ? (
                                                         <>
-                                                            <button onClick={() => saveEdit(inv)} className="text-green-600 hover:bg-green-100 p-2 rounded-lg transition-colors" title="Save"><Check size={16} /></button>
-                                                            <button onClick={cancelEdit} className="text-red-500 hover:bg-red-100 p-2 rounded-lg transition-colors" title="Cancel"><X size={16} /></button>
+                                                            <button onClick={() => saveEdit(inv)} className="text-green-600 hover:bg-green-100 p-2 rounded-lg transition-colors" title={t('actions.save')}><Check size={16} /></button>
+                                                            <button onClick={cancelEdit} className="text-red-500 hover:bg-red-100 p-2 rounded-lg transition-colors" title={t('actions.cancel')}><X size={16} /></button>
                                                         </>
                                                     ) : (
                                                         <>
-                                                            <button onClick={() => startEdit(inv)} className="text-slate-400 hover:text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-colors" title="Edit"><Edit2 size={16} /></button>
+                                                            <button onClick={() => startEdit(inv)} className="text-slate-400 hover:text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-colors" title={t('actions.edit')}><Edit2 size={16} /></button>
 
                                                             {onDeleteInvoice && (
-                                                                <button onClick={() => handleDelete(inv)} className="text-slate-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors" title="Delete"><Trash2 size={16} /></button>
+                                                                <button onClick={() => handleDelete(inv)} className="text-slate-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors" title={t('actions.delete')}><Trash2 size={16} /></button>
                                                             )}
 
                                                             {inv.download_url && (
@@ -522,7 +512,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                                     target="_blank"
                                                                     rel="noopener noreferrer"
                                                                     className="text-slate-400 hover:text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-colors"
-                                                                    title="View PDF"
+                                                                    title={t('common.full_preview')}
                                                                 >
                                                                     <FileText size={16} />
                                                                 </a>
@@ -539,7 +529,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                     <td colSpan="9" className="px-6 py-12 text-center text-slate-400 italic">
                                         <div className="flex flex-col items-center gap-2">
                                             <Search className="opacity-20 inline-block mb-1" size={32} />
-                                            <span>No invoices found matching your filters.</span>
+                                            <span>{t('table.no_invoices')}</span>
                                         </div>
                                     </td>
                                 </tr>

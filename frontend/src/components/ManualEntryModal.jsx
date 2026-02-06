@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Upload, X, Plus, Calendar, DollarSign, FileText } from 'lucide-react';
 import { DateInput } from './DateInput';
 
-export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = [] }) {
+export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = [], t = (s) => s }) {
     const [formData, setFormData] = useState({
         vendor_name: '',
         invoice_date: new Date().toISOString().split('T')[0],
@@ -63,7 +63,7 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
             <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
                 <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                    <h3 className="font-semibold text-lg text-slate-800">Add Manual Invoice</h3>
+                    <h3 className="font-semibold text-lg text-slate-800">{t('manual.title')}</h3>
                     <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors">
                         <X size={20} />
                     </button>
@@ -84,12 +84,12 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
                                 <>
                                     <FileText className="text-blue-500" size={32} />
                                     <span className="text-sm font-medium text-slate-700">{file.name}</span>
-                                    <span className="text-xs text-blue-600">Click to change</span>
+                                    <span className="text-xs text-blue-600">{t('manual.file_change')}</span>
                                 </>
                             ) : (
                                 <>
                                     <Upload className="text-slate-400" size={32} />
-                                    <span className="text-sm">Click or drag PDF/Image here</span>
+                                    <span className="text-sm">{t('manual.file_placeholder')}</span>
                                 </>
                             )}
                         </div>
@@ -97,7 +97,7 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1">
-                            <label className="text-xs font-semibold text-slate-500 uppercase">Date</label>
+                            <label className="text-xs font-semibold text-slate-500 uppercase">{t('table.date')}</label>
                             <DateInput
                                 required
                                 value={formData.invoice_date}
@@ -106,7 +106,7 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
                             />
                         </div>
                         <div className="space-y-1">
-                            <label className="text-xs font-semibold text-slate-500 uppercase">Currency</label>
+                            <label className="text-xs font-semibold text-slate-500 uppercase">{t('manual.currency')}</label>
                             <select
                                 value={formData.currency}
                                 onChange={e => setFormData({ ...formData, currency: e.target.value })}
@@ -120,11 +120,11 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
                     </div>
 
                     <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500 uppercase">Vendor Name</label>
+                        <label className="text-xs font-semibold text-slate-500 uppercase">{t('table.vendor')}</label>
                         <input
                             required
                             type="text"
-                            placeholder="e.g. Electric Company"
+                            placeholder={t('manual.vendor_placeholder')}
                             value={formData.vendor_name}
                             onChange={e => setFormData({ ...formData, vendor_name: e.target.value })}
                             className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -132,7 +132,7 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
                     </div>
 
                     <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500 uppercase">Total Amount</label>
+                        <label className="text-xs font-semibold text-slate-500 uppercase">{t('table.amount')}</label>
                         <div className="relative">
                             <input
                                 required
@@ -141,17 +141,17 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
                                 placeholder="0.00"
                                 value={formData.total_amount}
                                 onChange={e => setFormData({ ...formData, total_amount: e.target.value })}
-                                className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                className="w-full rtl:pl-3 rtl:pr-8 ltr:pl-8 ltr:pr-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                             />
-                            <DollarSign className="absolute left-2.5 top-2.5 text-slate-400" size={16} />
+                            <DollarSign className="absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-400" size={16} />
                         </div>
                     </div>
 
                     <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500 uppercase">Subject / Description</label>
+                        <label className="text-xs font-semibold text-slate-500 uppercase">{t('manual.subject')}</label>
                         <input
                             type="text"
-                            placeholder="Optional description"
+                            placeholder={t('manual.subject_placeholder')}
                             value={formData.subject}
                             onChange={e => setFormData({ ...formData, subject: e.target.value })}
                             className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -169,7 +169,7 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
                             ) : (
                                 <Plus size={18} />
                             )}
-                            {loading ? 'Creating...' : 'Add Invoice'}
+                            {loading ? t('manual.creating') : t('manual.add_button')}
                         </button>
                     </div>
 

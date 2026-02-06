@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Tag, Plus, X, ChevronDown, ChevronUp } from 'lucide-react';
 
-export function LabelManager({ labels, onAddLabel, onDeleteLabel }) {
+export function LabelManager({ labels, onAddLabel, onDeleteLabel, t = (s) => s }) {
     const [newLabel, setNewLabel] = useState("");
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -20,7 +20,7 @@ export function LabelManager({ labels, onAddLabel, onDeleteLabel }) {
             >
                 <div className="flex items-center gap-2.5 text-slate-700 font-semibold text-sm">
                     <Tag size={16} className="text-blue-500" />
-                    <span>Manage Labels</span>
+                    <span>{t('labels.title')}</span>
                     <span className="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded-full font-bold">{labels.length}</span>
                 </div>
                 <button className="text-slate-400 hover:text-blue-600 transition-colors bg-white border border-slate-200 rounded-lg p-1">
@@ -47,7 +47,7 @@ export function LabelManager({ labels, onAddLabel, onDeleteLabel }) {
                                     </span>
                                 ))
                             ) : (
-                                <p className="text-slate-400 text-xs italic">No labels created yet.</p>
+                                <p className="text-slate-400 text-xs italic">{t('labels.no_labels')}</p>
                             )}
                         </div>
 
@@ -57,7 +57,7 @@ export function LabelManager({ labels, onAddLabel, onDeleteLabel }) {
                                 type="text"
                                 value={newLabel}
                                 onChange={(e) => setNewLabel(e.target.value)}
-                                placeholder="New label name..."
+                                placeholder={t('labels.placeholder')}
                                 className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400"
                                 onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
                             />
@@ -66,7 +66,7 @@ export function LabelManager({ labels, onAddLabel, onDeleteLabel }) {
                                 disabled={!newLabel.trim()}
                                 className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none transition-all flex items-center gap-2"
                             >
-                                <Plus size={16} /> Add
+                                <Plus size={16} /> {t('labels.add')}
                             </button>
                         </div>
                     </div>

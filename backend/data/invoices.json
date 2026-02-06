@@ -27,7 +27,8 @@
     "currency": "ILS",
     "vat_amount": 49.75,
     "download_url": "http://127.0.0.1:8000/files/196109ecb2488fee_Print Receipt - RC2530168529.pdf",
-    "status": "Processed"
+    "status": "Pending",
+    "labels": []
   },
   "19929129351b5976": {
     "id": "19929129351b5976",
@@ -40,7 +41,10 @@
     "currency": "ILS",
     "vat_amount": 63.59,
     "download_url": "http://127.0.0.1:8000/files/19929129351b5976_kabala-283000-08-09-2025-14-25-06-8327.pdf",
-    "status": "Cancelled"
+    "status": "Cancelled",
+    "labels": [
+      "דוח"
+    ]
   },
   "1999605180d6e177": {
     "id": "1999605180d6e177",
@@ -54,52 +58,6 @@
     "vat_amount": 17.75,
     "download_url": "http://127.0.0.1:8000/files/1999605180d6e177_Print Receipt - RC2530493932.pdf",
     "status": "Processed"
-  },
-  "70586c35-cdfe-40cf-a0fe-ee1a64f86957": {
-    "id": "70586c35-cdfe-40cf-a0fe-ee1a64f86957",
-    "filename": "manual_70586c35-cdfe-40cf-a0fe-ee1a64f86957",
-    "sender_email": "manual@entry",
-    "subject": "DESC",
-    "invoice_date": "2025-12-15",
-    "vendor_name": "PASS",
-    "total_amount": 100.98,
-    "currency": "ILS",
-    "vat_amount": 0.0,
-    "download_url": "http://127.0.0.1:8000/files/manual_70586c35-cdfe-40cf-a0fe-ee1a64f86957_Figure_1.png",
-    "labels": [
-      "עסק"
-    ],
-    "status": "Pending"
-  },
-  "19b4a207bc893c42": {
-    "id": "19b4a207bc893c42",
-    "filename": "דצמבר.pdf",
-    "sender_email": "\"רועי כלימי\" <roeikalimi@gmail.com>",
-    "subject": "חשבוניות פרטנר 2024",
-    "invoice_date": "2024-01-07",
-    "vendor_name": "רועי כלימי",
-    "total_amount": 115.0,
-    "currency": "ILS",
-    "vat_amount": 21.37,
-    "download_url": "http://127.0.0.1:8000/files/19b4a207bc893c42_דצמבר.pdf",
-    "labels": [],
-    "status": "Pending"
-  },
-  "19a1fdd7e68341ba": {
-    "id": "19a1fdd7e68341ba",
-    "filename": "חשבונית_מס_קבלה_57354.pdf",
-    "sender_email": "\"מועדון UNIQ\" <outgoing@out.cardcom.co.il>",
-    "subject": "חשבונית מס קבלה מספר 57354 ממועדון UNIQ - עבור Roei Kalimi",
-    "invoice_date": "2025-10-26",
-    "vendor_name": "מועדון UNIQ",
-    "total_amount": 35.0,
-    "currency": "ILS",
-    "vat_amount": 5.34,
-    "download_url": "http://127.0.0.1:8000/files/19a1fdd7e68341ba_חשבונית_מס_קבלה_57354.pdf",
-    "labels": [
-      "Travel"
-    ],
-    "status": "Pending"
   },
   "18da2c4062da7aef": {
     "id": "18da2c4062da7aef",
@@ -118,5 +76,35 @@
       "Software"
     ],
     "status": "Processed"
+  },
+  "19b6a9c6ecb96127": {
+    "id": "19b6a9c6ecb96127",
+    "filename": "Print Receipt - RC2530664836.pdf",
+    "sender_email": "tabula <PazGasDoNotReply@pazgas.co.il>",
+    "subject": "קבלה חדשה מפזגז מספר RC2530664836",
+    "invoice_date": "2025-12-29",
+    "vendor_name": "tabula",
+    "total_amount": 145.57,
+    "currency": "ILS",
+    "vat_amount": 22.21,
+    "download_url": "http://127.0.0.1:8000/files/19b6a9c6ecb96127_Print Receipt - RC2530664836.pdf",
+    "labels": [
+      "Hardware"
+    ],
+    "status": "Pending"
+  },
+  "19b541a3edc672b8": {
+    "id": "19b541a3edc672b8",
+    "filename": "pb19prd5_104434619_4366747.pdf",
+    "sender_email": "Partner@partner.co.il",
+    "subject": "סיכום עסקה מפרטנר 36414485",
+    "invoice_date": "2025-12-25",
+    "vendor_name": "Partner@partner.co.il",
+    "total_amount": 100.85,
+    "currency": "ILS",
+    "vat_amount": 15.38,
+    "download_url": "http://127.0.0.1:8000/files/19b541a3edc672b8_pb19prd5_104434619_4366747.pdf",
+    "labels": [],
+    "status": "Pending"
   }
 }
