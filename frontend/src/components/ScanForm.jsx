@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 
-export function ScanForm({ onScan, isLoading }) {
-    const [startDate, setStartDate] = useState('2023-01-01');
-    const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+export function ScanForm({ onScan, isLoading, startDate, endDate, setStartDate, setEndDate }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();

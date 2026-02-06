@@ -2,6 +2,8 @@
 backend/__pycache__/
 backend/venv/
 backend/.env
+backend/token.json
+backend/credentials.json
 *.pyc
 __pycache__/
 

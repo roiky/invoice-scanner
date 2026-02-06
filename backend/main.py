@@ -3,8 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import date
 from .services.gmail_service import gmail_service
 from .services.storage_service import storage_service
+from .services.settings_service import settings_service
 from .models import ScanResult, InvoiceData
 from typing import List
+from pydantic import BaseModel
 
 from fastapi.staticfiles import StaticFiles
 import os
@@ -93,3 +95,74 @@ def delete_invoice(invoice_id: str):
         from fastapi import HTTPException
         raise HTTPException(status_code=404, detail="Invoice not found")
     return {"status": "success", "id": invoice_id}
+
+# --- Label Management ---
+
+@app.get("/labels", response_model=List[str])
+def get_labels():
+    return settings_service.get_labels()
+
+class LabelRequest(BaseModel):
+    label: str
+
+@app.post("/labels", response_model=List[str])
+def add_label(req: LabelRequest):
+    return settings_service.add_label(req.label)
+
+@app.delete("/labels/{label}", response_model=List[str])
+def delete_label(label: str):
+    return settings_service.delete_label(label)
+
+# --- Manual Entry ---
+
+from fastapi import File, UploadFile, Form
+import shutil
+import uuid
+
+@app.post("/invoices/manual", response_model=InvoiceData)
+async def create_manual_invoice(
+    vendor_name: str = Form(...),
+    invoice_date: str = Form(...),
+    total_amount: float = Form(...),
+    subject: str = Form(None),
+    currency: str = Form("ILS"),
+    file: UploadFile = File(None)
+):
+    """
+    Manually create an invoice, optionally uploading a file.
+    """
+    print(f"Manual Entry: {vendor_name} - {total_amount}")
+    
+    invoice_id = str(uuid.uuid4())
+    download_url = None
+
+    if file:
+        try:
+            filename = f"manual_{invoice_id}_{file.filename}"
+            file_path = os.path.join("backend/static/invoices", filename)
+            
+            with open(file_path, "wb") as buffer:
+                shutil.copyfileobj(file.file, buffer)
+            
+            download_url = f"http://127.0.0.1:8000/static/invoices/{filename}"
+            print(f"Saved manual file to {file_path}")
+        except Exception as e:
+            print(f"Failed to save file: {e}")
+
+    new_invoice = InvoiceData(
+        id=invoice_id,
+        invoice_date=invoice_date,
+        vendor_name=vendor_name,
+        total_amount=total_amount,
+        currency=currency,
+        vat_amount=0, # User can update later or we add field
+        subject=subject or "Manual Entry",
+        download_url=download_url,
+        status="Pending",
+        source="Manual" # Helper field if we added it, but model doesn't have it yet.
+    )
+
+    storage_service.save_invoice(new_invoice)
+    return new_invoice
+
+

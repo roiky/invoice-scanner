@@ -15,6 +15,7 @@ class InvoiceData(BaseModel):
     currency: str = "ILS"
     vat_amount: Optional[float] = None
     download_url: Optional[str] = None
+    labels: List[str] = []
     
     # Status
     status: str = "Pending" # Pending, Processed, Cancelled

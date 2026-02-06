@@ -11,6 +11,76 @@ from backend.models import InvoiceData, ScanResult
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
+STATIC_INVOICES_DIR = "backend/static/invoices" 
+BASE_URL = "http://localhost:8000/files"
+
+from xhtml2pdf import pisa
+import io
+
+def convert_html_to_pdf(source_html, output_path):
+    # Ensure Hebrew/UTF-8 support is attempted
+    # Reverting to David (System) as Rubik download failed
+    font_path = os.path.join(os.getcwd(), 'backend', 'static', 'fonts', 'david.ttf').replace('\\', '/')
+    
+    # Manually register the font with ReportLab to avoid temp file issues on Windows
+    try:
+        from reportlab.pdfbase import pdfmetrics
+        from reportlab.pdfbase.ttfonts import TTFont
+        # 'UTF-8' encoding is default for TTFont but let's be implicit if needed, 
+        # though usually arg 2 is filename. 
+        pdfmetrics.registerFont(TTFont('David', font_path))
+    except Exception as e:
+        print(f"Warning: Could not register font: {e}")
+
+    # Sanitize Source HTML: Extract body content to avoid nested <html>/<body> tags
+    # and potential encoding conflicts.
+    try:
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(source_html, 'html.parser')
+        
+        # If we have a body, take its content. Else take the whole thing.
+        if soup.body:
+            base_content = soup.body.decode_contents()
+        else:
+            base_content = source_html
+            
+    except Exception as e:
+        print(f"Warning: HTML parsing failed, using raw: {e}")
+        base_content = source_html
+
+    styled_html = f"""
+    <html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <style>
+            @page {{ size: A4; margin: 1cm; }}
+            body {{ 
+                font-family: 'David', sans-serif !important; 
+                direction: rtl;
+            }}
+            * {{
+                font-family: 'David', sans-serif !important;
+            }}
+            pre {{
+                font-family: 'David', sans-serif !important;
+                white-space: pre-wrap;
+            }}
+        </style>
+    </head>
+    <body dir="rtl">
+    {base_content}
+    </body>
+    </html>
+    """
+    
+    with open(output_path, "wb") as result_file:
+        pisa_status = pisa.CreatePDF(
+            src=styled_html,
+            dest=result_file,
+            encoding='utf-8'
+        )
+    return not pisa_status.err
+
 
 class GmailService:
     def __init__(self):
@@ -145,24 +215,46 @@ class GmailService:
                             
                         if found_text and found_html: break # Found both
                         
+                
                     return found_text, found_html
 
                 text_part, html_part = find_body_content([payload]) # Wrap payload in list for recursion compatibility
-                
-                if html_part:
-                    # Prefer HTML because it usually contains the full invoice structure (tables etc)
-                    # We strip tags using BeautifulSoup
-                    soup = BeautifulSoup(html_part, 'html.parser')
-                    # Get text with newlines to preserve structure
-                    body_text = soup.get_text(separator='\n')
-                elif text_part:
-                    body_text = text_part
-                else:
-                    body_text = msg_detail.get('snippet', '')
+
+                if not body_text:
+                    if html_part:
+                        soup = BeautifulSoup(html_part, 'html.parser')
+                        body_text = soup.get_text(separator='\n')
+                    elif text_part:
+                        body_text = text_part
+                    else:
+                        body_text = msg_detail.get('snippet', '')
+
+                if not body_text:
+                    continue
 
                 if body_text:
                     from backend.services.extraction_service import extraction_service
                     extracted = extraction_service.extract_from_body(body_text, "email_body")
+
+                # --- Generate PDF from Body if no attachment ---
+                try:
+                    pdf_filename = f"generated_{msg['id']}.pdf"
+                    full_pdf_path = os.path.join(STATIC_INVOICES_DIR, pdf_filename)
+                    
+                    # Prefer HTML if available, use html_part from scope
+                    content_to_render = html_part if html_part else f"<pre>{body_text}</pre>"
+                    
+                    if convert_html_to_pdf(content_to_render, full_pdf_path):
+                        print(f"Generated PDF for {msg['id']}")
+                        pdf_data_exists = True 
+                        generated_url = f"{BASE_URL}/{pdf_filename}"
+                        generated_filename = pdf_filename
+                    else:
+                        pdf_data_exists = False
+                except Exception as e:
+                    print(f"Failed to generate PDF for {msg['id']}: {e}")
+                    pdf_data_exists = False
+                # ----------------------------------------------------
 
             invoice = InvoiceData(
                 id=msg['id'],
@@ -174,7 +266,7 @@ class GmailService:
                 total_amount=extracted.get("total_amount"),
                 currency="ILS",
                 vat_amount=extracted.get("vat_amount"),
-                download_url=f"http://127.0.0.1:8000/files/{msg['id']}_{filename}" if pdf_data else None,
+                download_url=f"http://127.0.0.1:8000/files/{msg['id']}_{filename}" if pdf_data else (generated_url if 'generated_url' in locals() and generated_url else None),
                 status="Processed" if extracted.get("total_amount") else "Pending"
             )
             invoices.append(invoice)
