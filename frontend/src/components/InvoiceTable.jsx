@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { FileText, CheckCircle, AlertCircle, Download, Search, XCircle, Edit2, Trash2, Check, X } from 'lucide-react';
+import { FileText, CheckCircle, AlertCircle, Download, Search, XCircle, Edit2, Trash2, Check, X, ArrowUp, ArrowDown, ArrowUpDown, Calendar } from 'lucide-react';
 import { updateInvoice, deleteInvoice } from '../api';
 import { DateInput } from './DateInput';
 
@@ -7,6 +7,13 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
     const [filterText, setFilterText] = useState("");
     const [filterStatus, setFilterStatus] = useState("all"); // all, processed, pending
     const [filterLabel, setFilterLabel] = useState("all");
+    const [dateRange, setDateRange] = useState({ start: "", end: "" });
+
+    // Sorting State
+    const [sortConfig, setSortConfig] = useState({ key: 'invoice_date', direction: 'desc' });
+
+    // Selection State
+    const [selectedIds, setSelectedIds] = useState(new Set());
 
     // Editing State
     const [editingId, setEditingId] = useState(null);
@@ -15,7 +22,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
     // Filter Logic
     const filteredInvoices = useMemo(() => {
         if (!invoices) return [];
-        return invoices.filter(inv => {
+        let result = invoices.filter(inv => {
             const matchesText =
                 (inv.vendor_name?.toLowerCase() || "").includes(filterText.toLowerCase()) ||
                 (inv.subject?.toLowerCase() || "").includes(filterText.toLowerCase());
@@ -30,12 +37,108 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                 filterLabel === 'all' ? true :
                     (inv.labels || []).includes(filterLabel);
 
-            return matchesText && matchesStatus && matchesLabel;
+            // Date Range Filter
+            let matchesDate = true;
+            if (dateRange.start) {
+                matchesDate = matchesDate && (inv.invoice_date >= dateRange.start);
+            }
+            if (dateRange.end) {
+                matchesDate = matchesDate && (inv.invoice_date <= dateRange.end);
+            }
+
+            return matchesText && matchesStatus && matchesLabel && matchesDate;
         });
-    }, [invoices, filterText, filterStatus, filterLabel]);
+
+        // Sorting Logic
+        if (sortConfig.key) {
+            result.sort((a, b) => {
+                let aValue = a[sortConfig.key];
+                let bValue = b[sortConfig.key];
+
+                // Handle nulls
+                if (aValue === null || aValue === undefined) aValue = "";
+                if (bValue === null || bValue === undefined) bValue = "";
+
+                // Special handling for numeric
+                if (sortConfig.key === 'total_amount' || sortConfig.key === 'vat_amount') {
+                    aValue = Number(aValue || 0);
+                    bValue = Number(bValue || 0);
+                }
+
+                if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+                if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        return result;
+    }, [invoices, filterText, filterStatus, filterLabel, dateRange, sortConfig]);
 
 
-    // Actions
+    // Handlers
+    const handleSort = (key) => {
+        setSortConfig(current => {
+            if (current.key === key) {
+                return { key, direction: current.direction === 'asc' ? 'desc' : 'asc' };
+            }
+            return { key, direction: 'asc' };
+        });
+    };
+
+    const toggleSelection = (id) => {
+        setSelectedIds(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(id)) newSet.delete(id);
+            else newSet.add(id);
+            return newSet;
+        });
+    };
+
+    const toggleSelectAll = () => {
+        if (selectedIds.size === filteredInvoices.length && filteredInvoices.length > 0) {
+            setSelectedIds(new Set());
+        } else {
+            setSelectedIds(new Set(filteredInvoices.map(inv => inv.id)));
+        }
+    };
+
+    // Bulk Actions
+    const handleBulkDelete = async () => {
+        if (!window.confirm(`Delete ${selectedIds.size} selected invoices?`)) return;
+
+        const idsToProcess = Array.from(selectedIds);
+        setSelectedIds(new Set()); // Clear selection immediately
+
+        for (const id of idsToProcess) {
+            try {
+                await deleteInvoice(id);
+                if (onDeleteInvoice) onDeleteInvoice(id);
+            } catch (err) {
+                console.error(`Failed to delete invoice ${id}`, err);
+            }
+        }
+    };
+
+    const handleBulkStatusChange = async (newStatus) => {
+        const idsToProcess = Array.from(selectedIds);
+        setSelectedIds(new Set()); // Clear selection
+
+        for (const id of idsToProcess) {
+            const inv = invoices.find(i => i.id === id);
+            if (!inv) continue;
+
+            try {
+                const updatedInv = { ...inv, status: newStatus };
+                await updateInvoice(id, updatedInv);
+                if (onUpdateInvoice) onUpdateInvoice(updatedInv);
+            } catch (err) {
+                console.error(`Failed to update status for ${id}`, err);
+            }
+        }
+    };
+
+
+    // Actions (Single)
     const startEdit = (inv) => {
         setEditingId(inv.id);
         setEditForm({
@@ -57,12 +160,8 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
     const saveEdit = async (inv) => {
         try {
             const updatedInv = { ...inv, ...editForm };
-            // Optimistic Update handled by parent if prop provided
             if (onUpdateInvoice) onUpdateInvoice(updatedInv);
-
             setEditingId(null);
-
-            // API Call
             await updateInvoice(inv.id, updatedInv);
         } catch (err) {
             console.error("Failed to save", err);
@@ -123,51 +222,96 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
         );
     }
 
+    const SortIcon = ({ column }) => {
+        if (sortConfig.key !== column) return <ArrowUpDown size={14} className="opacity-20 ml-1 inline" />;
+        return sortConfig.direction === 'asc' ? <ArrowUp size={14} className="ml-1 inline" /> : <ArrowDown size={14} className="ml-1 inline" />;
+    };
+
     return (
         <div className="space-y-4">
             {/* Controls */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-between items-center bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
-                <div className="flex items-center gap-2 w-full sm:w-auto relative">
-                    <Search size={18} className="absolute left-3 text-slate-400" />
-                    <input
-                        type="text"
-                        placeholder="Filter by vendor or subject..."
-                        value={filterText}
-                        onChange={(e) => setFilterText(e.target.value)}
-                        className="pl-10 pr-4 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary w-full sm:w-60"
-                    />
+            <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm space-y-4">
+                {/* Top Row: General Filters */}
+                <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
+                    <div className="flex items-center gap-2 w-full sm:w-auto relative">
+                        <Search size={18} className="absolute left-3 text-slate-400" />
+                        <input
+                            type="text"
+                            placeholder="Filter by vendor or subject..."
+                            value={filterText}
+                            onChange={(e) => setFilterText(e.target.value)}
+                            className="pl-10 pr-4 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary w-full sm:w-60"
+                        />
+                    </div>
+
+                    <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
+                        <select
+                            value={filterStatus}
+                            onChange={(e) => setFilterStatus(e.target.value)}
+                            className="px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-slate-700 font-medium text-sm"
+                        >
+                            <option value="all">All Status</option>
+                            <option value="processed">Processed</option>
+                            <option value="pending">Pending</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+
+                        <select
+                            value={filterLabel}
+                            onChange={(e) => setFilterLabel(e.target.value)}
+                            className="px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-slate-700 font-medium text-sm"
+                        >
+                            <option value="all">All Tags</option>
+                            {availableLabels.map(l => (
+                                <option key={l} value={l}>{l}</option>
+                            ))}
+                        </select>
+
+                        <button
+                            onClick={downloadCSV}
+                            className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-md font-medium transition-colors ml-auto sm:ml-0 text-sm"
+                        >
+                            <Download size={16} />
+                            Export
+                        </button>
+                    </div>
                 </div>
 
-                <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
-                    <select
-                        value={filterStatus}
-                        onChange={(e) => setFilterStatus(e.target.value)}
-                        className="px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-slate-700 font-medium text-sm"
-                    >
-                        <option value="all">All Status</option>
-                        <option value="processed">Processed</option>
-                        <option value="pending">Pending</option>
-                        <option value="cancelled">Cancelled</option>
-                    </select>
+                {/* Bottom Row: Date Filter & Bulk Actions */}
+                <div className="flex flex-col sm:flex-row gap-4 justify-between items-center pt-2 border-t border-slate-100">
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                        <span className="text-sm font-medium text-slate-500 flex items-center gap-1">
+                            <Calendar size={14} /> Filter Dates:
+                        </span>
+                        <DateInput
+                            value={dateRange.start}
+                            onChange={(val) => setDateRange(prev => ({ ...prev, start: val }))}
+                            placeholder="Start Date"
+                            className="w-28 px-2 py-1 border border-slate-300 rounded text-sm focus:ring-1 focus:ring-primary"
+                        />
+                        <span className="text-slate-400">-</span>
+                        <DateInput
+                            value={dateRange.end}
+                            onChange={(val) => setDateRange(prev => ({ ...prev, end: val }))}
+                            placeholder="End Date"
+                            className="w-28 px-2 py-1 border border-slate-300 rounded text-sm focus:ring-1 focus:ring-primary"
+                        />
+                    </div>
 
-                    <select
-                        value={filterLabel}
-                        onChange={(e) => setFilterLabel(e.target.value)}
-                        className="px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-slate-700 font-medium text-sm"
-                    >
-                        <option value="all">All Tags</option>
-                        {availableLabels.map(l => (
-                            <option key={l} value={l}>{l}</option>
-                        ))}
-                    </select>
-
-                    <button
-                        onClick={downloadCSV}
-                        className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-md font-medium transition-colors ml-auto sm:ml-0 text-sm"
-                    >
-                        <Download size={16} />
-                        Export
-                    </button>
+                    {selectedIds.size > 0 && (
+                        <div className="flex items-center gap-2 animate-in fade-in slide-in-from-top-1 bg-blue-50 px-3 py-1.5 rounded-md border border-blue-100 w-full sm:w-auto justify-between sm:justify-start">
+                            <span className="text-sm font-medium text-blue-800 mr-2">{selectedIds.size} Selected</span>
+                            <div className="flex items-center gap-1">
+                                <button onClick={() => handleBulkStatusChange("Processed")} className="px-2 py-1 text-xs bg-white text-green-700 border border-green-200 hover:bg-green-50 rounded shadow-sm">Mark Processed</button>
+                                <button onClick={() => handleBulkStatusChange("Pending")} className="px-2 py-1 text-xs bg-white text-amber-700 border border-amber-200 hover:bg-amber-50 rounded shadow-sm">Mark Pending</button>
+                                <button onClick={() => handleBulkStatusChange("Cancelled")} className="px-2 py-1 text-xs bg-white text-red-700 border border-red-200 hover:bg-red-50 rounded shadow-sm">Mark Cancelled</button>
+                                <div className="w-px h-4 bg-blue-200 mx-1"></div>
+                                <button onClick={handleBulkDelete} className="px-2 py-1 text-xs bg-white text-red-700 border border-red-200 hover:bg-red-50 rounded shadow-sm flex items-center gap-1">
+                                    <Trash2 size={12} /> Delete
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -175,14 +319,34 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
             <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                 <div className="overflow-x-auto min-h-[400px]">
                     <table className="w-full text-sm text-left">
-                        <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-200">
+                        <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-200 select-none">
                             <tr>
-                                <th className="px-6 py-3 w-32">Status</th>
-                                <th className="px-6 py-3 w-32">Date</th>
-                                <th className="px-6 py-3">Vendor</th>
-                                <th className="px-6 py-3">Subject</th>
-                                <th className="px-6 py-3 text-right">Amount</th>
-                                <th className="px-6 py-3 text-right">VAT</th>
+                                <th className="px-4 py-3 w-10 text-center">
+                                    <input
+                                        type="checkbox"
+                                        checked={filteredInvoices.length > 0 && selectedIds.size === filteredInvoices.length}
+                                        onChange={toggleSelectAll}
+                                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                    />
+                                </th>
+                                <th className="px-6 py-3 w-32 cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => handleSort('status')}>
+                                    Status <SortIcon column="status" />
+                                </th>
+                                <th className="px-6 py-3 w-32 cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => handleSort('invoice_date')}>
+                                    Date <SortIcon column="invoice_date" />
+                                </th>
+                                <th className="px-6 py-3 cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => handleSort('vendor_name')}>
+                                    Vendor <SortIcon column="vendor_name" />
+                                </th>
+                                <th className="px-6 py-3 cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => handleSort('subject')}>
+                                    Subject <SortIcon column="subject" />
+                                </th>
+                                <th className="px-6 py-3 text-right cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => handleSort('total_amount')}>
+                                    Amount <SortIcon column="total_amount" />
+                                </th>
+                                <th className="px-6 py-3 text-right cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => handleSort('vat_amount')}>
+                                    VAT <SortIcon column="vat_amount" />
+                                </th>
                                 <th className="px-6 py-3">Tags</th>
                                 <th className="px-6 py-3 text-center">Actions</th>
                             </tr>
@@ -192,7 +356,15 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                 filteredInvoices.map((inv) => {
                                     const isEditing = editingId === inv.id;
                                     return (
-                                        <tr key={inv.id} className={`hover:bg-slate-50 transition-colors ${isEditing ? 'bg-blue-50/50' : ''}`}>
+                                        <tr key={inv.id} className={`hover:bg-slate-50 transition-colors ${selectedIds.has(inv.id) ? 'bg-blue-50/30' : ''} ${isEditing ? 'bg-blue-50/50' : ''}`}>
+                                            <td className="px-4 py-3 text-center">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedIds.has(inv.id)}
+                                                    onChange={() => toggleSelection(inv.id)}
+                                                    className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                                />
+                                            </td>
                                             <td className="px-6 py-3">
                                                 {isEditing ? (
                                                     <select
@@ -350,7 +522,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                 })
                             ) : (
                                 <tr>
-                                    <td colSpan="7" className="px-6 py-8 text-center text-slate-400 italic">
+                                    <td colSpan="9" className="px-6 py-8 text-center text-slate-400 italic">
                                         No matching invoices found.
                                     </td>
                                 </tr>

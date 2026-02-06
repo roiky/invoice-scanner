@@ -55,33 +55,6 @@
     "download_url": "http://127.0.0.1:8000/files/1999605180d6e177_Print Receipt - RC2530493932.pdf",
     "status": "Processed"
   },
-  "1999c1cb536c1ea8": {
-    "id": "1999c1cb536c1ea8",
-    "filename": "unknown.pdf",
-    "sender_email": "\"קרייזי מיט ראשון לציון מזרח\" <NoReply@plweb.online>",
-    "subject": "פירוט הזמנה קרייזי מיט ראשון לציון מזרח",
-    "invoice_date": "2026-02-06",
-    "vendor_name": "קרייזי מיט ראשון לציון מזרח",
-    "total_amount": 10.0,
-    "currency": "ILS",
-    "vat_amount": 1.8,
-    "download_url": "http://localhost:8000/files/generated_1999c1cb536c1ea8.pdf",
-    "status": "Pending"
-  },
-  "b338dafb-b68c-4ab1-b782-a9820019ee81": {
-    "id": "b338dafb-b68c-4ab1-b782-a9820019ee81",
-    "filename": "manual_b338dafb-b68c-4ab1-b782-a9820019ee81",
-    "sender_email": "manual@entry",
-    "subject": "Test Subject",
-    "invoice_date": "2023-10-27",
-    "vendor_name": "Test Vendor",
-    "total_amount": 123.45,
-    "currency": "ILS",
-    "vat_amount": 0.0,
-    "download_url": "http://127.0.0.1:8000/static/invoices/manual_b338dafb-b68c-4ab1-b782-a9820019ee81_test_invoice.txt",
-    "labels": [],
-    "status": "Pending"
-  },
   "70586c35-cdfe-40cf-a0fe-ee1a64f86957": {
     "id": "70586c35-cdfe-40cf-a0fe-ee1a64f86957",
     "filename": "manual_70586c35-cdfe-40cf-a0fe-ee1a64f86957",
@@ -95,6 +68,36 @@
     "download_url": "http://127.0.0.1:8000/files/manual_70586c35-cdfe-40cf-a0fe-ee1a64f86957_Figure_1.png",
     "labels": [
       "עסק"
+    ],
+    "status": "Pending"
+  },
+  "19b4a207bc893c42": {
+    "id": "19b4a207bc893c42",
+    "filename": "דצמבר.pdf",
+    "sender_email": "\"רועי כלימי\" <roeikalimi@gmail.com>",
+    "subject": "חשבוניות פרטנר 2024",
+    "invoice_date": "2024-01-07",
+    "vendor_name": "רועי כלימי",
+    "total_amount": 115.0,
+    "currency": "ILS",
+    "vat_amount": 21.37,
+    "download_url": "http://127.0.0.1:8000/files/19b4a207bc893c42_דצמבר.pdf",
+    "labels": [],
+    "status": "Pending"
+  },
+  "19a1fdd7e68341ba": {
+    "id": "19a1fdd7e68341ba",
+    "filename": "חשבונית_מס_קבלה_57354.pdf",
+    "sender_email": "\"מועדון UNIQ\" <outgoing@out.cardcom.co.il>",
+    "subject": "חשבונית מס קבלה מספר 57354 ממועדון UNIQ - עבור Roei Kalimi",
+    "invoice_date": "2025-10-26",
+    "vendor_name": "מועדון UNIQ",
+    "total_amount": 35.0,
+    "currency": "ILS",
+    "vat_amount": 5.34,
+    "download_url": "http://127.0.0.1:8000/files/19a1fdd7e68341ba_חשבונית_מס_קבלה_57354.pdf",
+    "labels": [
+      "Travel"
     ],
     "status": "Pending"
   }
