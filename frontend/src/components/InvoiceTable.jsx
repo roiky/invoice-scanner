@@ -22,7 +22,8 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
             const matchesStatus =
                 filterStatus === 'all' ? true :
                     filterStatus === 'processed' ? inv.status === 'Processed' :
-                        inv.status === 'Pending';
+                        filterStatus === 'cancelled' ? inv.status === 'Cancelled' :
+                            inv.status === 'Pending';
 
             const matchesLabel =
                 filterLabel === 'all' ? true :
@@ -145,6 +146,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                         <option value="all">All Status</option>
                         <option value="processed">Processed</option>
                         <option value="pending">Pending</option>
+                        <option value="cancelled">Cancelled</option>
                     </select>
 
                     <select

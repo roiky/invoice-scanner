@@ -137,6 +137,7 @@ async def create_manual_invoice(
     download_url = None
 
     if file:
+        print(f"Received file: {file.filename}, content_type: {file.content_type}")
         try:
             filename = f"manual_{invoice_id}_{file.filename}"
             file_path = os.path.join("backend/static/invoices", filename)
@@ -144,22 +145,24 @@ async def create_manual_invoice(
             with open(file_path, "wb") as buffer:
                 shutil.copyfileobj(file.file, buffer)
             
-            download_url = f"http://127.0.0.1:8000/static/invoices/{filename}"
+            download_url = f"http://127.0.0.1:8000/files/{filename}"
             print(f"Saved manual file to {file_path}")
         except Exception as e:
             print(f"Failed to save file: {e}")
 
     new_invoice = InvoiceData(
         id=invoice_id,
+        filename=f"manual_{invoice_id}", # Required field
+        sender_email="manual@entry",      # Required field
         invoice_date=invoice_date,
         vendor_name=vendor_name,
         total_amount=total_amount,
         currency=currency,
-        vat_amount=0, # User can update later or we add field
+        vat_amount=0, 
         subject=subject or "Manual Entry",
         download_url=download_url,
         status="Pending",
-        source="Manual" # Helper field if we added it, but model doesn't have it yet.
+        labels=[]
     )
 
     storage_service.save_invoice(new_invoice)

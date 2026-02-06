@@ -67,5 +67,35 @@
     "vat_amount": 1.8,
     "download_url": "http://localhost:8000/files/generated_1999c1cb536c1ea8.pdf",
     "status": "Pending"
+  },
+  "b338dafb-b68c-4ab1-b782-a9820019ee81": {
+    "id": "b338dafb-b68c-4ab1-b782-a9820019ee81",
+    "filename": "manual_b338dafb-b68c-4ab1-b782-a9820019ee81",
+    "sender_email": "manual@entry",
+    "subject": "Test Subject",
+    "invoice_date": "2023-10-27",
+    "vendor_name": "Test Vendor",
+    "total_amount": 123.45,
+    "currency": "ILS",
+    "vat_amount": 0.0,
+    "download_url": "http://127.0.0.1:8000/static/invoices/manual_b338dafb-b68c-4ab1-b782-a9820019ee81_test_invoice.txt",
+    "labels": [],
+    "status": "Pending"
+  },
+  "7b5f8718-3b0b-4042-bae9-cb46a07905e6": {
+    "id": "7b5f8718-3b0b-4042-bae9-cb46a07905e6",
+    "filename": "manual_7b5f8718-3b0b-4042-bae9-cb46a07905e6",
+    "sender_email": "manual@entry",
+    "subject": "SUB_TEST",
+    "invoice_date": "2026-02-06",
+    "vendor_name": "VEND_TEST",
+    "total_amount": 1234.0,
+    "currency": "EUR",
+    "vat_amount": 0.0,
+    "download_url": "http://127.0.0.1:8000/files/manual_7b5f8718-3b0b-4042-bae9-cb46a07905e6_הצעת מחיר להפקת סרטון שיווקי.pdf",
+    "labels": [
+      "Personal"
+    ],
+    "status": "Processed"
   }
 }
