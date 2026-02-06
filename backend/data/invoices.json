@@ -100,5 +100,23 @@
       "Travel"
     ],
     "status": "Pending"
+  },
+  "18da2c4062da7aef": {
+    "id": "18da2c4062da7aef",
+    "filename": "Print Receipt - RC2430071158.pdf",
+    "sender_email": "tabula <PazGasDoNotReply@pazgas.co.il>",
+    "subject": "קבלה חדשה מספר RC2430071158 מפזגז",
+    "invoice_date": "2024-02-13",
+    "vendor_name": "PazGaz",
+    "total_amount": 170.32,
+    "currency": "ILS",
+    "vat_amount": 25.98,
+    "download_url": "http://127.0.0.1:8000/files/18da2c4062da7aef_Print Receipt - RC2430071158.pdf",
+    "labels": [
+      "עסק",
+      "Hardware",
+      "Software"
+    ],
+    "status": "Processed"
   }
 }
