@@ -70,6 +70,15 @@ function App() {
   };
 
   const handleDeleteLabel = async (labelToDelete) => {
+    // Check if label is in use
+    const isInUse = historyInvoices.some(inv => (inv.labels || []).includes(labelToDelete));
+    if (isInUse) {
+      alert(`Cannot delete label "${labelToDelete}" because it is currently assigned to one or more invoices.`);
+      return;
+    }
+
+    if (!window.confirm(`Delete label "${labelToDelete}"?`)) return;
+
     try {
       const res = await fetch(`http://127.0.0.1:8000/labels/${labelToDelete}`, {
         method: 'DELETE'

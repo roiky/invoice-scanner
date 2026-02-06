@@ -179,6 +179,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                 <th className="px-6 py-3">Vendor</th>
                                 <th className="px-6 py-3">Subject</th>
                                 <th className="px-6 py-3 text-right">Amount</th>
+                                <th className="px-6 py-3 text-right">VAT</th>
                                 <th className="px-6 py-3">Tags</th>
                                 <th className="px-6 py-3 text-center">Actions</th>
                             </tr>
@@ -254,6 +255,23 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                 )}
                                             </td>
 
+                                            <td className="px-6 py-3 text-right text-slate-500">
+                                                {isEditing ? (
+                                                    <div className="flex items-center gap-1 justify-end">
+                                                        <input
+                                                            type="number"
+                                                            step="0.01"
+                                                            value={editForm.vat_amount || ""}
+                                                            onChange={e => setEditForm({ ...editForm, vat_amount: e.target.value ? parseFloat(e.target.value) : null })}
+                                                            className="border border-slate-300 rounded px-1 py-1 w-16 text-right focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
+                                                        />
+                                                        <span className="text-xs text-slate-400">{inv.currency}</span>
+                                                    </div>
+                                                ) : (
+                                                    `${Number(inv.vat_amount || 0).toFixed(2)} ${inv.currency}`
+                                                )}
+                                            </td>
+
                                             {/* TAGS COLUMN */}
                                             <td className="px-6 py-3">
                                                 {isEditing ? (
@@ -271,8 +289,8 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                                         setEditForm({ ...editForm, labels: newLabels });
                                                                     }}
                                                                     className={`cursor-pointer px-2 py-0.5 rounded text-[10px] border select-none ${isSelected
-                                                                            ? 'bg-blue-100 text-blue-700 border-blue-200'
-                                                                            : 'bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200'
+                                                                        ? 'bg-blue-100 text-blue-700 border-blue-200'
+                                                                        : 'bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200'
                                                                         }`}
                                                                 >
                                                                     {label}
