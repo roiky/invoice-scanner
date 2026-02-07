@@ -58,39 +58,27 @@ def convert_html_to_pdf(source_html, output_path):
         else:
             content_soup = BeautifulSoup(source_html, 'html.parser')
 
-        # Advanced Bidi Handling:
-        # 1. We use dir="rtl" on the body (see below) to ensure Hebrew is reversed correctly (Visual order).
-        # 2. However, dir="rtl" also reverses English ("APPLE" -> "ELPPA").
-        # 3. Fix: We wrap English/Number sequences in <span dir="ltr"> to protect them.
-        import re
-        
-        # Regex to find English words, numbers, and basic punctuation
-        # [a-zA-Z0-9\.,\-\s]+ but refined to avoid breaking HTML tags (which BS4 handles, but we modify text nodes)
-        english_pattern = re.compile(r'([a-zA-Z0-9\.,\-\+\(\)\s]+)')
+        # Advanced Bidi Handling (V10 - Final Strategy):
+        # 1. We use DEFAULT LTR direction for the body. This keeps English Logical ("APPLE").
+        # 2. We use python-bidi with base_dir='L' to pre-reverse Hebrew (Visual Order).
+        #    "בדיקה" -> "הקידב".
+        #    "APPLE" -> "APPLE".
+        #    "APPLE בדיקה" -> "APPLE הקידב" (Correct Visual LTR).
         
         for element in content_soup.find_all(string=True):
             if element.parent.name not in ['script', 'style', 'pre']:
                 original_text = str(element)
-                # If text contains Hebrew, we don't touch it (let Body RTL handle it).
-                # If text contains English, we wrap the English parts.
+                if not original_text.strip():
+                    continue
+                    
+                # Reshape Arabic/Hebrew (mostly for Arabic, safe for Hebrew)
+                reshaped_text = arabic_reshaper.reshape(original_text)
                 
-                # Check if it has english/numbers
-                if english_pattern.search(original_text):
-                    # We need to replace this text node with a structure containing spans.
-                    # BeautifulSoup string replacement is tricky with HTML structure.
-                    # Easier to wrap the whole node in a customized way or split it.
-                    
-                    # Simple approach: If the node is purely English, wrap it.
-                    # If mixed, we have to split.
-                    
-                    # For safety/simplicity in this "Fix Mode":
-                    # We will use a helper that wraps English sequences in unicode LTR marks? 
-                    # No, dir="ltr" span is safer for xhtml2pdf.
-                    
-                    # Replacing the string with a soup fragment:
-                    new_html = english_pattern.sub(r'<span dir="ltr">\1</span>', original_text)
-                    new_soup = BeautifulSoup(new_html, 'html.parser')
-                    element.replace_with(new_soup)
+                # Apply Bidi with LTR base direction
+                # This reverses Hebrew strings for Visual display in LTR context
+                bidi_text = bidi.algorithm.get_display(reshaped_text, base_dir='L')
+                
+                element.replace_with(bidi_text)
 
         base_content = str(content_soup)
             
@@ -118,6 +106,9 @@ def convert_html_to_pdf(source_html, output_path):
             @page {{ size: A4; margin: 1cm; }}
             body {{ 
                 font-family: 'Helvetica', 'Arial', sans-serif !important; 
+                /* CRITICAL: Force LTR direction to keep English Logical ("APPLE") */
+                direction: ltr;
+                /* Right align for Hebrew aesthetics */
                 text-align: right;
             }}
             * {{
@@ -127,14 +118,11 @@ def convert_html_to_pdf(source_html, output_path):
                 font-family: 'Helvetica', 'Arial', sans-serif !important;
                 white-space: pre-wrap;
                 text-align: right;
-            }}
-            span[dir="ltr"] {{
-                direction: ltr; 
-                display: inline-block; /* Helps xhtml2pdf handle direction change sometimes */
+                direction: ltr;
             }}
         </style>
     </head>
-    <body dir="rtl">
+    <body dir="ltr">
     {base_content}
     </body>
     </html>

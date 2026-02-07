@@ -1,97 +1,83 @@
+
 import os
-from xhtml2pdf import pisa
-import io
+import sys
+from bs4 import BeautifulSoup
+import arabic_reshaper
+import bidi.algorithm
 
-def convert_html_to_pdf(source_html, output_path):
-    # Ensure Hebrew/UTF-8 support is attempted
-    # Using Arial from local static folder
-    # Must use forward slashes for CSS url or absolute file uri
-    font_path = os.path.join(os.getcwd(), 'backend', 'static', 'fonts', 'arial.ttf').replace('\\', '/')
-    print(f"Font path: {font_path}")
-    print(f"Font exists: {os.path.exists(font_path)}")
+# Add project root
+sys.path.append(os.getcwd())
+
+from backend.services.gmail_service import process_text_for_pdf, convert_html_to_pdf
+
+def debug_pdf_generation():
+    print("Running Debug PDF Generation...")
     
-    # Manually register the font with ReportLab
-    try:
-        from reportlab.pdfbase import pdfmetrics
-        from reportlab.pdfbase.ttfonts import TTFont
-        
-        # Register properly
-        pdfmetrics.registerFont(TTFont('Arial', font_path))
-        print("Font registered successfully via ReportLab")
-    except Exception as e:
-        print(f"Failed to register font: {e}")
-
-    styled_html = f"""
-    <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <style>
-            @page {{ size: A4; margin: 1cm; }}
-            body {{ 
-                font-family: 'Arial', sans-serif; 
-                direction: rtl;
-            }}
-            pre {{
-                font-family: 'Arial', sans-serif;
-                white-space: pre-wrap;
-            }}
-        </style>
-    </head>
-    <body dir="rtl">
-    {source_html}
-    </body>
-    </html>
+    # 1. Define Test Content (Mixed Hebrew/English)
+    # This mimics what we expect from an email body
+    raw_html = """
+    <div>
+        <p>English Start: APPLE</p>
+        <p>Hebrew Start: בדיקה</p>
+        <p>Mixed 1: APPLE בדיקה</p>
+        <p>Mixed 2: בדיקה APPLE</p>
+        <p>Sentence: This is a test.</p>
+    </div>
     """
     
-    try:
-        with open(output_path, "wb") as result_file:
-            pisa_status = pisa.CreatePDF(
-                src=styled_html,
-                dest=result_file,
-                encoding='utf-8'
-            )
-        print(f"Pisa err: {pisa_status.err}")
-        return not pisa_status.err
-    except Exception as e:
-        print(f"Exception: {e}")
-        return False
+    # 2. Manual Simulation of Service Logic (to allow saving intermediate HTML)
+    # We copy the logic from gmail_service.py to ensure we see exactly what it does
+    soup = BeautifulSoup(raw_html, 'html.parser')
+    
+    print("\n--- Processing Text Nodes ---")
+    for element in soup.find_all(string=True):
+        if element.parent.name not in ['script', 'style', 'pre']:
+            original_text = str(element)
+            if not original_text.strip(): continue
+            
+            # Use the imported service function to test IT specifically
+            processed_text = process_text_for_pdf(original_text)
+            
+            print(f"Orig: '{original_text.strip()}'")
+            print(f"Proc: '{processed_text.strip()}'")
+            
+            element.replace_with(processed_text)
+            
+    processed_html = str(soup)
+    
+    # 3. Save Intermediate HTML
+    with open("debug_intermediate.html", "w", encoding="utf-8") as f:
+        # Wrap in the same styling as service
+        full_html = f"""
+        <html>
+        <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+            <style>
+                body {{ 
+                    font-family: 'Arial', sans-serif; 
+                    direction: ltr; /* mimic service */
+                    text-align: right;
+                }}
+            </style>
+        </head>
+        <body dir="ltr">
+        <h1>Debug Intermediate HTML</h1>
+        <p>Open this in Chrome/Edge. If it looks WRONG here, python-bidi is to blame.</p>
+        <hr>
+        {processed_html}
+        </body>
+        </html>
+        """
+        f.write(full_html)
+    print("\nSaved 'debug_intermediate.html'")
+    
+    # 4. Generate PDF using Service
+    # We pass the original raw_html to the service function, 
+    # letting it do its own processing (which we just simulated above).
+    # This verifies the service function itself.
+    output_pdf = "debug_service_output.pdf"
+    convert_html_to_pdf(raw_html, output_pdf)
+    print(f"Generated '{output_pdf}' using service logic.")
 
-# Test
 if __name__ == "__main__":
-    # 1. Verify Encoding of Hebrew String
-    hebrew_text = "בדיקה"
-    print(f"Hebrew Text: {hebrew_text}")
-    print(f"Hebrew Hex: {[hex(ord(c)) for c in hebrew_text]}")
-    
-    # Simulate an email with full HTML structure
-    email_html = """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Email</title>
-    </head>
-    <body style="font-family: sans-serif;">
-        <h1>קבלה לתשלום / Payment Receipt</h1>
-        <p>שלום רב,</p>
-        <p>מצורפת הקבלה עבור העסקה האחרונה.</p>
-        <p>תודה רבה!</p>
-    </body>
-    </html>
-    """
-    
-    # Test with David
-    print("\n--- Testing David Font ---")
-    output_david = "test_gen_david.pdf"
-    convert_html_to_pdf(email_html, output_david)
-    
-    # Test with Arial (changing code dynamically for test would be hard, 
-    # but let's assume the function uses David currently. 
-    # To test Arial we'd need to change the function logic or pass font as arg.
-    # For now, let's stick to validating the CURRENT setup.)
-
-    # Verify Output File Size
-    if os.path.exists(output_david):
-        size = os.path.getsize(output_david)
-        print(f"Generated PDF Size: {size} bytes")
-    else:
-        print("Failed to generate PDF file.")
+    debug_pdf_generation()
