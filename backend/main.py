@@ -83,8 +83,7 @@ def scan_emails(start_date: date, end_date: date):
     # We also want to SAVE new ones to DB immediately? 
     # Yes, so they appear in history.
     
-    # But wait, scan_invoices returns "Fresh" data. 
-    # If I edit an invoice in history, I want the scan to show the EDITED version.
+    from .services.rule_service import rule_service # Import here to avoid circular
     
     for fresh_inv in scan_result.invoices:
         existing = storage_service.get_by_id(fresh_inv.id)
@@ -98,27 +97,31 @@ def scan_emails(start_date: date, end_date: date):
             
             final_invoices.append(existing)
         else:
-            # New discovery!
-            # Default status should be Pending (user requested default pending)
-            fresh_inv.status = "Pending" 
-            final_invoices.append(fresh_inv)
-            storage_service.save_invoice(fresh_inv)
+            # NEW Invoice found! Apply rules here.
+            rule_service.apply_rules(fresh_inv)
             
-    scan_result.invoices = final_invoices
-    return scan_result
+            # Save new
+            storage_service.save_invoice(fresh_inv)
+            final_invoices.append(fresh_inv)
+            
+    return ScanResult(
+        total_emails_scanned=scan_result.total_emails_scanned,
+        invoices_found=len(final_invoices),
+        invoices=final_invoices
+    )
 
 @app.get("/invoices", response_model=List[InvoiceData])
-def get_history():
+def get_invoices():
     """Returns all saved invoices from history"""
     return storage_service.get_all()
 
 @app.put("/invoices/{invoice_id}", response_model=InvoiceData)
-def update_invoice(invoice_id: str, invoice_update: InvoiceData):
+def update_invoice(invoice_id: str, invoice: InvoiceData):
     """Updates an invoice (status, amount, vendor, etc)"""
     # We treat the input as full object or partial? 
     # Usually easier to just take the dict
-    print(f"Update payload: {invoice_update.model_dump()}")
-    updated = storage_service.update_invoice(invoice_id, invoice_update.model_dump())
+    print(f"Update payload: {invoice.model_dump()}")
+    updated = storage_service.update_invoice(invoice_id, invoice.model_dump())
     if not updated:
         from fastapi import HTTPException
         raise HTTPException(status_code=404, detail="Invoice not found")
@@ -138,6 +141,34 @@ def delete_invoice(invoice_id: str):
 @app.get("/labels", response_model=List[str])
 def get_labels():
     return settings_service.get_labels()
+
+# --- Rules Endpoints ---
+from .models import Rule
+from .services.rule_service import rule_service
+
+@app.get("/rules", response_model=List[Rule])
+def get_rules():
+    return rule_service.get_all_rules()
+
+@app.post("/rules", response_model=Rule)
+def create_rule(rule: Rule):
+    return rule_service.create_rule(rule)
+
+@app.put("/rules/{rule_id}", response_model=Rule)
+def update_rule(rule_id: str, rule: Rule):
+    updated = rule_service.update_rule(rule_id, rule)
+    if not updated:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Rule not found")
+    return updated
+
+@app.delete("/rules/{rule_id}")
+def delete_rule(rule_id: str):
+    success = rule_service.delete_rule(rule_id)
+    if not success:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Rule not found")
+    return {"status": "success"}
 
 class LabelRequest(BaseModel):
     label: str

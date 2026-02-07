@@ -198,21 +198,6 @@
     "comments": "",
     "status": "Processed"
   },
-  "19bdb9dcbded21a3": {
-    "id": "19bdb9dcbded21a3",
-    "filename": "unknown.pdf",
-    "sender_email": "zehavasade2@gmail.com",
-    "subject": "זהבה שדה - חשבונית מס קבלה מספר 9168",
-    "invoice_date": null,
-    "vendor_name": "zehavasade2@gmail.com",
-    "total_amount": null,
-    "currency": "ILS",
-    "vat_amount": null,
-    "download_url": "http://localhost:8000/files/generated_19bdb9dcbded21a3.pdf",
-    "labels": [],
-    "comments": "להכניס ידני",
-    "status": "Pending"
-  },
   "19bc152d45138d40": {
     "id": "19bc152d45138d40",
     "filename": "Print Receipt - RCD26900086.pdf",
@@ -297,5 +282,22 @@
     ],
     "comments": "",
     "status": "Processed"
+  },
+  "19bdb9dcbded21a3": {
+    "id": "19bdb9dcbded21a3",
+    "filename": "unknown.pdf",
+    "sender_email": "zehavasade2@gmail.com",
+    "subject": "זהבה שדה - חשבונית מס קבלה מספר 9168",
+    "invoice_date": null,
+    "vendor_name": "zehavasade2@gmail.com",
+    "total_amount": null,
+    "currency": "ILS",
+    "vat_amount": null,
+    "download_url": "http://localhost:8000/files/generated_19bdb9dcbded21a3.pdf",
+    "labels": [
+      "עסק"
+    ],
+    "comments": "להשלים ידנית",
+    "status": "Pending"
   }
 }

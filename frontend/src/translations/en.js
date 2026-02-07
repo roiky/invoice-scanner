@@ -107,6 +107,27 @@ export const en = {
         loading: "Loading...",
         error: "Error",
         full_preview: "Full Preview"
+    },
+    rules: {
+        title: "Automation Rules",
+        subtitle: "Define rules to automatically process incoming invoices.",
+        create_new: "Create New Rule",
+        create_first: "Create your first rule",
+        no_rules: "No rules defined yet.",
+        error_fetching: "Failed to load rules",
+        error_saving: "Failed to save rule",
+        error_deleting: "Failed to delete rule",
+        delete_confirm: "Are you sure you want to delete this rule?",
+        edit_rule: "Edit Rule",
+        create_rule: "Create Rule",
+        rule_name: "Rule Name",
+        is_active: "Active",
+        conditions: "Conditions",
+        actions: "Actions",
+        select_field: "Select Field",
+        select_operator: "Select Operator",
+        select_action: "Select Action",
+        select_label: "Select Label..."
     }
 };
 

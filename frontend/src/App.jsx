@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { LayoutDashboard, History, Settings, FileText, CheckCircle, AlertCircle, Search, ShieldCheck, DollarSign, Plus, Globe, Scan } from 'lucide-react'
+import { LayoutDashboard, History, Settings, FileText, CheckCircle, AlertCircle, Search, ShieldCheck, DollarSign, Plus, Globe, Scan, Gavel } from 'lucide-react'
 import * as api from './api'
 import { InvoiceTable } from './components/InvoiceTable'
 import { ScanForm } from './components/ScanForm'
 import { ManualEntryModal } from './components/ManualEntryModal'
 import { StatsCard } from './components/StatsCard'
 import { LabelManager } from './components/LabelManager'
+import { RulesTab } from './components/RulesTab'
 import { LanguageProvider, useLanguage } from './context/LanguageContext'
 
 function AppContent() {
@@ -255,6 +256,16 @@ function AppContent() {
                 <History size={18} />
                 {t('nav.history')}
               </button>
+              <button
+                onClick={() => setActiveTab('rules')}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 ${activeTab === 'rules'
+                  ? 'bg-white text-blue-700 shadow-sm ring-1 ring-slate-200'
+                  : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
+                  }`}
+              >
+                <Gavel size={18} />
+                {t('rules.title')}
+              </button>
             </nav>
 
             {/* Language Switcher */}
@@ -418,7 +429,7 @@ function AppContent() {
               </div>
             )}
           </div>
-        ) : (
+        ) : activeTab === 'history' ? (
           <div className="space-y-6">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -455,7 +466,9 @@ function AppContent() {
               t={t}
             />
           </div>
-        )}
+        ) : activeTab === 'rules' ? (
+          <RulesTab t={t} labels={labels} />
+        ) : null}
       </main>
 
       <ManualEntryModal

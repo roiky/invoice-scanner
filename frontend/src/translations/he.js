@@ -108,6 +108,27 @@ export const he = {
         loading: "טוען...",
         error: "שגיאה",
         full_preview: "תצוגה מלאה"
+    },
+    rules: {
+        title: "חוקי אוטומציה",
+        subtitle: "הגדר חוקים לעיבוד אוטומטי של חשבוניות נכנסות.",
+        create_new: "צור חוק חדש",
+        create_first: "צור את החוק הראשון שלך",
+        no_rules: "עדיין לא הוגדרו חוקים.",
+        error_fetching: "שגיאה בטעינת החוקים",
+        error_saving: "שגיאה בשמירת החוק",
+        error_deleting: "שגיאה במחיקת החוק",
+        delete_confirm: "האם אתה בטוח שברצונך למחוק חוק זה?",
+        edit_rule: "ערוך חוק",
+        create_rule: "צור חוק",
+        rule_name: "שם החוק",
+        is_active: "פעיל",
+        conditions: "תנאים",
+        actions: "פעולות",
+        select_field: "בחר שדה",
+        select_operator: "בחר אופרטור",
+        select_action: "בחר פעולה",
+        select_label: "בחר תגית..."
     }
 };
 

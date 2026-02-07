@@ -106,3 +106,37 @@ export const deleteLabel = async (label) => {
     }
     return response.json();
 };
+
+// --- Rules Management ---
+
+export const getRules = async () => {
+    const response = await fetch(`${API_URL}/rules`);
+    if (!response.ok) throw new Error('Failed to fetch rules');
+    return response.json();
+};
+
+export const createRule = async (rule) => {
+    const response = await fetch(`${API_URL}/rules`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(rule)
+    });
+    if (!response.ok) throw new Error('Failed to create rule');
+    return response.json();
+};
+
+export const updateRule = async (id, rule) => {
+    const response = await fetch(`${API_URL}/rules/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(rule)
+    });
+    if (!response.ok) throw new Error('Failed to update rule');
+    return response.json();
+};
+
+export const deleteRule = async (id) => {
+    const response = await fetch(`${API_URL}/rules/${id}`, { method: 'DELETE' });
+    if (!response.ok) throw new Error('Failed to delete rule');
+    return response.json();
+};
