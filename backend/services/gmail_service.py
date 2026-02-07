@@ -16,38 +16,100 @@ BASE_URL = "http://localhost:8000/files"
 
 from xhtml2pdf import pisa
 import io
+from bs4 import BeautifulSoup
+import bidi.algorithm
+import arabic_reshaper
+
+def process_text_for_pdf(text):
+    if not text: return text
+    reshaped_text = arabic_reshaper.reshape(text)
+    # base_dir='L' ensures that the overall paragraph direction is LTR, 
+    # which keeps English text (L-to-R) correctly oriented, while Hebrew (R-to-L) 
+    # is reversed locally by get_display for visual rendering.
+    bidi_text = bidi.algorithm.get_display(reshaped_text, base_dir='L')
+    return bidi_text
 
 def convert_html_to_pdf(source_html, output_path):
     # Ensure Hebrew/UTF-8 support is attempted
-    # Reverting to David (System) as Rubik download failed
-    font_path = os.path.join(os.getcwd(), 'backend', 'static', 'fonts', 'david.ttf').replace('\\', '/')
+    # using Arial which is known to support Hebrew well
+    font_path = os.path.join(os.getcwd(), 'backend', 'static', 'fonts', 'arial.ttf').replace('\\', '/')
     
-    # Manually register the font with ReportLab to avoid temp file issues on Windows
+    # Manually register the font with ReportLab
+    # Challenge: xhtml2pdf crashes with @font-face on Windows (temp file lock).
+    # Challenge: xhtml2pdf doesn't find Python-registered fonts unless mapped in CSS.
+    # Hack: Register our Hebrew font as 'Helvetica' (the default PDF font).
+    # This forces xhtml2pdf to use our font for the default text without need for @font-face.
     try:
         from reportlab.pdfbase import pdfmetrics
         from reportlab.pdfbase.ttfonts import TTFont
-        # 'UTF-8' encoding is default for TTFont but let's be implicit if needed, 
-        # though usually arg 2 is filename. 
-        pdfmetrics.registerFont(TTFont('David', font_path))
+        
+        pdfmetrics.registerFont(TTFont('Helvetica', font_path))
+        pdfmetrics.registerFont(TTFont('Arial', font_path)) # Register as Arial too just in case
     except Exception as e:
         print(f"Warning: Could not register font: {e}")
 
-    # Sanitize Source HTML: Extract body content to avoid nested <html>/<body> tags
-    # and potential encoding conflicts.
+    # Sanitize Source HTML
     try:
-        from bs4 import BeautifulSoup
         soup = BeautifulSoup(source_html, 'html.parser')
         
         # If we have a body, take its content. Else take the whole thing.
         if soup.body:
-            base_content = soup.body.decode_contents()
+            content_soup = BeautifulSoup(soup.body.decode_contents(), 'html.parser')
         else:
-            base_content = source_html
+            content_soup = BeautifulSoup(source_html, 'html.parser')
+
+        # Advanced Bidi Handling:
+        # 1. We use dir="rtl" on the body (see below) to ensure Hebrew is reversed correctly (Visual order).
+        # 2. However, dir="rtl" also reverses English ("APPLE" -> "ELPPA").
+        # 3. Fix: We wrap English/Number sequences in <span dir="ltr"> to protect them.
+        import re
+        
+        # Regex to find English words, numbers, and basic punctuation
+        # [a-zA-Z0-9\.,\-\s]+ but refined to avoid breaking HTML tags (which BS4 handles, but we modify text nodes)
+        english_pattern = re.compile(r'([a-zA-Z0-9\.,\-\+\(\)\s]+)')
+        
+        for element in content_soup.find_all(string=True):
+            if element.parent.name not in ['script', 'style', 'pre']:
+                original_text = str(element)
+                # If text contains Hebrew, we don't touch it (let Body RTL handle it).
+                # If text contains English, we wrap the English parts.
+                
+                # Check if it has english/numbers
+                if english_pattern.search(original_text):
+                    # We need to replace this text node with a structure containing spans.
+                    # BeautifulSoup string replacement is tricky with HTML structure.
+                    # Easier to wrap the whole node in a customized way or split it.
+                    
+                    # Simple approach: If the node is purely English, wrap it.
+                    # If mixed, we have to split.
+                    
+                    # For safety/simplicity in this "Fix Mode":
+                    # We will use a helper that wraps English sequences in unicode LTR marks? 
+                    # No, dir="ltr" span is safer for xhtml2pdf.
+                    
+                    # Replacing the string with a soup fragment:
+                    new_html = english_pattern.sub(r'<span dir="ltr">\1</span>', original_text)
+                    new_soup = BeautifulSoup(new_html, 'html.parser')
+                    element.replace_with(new_soup)
+
+        base_content = str(content_soup)
             
     except Exception as e:
-        print(f"Warning: HTML parsing failed, using raw: {e}")
+        print(f"Warning: HTML parsing/bidi failed, using raw: {e}")
         base_content = source_html
 
+    # Link callback to handle font loading for xhtml2pdf if needed
+    def link_callback(uri, rel):
+        # Allow loading local files from backend/static
+        if uri.startswith('backend/static/'):
+            path = os.path.join(os.getcwd(), uri)
+            return path
+        return uri
+
+    # We add a specific style to force the font usage
+    # Using 'Arial' or 'Helvetica' which are now mapped to our TTF
+    # REMOVED @font-face to avoid crash
+    # ADDED dir="rtl" back to support Hebrew visual reversing.
     styled_html = f"""
     <html>
     <head>
@@ -55,15 +117,20 @@ def convert_html_to_pdf(source_html, output_path):
         <style>
             @page {{ size: A4; margin: 1cm; }}
             body {{ 
-                font-family: 'David', sans-serif !important; 
-                direction: rtl;
+                font-family: 'Helvetica', 'Arial', sans-serif !important; 
+                text-align: right;
             }}
             * {{
-                font-family: 'David', sans-serif !important;
+                font-family: 'Helvetica', 'Arial', sans-serif !important;
             }}
             pre {{
-                font-family: 'David', sans-serif !important;
+                font-family: 'Helvetica', 'Arial', sans-serif !important;
                 white-space: pre-wrap;
+                text-align: right;
+            }}
+            span[dir="ltr"] {{
+                direction: ltr; 
+                display: inline-block; /* Helps xhtml2pdf handle direction change sometimes */
             }}
         </style>
     </head>
@@ -77,9 +144,11 @@ def convert_html_to_pdf(source_html, output_path):
         pisa_status = pisa.CreatePDF(
             src=styled_html,
             dest=result_file,
-            encoding='utf-8'
+            encoding='utf-8',
+            link_callback=link_callback
         )
     return not pisa_status.err
+
 
 
 import threading

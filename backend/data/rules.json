@@ -38,5 +38,23 @@
       }
     ],
     "is_active": true
+  },
+  {
+    "id": "ecae64da-7153-4e3a-970f-3b9b489907ff",
+    "name": "\u05e4\u05e8\u05e1\u05d5\u05de\u05ea",
+    "conditions": [
+      {
+        "field": "subject",
+        "operator": "contains",
+        "value": "\u05e4\u05e8\u05e1\u05d5\u05de\u05ea"
+      }
+    ],
+    "actions": [
+      {
+        "action_type": "set_status",
+        "value": "Cancelled"
+      }
+    ],
+    "is_active": true
   }
 ]

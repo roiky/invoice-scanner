@@ -67,7 +67,8 @@ export const en = {
     auth: {
         connected_as: "Connected as",
         logout: "Logout",
-        logout_confirm: "Are you sure you want to logout? You will need to re-authenticate with Google."
+        logout_confirm: "Are you sure you want to logout? You will need to re-authenticate with Google.",
+        connect: "Login with Gmail"
     },
     actions: {
         edit: "Edit",

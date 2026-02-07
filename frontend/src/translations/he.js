@@ -67,7 +67,8 @@ export const he = {
     auth: {
         connected_as: "מחובר כ-",
         logout: "התנתק",
-        logout_confirm: "האם אתה בטוח שברצונך להתנתק? תצטרך להתחבר מחדש דרך גוגל."
+        logout_confirm: "האם אתה בטוח שברצונך להתנתק? תצטרך להתחבר מחדש דרך גוגל.",
+        connect: "התחברות עם Gmail"
     },
     actions: {
         edit: "ערוך",

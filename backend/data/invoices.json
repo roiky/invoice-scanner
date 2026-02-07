@@ -249,40 +249,6 @@
     "comments": "",
     "status": "Processed"
   },
-  "19bbbec860b3f6ae": {
-    "id": "19bbbec860b3f6ae",
-    "filename": "unknown.pdf",
-    "sender_email": "Apple <no_reply@email.apple.com>",
-    "subject": "‫הקבלה שלך מ‑Apple‬",
-    "invoice_date": "2026-01-01",
-    "vendor_name": "Apple",
-    "total_amount": 33.9,
-    "currency": "ILS",
-    "vat_amount": 5.17,
-    "download_url": "http://localhost:8000/files/generated_19bbbec860b3f6ae.pdf",
-    "labels": [
-      "עסק"
-    ],
-    "comments": "",
-    "status": "Processed"
-  },
-  "19bbb3258cbb95b8": {
-    "id": "19bbb3258cbb95b8",
-    "filename": "unknown.pdf",
-    "sender_email": "Apple <no_reply@email.apple.com>",
-    "subject": "‫הקבלה שלך מ‑Apple‬",
-    "invoice_date": "2026-01-01",
-    "vendor_name": "Apple",
-    "total_amount": 11.9,
-    "currency": "ILS",
-    "vat_amount": 1.82,
-    "download_url": "http://localhost:8000/files/generated_19bbb3258cbb95b8.pdf",
-    "labels": [
-      "עסק"
-    ],
-    "comments": "",
-    "status": "Processed"
-  },
   "19bdb9dcbded21a3": {
     "id": "19bdb9dcbded21a3",
     "filename": "unknown.pdf",
@@ -298,6 +264,36 @@
       "עסק"
     ],
     "comments": "להשלים ידנית",
+    "status": "Pending"
+  },
+  "19c24dc9fdefee8c": {
+    "id": "19c24dc9fdefee8c",
+    "filename": "unknown.pdf",
+    "sender_email": "Apple <no_reply@email.apple.com>",
+    "subject": "‫הקבלה שלך מ‑Apple‬",
+    "invoice_date": null,
+    "vendor_name": "Apple",
+    "total_amount": 33.9,
+    "currency": "ILS",
+    "vat_amount": 5.17,
+    "download_url": "http://localhost:8000/files/generated_19c24dc9fdefee8c.pdf",
+    "labels": [],
+    "comments": null,
+    "status": "Processed"
+  },
+  "19c225be4dcf66ef": {
+    "id": "19c225be4dcf66ef",
+    "filename": "unknown.pdf",
+    "sender_email": "Cloud Be <no-reply@payplus.co.il>",
+    "subject": "חשבונית מס קבלה - Cloud Be",
+    "invoice_date": "2026-02-03",
+    "vendor_name": "Cloud Be",
+    "total_amount": null,
+    "currency": "ILS",
+    "vat_amount": null,
+    "download_url": "http://localhost:8000/files/generated_19c225be4dcf66ef.pdf",
+    "labels": [],
+    "comments": null,
     "status": "Pending"
   }
 }
