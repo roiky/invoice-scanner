@@ -16,6 +16,7 @@ class InvoiceData(BaseModel):
     vat_amount: Optional[float] = None
     download_url: Optional[str] = None
     labels: List[str] = []
+    comments: Optional[str] = None
     
     # Status
     status: str = "Pending" # Pending, Processed, Cancelled

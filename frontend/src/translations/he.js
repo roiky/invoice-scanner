@@ -59,6 +59,8 @@ export const he = {
         subject: "נושא",
         amount: "סכום",
         labels: "תגיות",
+        comments: "הערות",
+        add_comment: "הוסף הערה...",
         no_labels: "אין תגיות",
         no_invoices: "לא נמצאו חשבוניות התואמות לחיפוש."
     },

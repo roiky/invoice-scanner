@@ -59,6 +59,8 @@ export const en = {
         subject: "Subject",
         amount: "Amount",
         labels: "Labels",
+        comments: "Comments",
+        add_comment: "Add a comment...",
         no_labels: "No labels",
         no_invoices: "No invoices found matching your filters."
     },

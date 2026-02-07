@@ -1,4 +1,7 @@
-import React, { useState, useMemo } from 'react';
+
+import os
+
+part1 = r"""import React, { useState, useMemo } from 'react';
 import { FileText, CheckCircle, AlertCircle, Download, Search, XCircle, Edit2, Trash2, Check, X, ArrowUp, ArrowDown, ArrowUpDown, Calendar } from 'lucide-react';
 import { updateInvoice, deleteInvoice } from '../api';
 import { DateInput } from './DateInput';
@@ -272,7 +275,9 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
 
                         {/* Labels Multi-select Dropdown */}
                         <div className="relative group">
-                            <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-1">"""
+
+middle = r"""
                                 <button className={`flex items-center gap-2 px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium transition-all ${filterLabel.length > 0 ? 'text-blue-600 bg-blue-50 border-blue-200' : 'text-slate-700 hover:bg-slate-100'}`}>
                                     <span>{filterLabel.length === 0 ? t('filters.all_labels') : `${filterLabel.length} ${t('table.labels')}`}</span>
                                     <ArrowDown size={14} className="opacity-50" />
@@ -327,7 +332,9 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                 <Download size={16} />
                                 {t('history.export_csv')}
                             </button>
-                        </div>
+"""
+
+part2 = r"""                        </div>
                     </div>
                 </div>
 
@@ -621,3 +628,9 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
             </div>
             );
 }
+"""
+
+with open("c:/Users/Roei/.gemini/antigravity/scratch/gmail_invoice_scanner/frontend/src/components/InvoiceTable.jsx", "w", encoding="utf-8") as f:
+    f.write(part1 + middle + part2)
+
+print("File reconstructed successfully.")

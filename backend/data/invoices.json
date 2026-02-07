@@ -14,7 +14,8 @@
     "labels": [
       "Personal",
       "Software"
-    ]
+    ],
+    "comments": "???"
   },
   "196109ecb2488fee": {
     "id": "196109ecb2488fee",
@@ -83,7 +84,7 @@
     "sender_email": "tabula <PazGasDoNotReply@pazgas.co.il>",
     "subject": "קבלה חדשה מפזגז מספר RC2530664836",
     "invoice_date": "2025-12-29",
-    "vendor_name": "tabula",
+    "vendor_name": "pazgaz",
     "total_amount": 145.57,
     "currency": "ILS",
     "vat_amount": 22.21,
@@ -91,7 +92,8 @@
     "labels": [
       "Hardware"
     ],
-    "status": "Pending"
+    "status": "Processed",
+    "comments": ""
   },
   "19b541a3edc672b8": {
     "id": "19b541a3edc672b8",
@@ -104,7 +106,184 @@
     "currency": "ILS",
     "vat_amount": 15.38,
     "download_url": "http://127.0.0.1:8000/files/19b541a3edc672b8_pb19prd5_104434619_4366747.pdf",
-    "labels": [],
+    "labels": [
+      "ביגוד"
+    ],
     "status": "Pending"
+  },
+  "19b597292bf9b4af": {
+    "id": "19b597292bf9b4af",
+    "filename": "unknown.pdf",
+    "sender_email": "\"סיגל אקנין\" <sigalaknin67@gmail.com>",
+    "subject": "Re: חשבוניות פרטנר 2024",
+    "invoice_date": "2024-01-01",
+    "vendor_name": "סיגל אקנין",
+    "total_amount": null,
+    "currency": "ILS",
+    "vat_amount": null,
+    "download_url": "http://localhost:8000/files/generated_19b597292bf9b4af.pdf",
+    "labels": [],
+    "status": "Cancelled"
+  },
+  "19b59087dba6fb50": {
+    "id": "19b59087dba6fb50",
+    "filename": "unknown.pdf",
+    "sender_email": "\"סיגל אקנין\" <sigalaknin67@gmail.com>",
+    "subject": "Re: חשבוניות פרטנר 2024",
+    "invoice_date": "2024-01-01",
+    "vendor_name": "סיגל אקנין",
+    "total_amount": null,
+    "currency": "ILS",
+    "vat_amount": null,
+    "download_url": "http://localhost:8000/files/generated_19b59087dba6fb50.pdf",
+    "labels": [],
+    "status": "Cancelled"
+  },
+  "19b58e74a3c6744b": {
+    "id": "19b58e74a3c6744b",
+    "filename": "unknown.pdf",
+    "sender_email": "\"סיגל אקנין\" <sigalaknin67@gmail.com>",
+    "subject": "Re: חשבוניות פרטנר 2024",
+    "invoice_date": "2024-01-01",
+    "vendor_name": "סיגל אקנין",
+    "total_amount": null,
+    "currency": "ILS",
+    "vat_amount": null,
+    "download_url": "http://localhost:8000/files/generated_19b58e74a3c6744b.pdf",
+    "labels": [],
+    "status": "Cancelled"
+  },
+  "19b4a207bc893c42": {
+    "id": "19b4a207bc893c42",
+    "filename": "דצמבר.pdf",
+    "sender_email": "\"רועי כלימי\" <roeikalimi@gmail.com>",
+    "subject": "חשבוניות פרטנר 2024",
+    "invoice_date": "2024-01-07",
+    "vendor_name": "רועי כלימי",
+    "total_amount": 115.0,
+    "currency": "ILS",
+    "vat_amount": 21.37,
+    "download_url": "http://127.0.0.1:8000/files/19b4a207bc893c42_דצמבר.pdf",
+    "labels": [],
+    "status": "Processed"
+  },
+  "19a1fdd7e68341ba": {
+    "id": "19a1fdd7e68341ba",
+    "filename": "חשבונית_מס_קבלה_57354.pdf",
+    "sender_email": "\"מועדון UNIQ\" <outgoing@out.cardcom.co.il>",
+    "subject": "חשבונית מס קבלה מספר 57354 ממועדון UNIQ - עבור Roei Kalimi",
+    "invoice_date": "2025-10-26",
+    "vendor_name": "מועדון UNIQ",
+    "total_amount": 35.0,
+    "currency": "ILS",
+    "vat_amount": 5.34,
+    "download_url": "http://127.0.0.1:8000/files/19a1fdd7e68341ba_חשבונית_מס_קבלה_57354.pdf",
+    "labels": [],
+    "status": "Processed"
+  },
+  "19bee2a40d1812b9": {
+    "id": "19bee2a40d1812b9",
+    "filename": "37989.pdf",
+    "sender_email": "do-not-reply@kavanu.co",
+    "subject": "קבלה מה קבענו בע\"מ",
+    "invoice_date": "2026-01-24",
+    "vendor_name": "do-not-reply@kavanu.co",
+    "total_amount": 224.2,
+    "currency": "ILS",
+    "vat_amount": 34.2,
+    "download_url": "http://127.0.0.1:8000/files/19bee2a40d1812b9_37989.pdf",
+    "labels": [],
+    "comments": null,
+    "status": "Processed"
+  },
+  "19bdb9dcbded21a3": {
+    "id": "19bdb9dcbded21a3",
+    "filename": "unknown.pdf",
+    "sender_email": "zehavasade2@gmail.com",
+    "subject": "זהבה שדה - חשבונית מס קבלה מספר 9168",
+    "invoice_date": null,
+    "vendor_name": "zehavasade2@gmail.com",
+    "total_amount": null,
+    "currency": "ILS",
+    "vat_amount": null,
+    "download_url": "http://localhost:8000/files/generated_19bdb9dcbded21a3.pdf",
+    "labels": [],
+    "comments": "להכניס ידני",
+    "status": "Pending"
+  },
+  "19bc152d45138d40": {
+    "id": "19bc152d45138d40",
+    "filename": "Print Receipt - RCD26900086.pdf",
+    "sender_email": "\"אלה מולכו\" <ella.moleco@havazingboim.com>",
+    "subject": "דרמה שירותי אסתטיקה בע\"מ  בברכה,  מצורפת קבלה מס' RCD26900086  שלום,",
+    "invoice_date": "2026-01-15",
+    "vendor_name": "אלה מולכו",
+    "total_amount": 500.0,
+    "currency": "ILS",
+    "vat_amount": 76.27,
+    "download_url": "http://127.0.0.1:8000/files/19bc152d45138d40_Print Receipt - RCD26900086.pdf",
+    "labels": [],
+    "comments": null,
+    "status": "Processed"
+  },
+  "19bc0cfe2ba59ec1": {
+    "id": "19bc0cfe2ba59ec1",
+    "filename": "Print Receipt - RCD26900081.pdf",
+    "sender_email": "\"אלה מולכו\" <ella.moleco@havazingboim.com>",
+    "subject": "דרמה שירותי אסתטיקה בע\"מ  בברכה,  מצורפת קבלה מס' RCD26900081  שלום,",
+    "invoice_date": "2026-01-15",
+    "vendor_name": "אלה מולכו",
+    "total_amount": 17150.0,
+    "currency": "ILS",
+    "vat_amount": 2616.1,
+    "download_url": "http://127.0.0.1:8000/files/19bc0cfe2ba59ec1_Print Receipt - RCD26900081.pdf",
+    "labels": [],
+    "comments": null,
+    "status": "Processed"
+  },
+  "19bbccf9a3ff365e": {
+    "id": "19bbccf9a3ff365e",
+    "filename": "Print Receipt - RCD26900079.pdf",
+    "sender_email": "Arie Tokar <arie.tokar@havazingboim.com>",
+    "subject": "דרמה שירותי אסתטיקה בע\"מ  בברכה,  מצורפת קבלה מס' RCD26900079  שלום,",
+    "invoice_date": "2026-01-14",
+    "vendor_name": "Arie Tokar",
+    "total_amount": 500.0,
+    "currency": "ILS",
+    "vat_amount": 76.27,
+    "download_url": "http://127.0.0.1:8000/files/19bbccf9a3ff365e_Print Receipt - RCD26900079.pdf",
+    "labels": [],
+    "comments": null,
+    "status": "Processed"
+  },
+  "19bbbec860b3f6ae": {
+    "id": "19bbbec860b3f6ae",
+    "filename": "unknown.pdf",
+    "sender_email": "Apple <no_reply@email.apple.com>",
+    "subject": "‫הקבלה שלך מ‑Apple‬",
+    "invoice_date": null,
+    "vendor_name": "Apple",
+    "total_amount": 33.9,
+    "currency": "ILS",
+    "vat_amount": 5.17,
+    "download_url": "http://localhost:8000/files/generated_19bbbec860b3f6ae.pdf",
+    "labels": [],
+    "comments": null,
+    "status": "Processed"
+  },
+  "19bbb3258cbb95b8": {
+    "id": "19bbb3258cbb95b8",
+    "filename": "unknown.pdf",
+    "sender_email": "Apple <no_reply@email.apple.com>",
+    "subject": "‫הקבלה שלך מ‑Apple‬",
+    "invoice_date": null,
+    "vendor_name": "Apple",
+    "total_amount": 11.9,
+    "currency": "ILS",
+    "vat_amount": 1.82,
+    "download_url": "http://localhost:8000/files/generated_19bbb3258cbb95b8.pdf",
+    "labels": [],
+    "comments": null,
+    "status": "Processed"
   }
 }
