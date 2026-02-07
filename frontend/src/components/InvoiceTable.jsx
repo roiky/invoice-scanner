@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { FileText, CheckCircle, AlertCircle, Download, Search, XCircle, Edit2, Trash2, Check, X, ArrowUp, ArrowDown, ArrowUpDown, Calendar } from 'lucide-react';
+import { FileText, CheckCircle, AlertCircle, Download, Search, XCircle, Edit2, Trash2, Check, X, ArrowUp, ArrowDown, ArrowUpDown, Calendar, Tag } from 'lucide-react';
 import { updateInvoice, deleteInvoice } from '../api';
 import { DateInput } from './DateInput';
 
-export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, onDeleteInvoice, onBulkDelete, onBulkStatusChange, t = (s) => s }) {
+export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, onDeleteInvoice, onBulkDelete, onBulkStatusChange, onBulkAddLabel, t = (s) => s }) {
     const [filterText, setFilterText] = useState("");
     const [filterStatus, setFilterStatus] = useState([]); // Array of strings
     const [filterLabel, setFilterLabel] = useState([]); // Array of strings
@@ -18,6 +18,9 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
     // Editing State
     const [editingId, setEditingId] = useState(null);
     const [editForm, setEditForm] = useState({});
+
+    // Bulk Label State
+    const [isBulkLabelOpen, setIsBulkLabelOpen] = useState(false);
 
     // Filter Logic
     const filteredInvoices = useMemo(() => {
@@ -102,35 +105,11 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
 
     // Bulk Actions
     const handleBulkDelete = async () => {
-        if (!onDeleteInvoice) return;
-        // Logic handled by parent via loop or specialized bulk prop
-        // Current App.jsx supports single delete.
-        // We will defer bulk implementation to be clean, or hack it for now.
-        // Better: We will assume parent handles single ID. 
-        // But we want 1 confirm.
-
-        // Actually, let's implement the cleaner prop approach proposed.
-        // Note: I cannot add props to App.jsx in this single tool call effectively without breaking interface first.
-        // So I will convert this to use the passed props, but I need to be careful about the "Confirm" dialogs.
-
-        // TEMPORARY FIX within constraints:
-        // Use the passed props. BUT `App.jsx` has confirm.
-        // So we can't loop `onDeleteInvoice`.
-
-        // I will MODIFY App.jsx first to add onBulkDelete? 
-        // No, I'm modifying InvoiceTable now.
-
         if (onBulkDelete) {
             onBulkDelete(Array.from(selectedIds));
             setSelectedIds(new Set());
             return;
         }
-
-        // Fallback if no bulk prop (legacy):
-        // We must do it locally if parent doesn't support it, OR we just accept multiple confirms (bad).
-        // OR we accept that we are removing local API calls.
-
-        // Let's comment out the implementation and rely on the new prop I WILL add to App.jsx.
     };
 
     const handleBulkStatusChange = async (newStatus) => {
@@ -176,25 +155,37 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
         if (!filteredInvoices.length) return;
 
         const headers = ["ID", "Date", "Vendor", "Subject", "Amount", "Currency", "VAT", "Status", "Labels", "Comments"];
+        
+        const escapeCSV = (str) => {
+            if (str === null || str === undefined) return '';
+            const stringValue = String(str);
+            // Replace newlines with space to avoid breaking rows
+            const sanitized = stringValue.replace(/\n/g, ' ').replace(/\r/g, ' ');
+            // Escape double quotes by doubling them
+            return `"${sanitized.replace(/"/g, '""')}"`;
+        };
+
         const csvRows = [headers.join(",")];
 
         for (const inv of filteredInvoices) {
             const row = [
                 inv.id,
                 inv.invoice_date,
-                `"${inv.vendor_name || ''}"`, // Quote to handle commas
-                `"${inv.subject || ''}"`,
+                escapeCSV(inv.vendor_name),
+                escapeCSV(inv.subject),
                 inv.total_amount,
                 inv.currency,
                 inv.vat_amount,
                 inv.status,
-                `"${(inv.labels || []).join(', ')}"`,
-                `"${(inv.comments || '').replace(/"/g, '""')}"` // Escape quotes
+                escapeCSV((inv.labels || []).join(', ')),
+                escapeCSV(inv.comments)
             ];
             csvRows.push(row.join(","));
         }
 
-        const csvString = csvRows.join("\n");
+        // Use CRLF for Excel compatibility
+        const csvString = csvRows.join("\r\n");
+        // Add BOM for Excel UTF-8 recognition
         const blob = new Blob(["\uFEFF" + csvString], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
@@ -319,15 +310,16 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                     )}
                                 </div>
                             </div>
-
-                            <button
-                                onClick={downloadCSV}
-                                className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-medium transition-all shadow-md hover:shadow-lg active:scale-95 ml-auto sm:ml-0 text-sm"
-                            >
-                                <Download size={16} />
-                                {t('history.export_csv')}
-                            </button>
                         </div>
+
+                        {/* Export CSV Button - Moved outside of Labels group */}
+                        <button
+                            onClick={downloadCSV}
+                            className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-medium transition-all shadow-md hover:shadow-lg active:scale-95 ml-auto sm:ml-0 text-sm"
+                        >
+                            <Download size={16} />
+                            {t('history.export_csv')}
+                        </button>
                     </div>
                 </div>
 
@@ -362,6 +354,43 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                 </span>
                                 <div className="h-4 w-px bg-blue-200/50 mx-1"></div>
                                 <div className="flex items-center gap-2">
+                                    
+                                    {/* Add Label Bulk Action */}
+                                    <div className="relative">
+                                        <button 
+                                            onClick={() => setIsBulkLabelOpen(!isBulkLabelOpen)} 
+                                            className="px-3 py-1.5 text-xs font-medium bg-white text-blue-700 border border-blue-200/50 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-800 rounded-md shadow-sm transition-all flex items-center gap-1"
+                                        >
+                                            <Tag size={12} />
+                                            {t('actions.add_label')}
+                                        </button>
+                                        {isBulkLabelOpen && (
+                                            <div className="absolute bottom-full mb-2 left-0 bg-white rounded-lg shadow-xl border border-slate-100 p-2 w-48 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
+                                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Select Label to Add</div>
+                                                {availableLabels.length === 0 ? (
+                                                    <p className="text-xs text-slate-400 p-2 text-center">No labels available</p>
+                                                ) : (
+                                                    <div className="max-h-48 overflow-y-auto space-y-1">
+                                                        {availableLabels.map(l => (
+                                                            <button
+                                                                key={l}
+                                                                onClick={() => {
+                                                                    if (onBulkAddLabel) onBulkAddLabel(Array.from(selectedIds), l);
+                                                                    setIsBulkLabelOpen(false);
+                                                                }}
+                                                                className="w-full text-start px-2 py-1.5 hover:bg-blue-50 rounded text-xs text-slate-700 block truncate transition-colors"
+                                                            >
+                                                                {l}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="w-px h-4 bg-blue-200 mx-1"></div>
+
                                     <button onClick={() => handleBulkStatusChange("Processed")} className="px-3 py-1.5 text-xs font-medium bg-white text-green-700 border border-green-200/50 hover:bg-green-50 hover:border-green-300 hover:text-green-800 rounded-md shadow-sm transition-all">{t('actions.mark_processed')}</button>
                                     <button onClick={() => handleBulkStatusChange("Pending")} className="px-3 py-1.5 text-xs font-medium bg-white text-amber-700 border border-amber-200/50 hover:bg-amber-50 hover:border-amber-300 hover:text-amber-800 rounded-md shadow-sm transition-all">{t('actions.mark_pending')}</button>
                                     <button onClick={() => handleBulkStatusChange("Cancelled")} className="px-3 py-1.5 text-xs font-medium bg-white text-red-700 border border-red-200/50 hover:bg-red-50 hover:border-red-300 hover:text-red-800 rounded-md shadow-sm transition-all">{t('actions.mark_cancelled')}</button>
@@ -606,7 +635,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                     })
                                 ) : (
                                     <tr>
-                                        <td colSpan="9" className="px-6 py-12 text-center text-slate-400 italic">
+                                        <td colSpan="10" className="px-6 py-12 text-center text-slate-400 italic">
                                             <div className="flex flex-col items-center gap-2">
                                                 <Search className="opacity-20 inline-block mb-1" size={32} />
                                                 <span>{t('table.no_invoices')}</span>

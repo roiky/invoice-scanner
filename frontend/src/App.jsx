@@ -152,6 +152,26 @@ function AppContent() {
     }
   };
 
+  const handleBulkAddLabel = async (ids, labelName) => {
+    for (const id of ids) {
+      const inv = invoices.find(i => i.id === id) || scanResults.find(i => i.id === id);
+      if (!inv) continue;
+
+      // Avoid duplicates
+      if (inv.labels && inv.labels.includes(labelName)) continue;
+
+      try {
+        const currentLabels = inv.labels || [];
+        const updatedInv = { ...inv, labels: [...currentLabels, labelName] };
+        await api.updateInvoice(id, updatedInv);
+        setInvoices(prev => prev.map(i => i.id === id ? updatedInv : i));
+        setScanResults(prev => prev.map(i => i.id === id ? updatedInv : i));
+      } catch (err) {
+        console.error(`Failed to add label for ${id}`, err);
+      }
+    }
+  };
+
   const handleAddLabel = async (labelName) => {
     try {
       await api.createLabel(labelName);
@@ -392,6 +412,7 @@ function AppContent() {
                   onDeleteInvoice={handleDeleteInvoice}
                   onBulkDelete={handleBulkDelete}
                   onBulkStatusChange={handleBulkStatusChange}
+                  onBulkAddLabel={handleBulkAddLabel}
                   t={t}
                 />
               </div>
@@ -430,6 +451,7 @@ function AppContent() {
               onDeleteInvoice={handleDeleteInvoice}
               onBulkDelete={handleBulkDelete}
               onBulkStatusChange={handleBulkStatusChange}
+              onBulkAddLabel={handleBulkAddLabel}
               t={t}
             />
           </div>

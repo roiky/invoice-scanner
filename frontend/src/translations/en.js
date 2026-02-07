@@ -78,7 +78,8 @@ export const en = {
         mark_processed: "Mark Processed",
         mark_pending: "Mark Pending",
         mark_cancelled: "Mark Cancelled",
-        selected: "Selected"
+        selected: "Selected",
+        add_label: "Add Label"
     },
     manual: {
         title: "Add Manual Invoice",
@@ -108,3 +109,5 @@ export const en = {
         full_preview: "Full Preview"
     }
 };
+
+// Force update

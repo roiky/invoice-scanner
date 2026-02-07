@@ -192,8 +192,10 @@
     "currency": "ILS",
     "vat_amount": 34.2,
     "download_url": "http://127.0.0.1:8000/files/19bee2a40d1812b9_37989.pdf",
-    "labels": [],
-    "comments": null,
+    "labels": [
+      "עסק"
+    ],
+    "comments": "",
     "status": "Processed"
   },
   "19bdb9dcbded21a3": {
@@ -222,8 +224,10 @@
     "currency": "ILS",
     "vat_amount": 76.27,
     "download_url": "http://127.0.0.1:8000/files/19bc152d45138d40_Print Receipt - RCD26900086.pdf",
-    "labels": [],
-    "comments": null,
+    "labels": [
+      "עסק"
+    ],
+    "comments": "",
     "status": "Processed"
   },
   "19bc0cfe2ba59ec1": {
@@ -237,8 +241,10 @@
     "currency": "ILS",
     "vat_amount": 2616.1,
     "download_url": "http://127.0.0.1:8000/files/19bc0cfe2ba59ec1_Print Receipt - RCD26900081.pdf",
-    "labels": [],
-    "comments": null,
+    "labels": [
+      "עסק"
+    ],
+    "comments": "",
     "status": "Processed"
   },
   "19bbccf9a3ff365e": {
@@ -252,8 +258,10 @@
     "currency": "ILS",
     "vat_amount": 76.27,
     "download_url": "http://127.0.0.1:8000/files/19bbccf9a3ff365e_Print Receipt - RCD26900079.pdf",
-    "labels": [],
-    "comments": null,
+    "labels": [
+      "עסק"
+    ],
+    "comments": "",
     "status": "Processed"
   },
   "19bbbec860b3f6ae": {
@@ -261,14 +269,16 @@
     "filename": "unknown.pdf",
     "sender_email": "Apple <no_reply@email.apple.com>",
     "subject": "‫הקבלה שלך מ‑Apple‬",
-    "invoice_date": null,
+    "invoice_date": "2026-01-01",
     "vendor_name": "Apple",
     "total_amount": 33.9,
     "currency": "ILS",
     "vat_amount": 5.17,
     "download_url": "http://localhost:8000/files/generated_19bbbec860b3f6ae.pdf",
-    "labels": [],
-    "comments": null,
+    "labels": [
+      "עסק"
+    ],
+    "comments": "",
     "status": "Processed"
   },
   "19bbb3258cbb95b8": {
@@ -276,14 +286,16 @@
     "filename": "unknown.pdf",
     "sender_email": "Apple <no_reply@email.apple.com>",
     "subject": "‫הקבלה שלך מ‑Apple‬",
-    "invoice_date": null,
+    "invoice_date": "2026-01-01",
     "vendor_name": "Apple",
     "total_amount": 11.9,
     "currency": "ILS",
     "vat_amount": 1.82,
     "download_url": "http://localhost:8000/files/generated_19bbb3258cbb95b8.pdf",
-    "labels": [],
-    "comments": null,
+    "labels": [
+      "עסק"
+    ],
+    "comments": "",
     "status": "Processed"
   }
 }

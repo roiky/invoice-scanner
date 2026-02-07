@@ -74,11 +74,13 @@ export const he = {
         save: "שמור",
         cancel: "ביטול",
         delete: "מחק",
-        delete_selected: "מחק בחורים",
+        delete_selected: "מחק בחירה",
         mark_processed: "סמן כטופל",
         mark_pending: "סמן כממתין",
-        mark_cancelled: "סמן כבוטל",
-        selected: "נבחרו"
+        mark_cancelled: "סמן כמבוטל",
+        selected: "נבחרו",
+        clear_filters: "נקה סינונים",
+        add_label: "הוסף תווית"
     },
     manual: {
         title: "הוספת חשבונית ידנית",
@@ -108,3 +110,5 @@ export const he = {
         full_preview: "תצוגה מלאה"
     }
 };
+
+// Force update
