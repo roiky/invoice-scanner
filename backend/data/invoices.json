@@ -10,7 +10,9 @@
     "currency": "ILS",
     "vat_amount": 34.2,
     "download_url": "http://127.0.0.1:8000/files/19979ab58675f921_34871.pdf",
-    "labels": [],
+    "labels": [
+      "עסק"
+    ],
     "comments": null,
     "status": "Processed"
   },
@@ -19,12 +21,229 @@
     "filename": "unknown.pdf",
     "sender_email": "Temu <temu@commerce.temuemail.com>",
     "subject": "(פרסומת)תודה על הזמנתך",
-    "invoice_date": null,
+    "invoice_date": "2025-09-21",
     "vendor_name": "Temu",
     "total_amount": null,
     "currency": "ILS",
     "vat_amount": null,
     "download_url": "http://localhost:8000/files/generated_1996d9cafb7977b4.pdf",
+    "labels": [
+      "ספאם"
+    ],
+    "comments": null,
+    "status": "Cancelled"
+  },
+  "19963740054d515f": {
+    "id": "19963740054d515f",
+    "filename": "3cf83bbc-2731-4f3f-a951-4b5a0ea66bdd.pdf",
+    "sender_email": "\"חברת חשמל לישראל\" <noreplys@iec.co.il>",
+    "subject": "אקנין ספיר קבלה לחשבון חוזה 347416318",
+    "invoice_date": "2025-09-19",
+    "vendor_name": "חברת חשמל לישראל",
+    "total_amount": 1111.75,
+    "currency": "ILS",
+    "vat_amount": 169.59,
+    "download_url": "http://127.0.0.1:8000/files/19963740054d515f_3cf83bbc-2731-4f3f-a951-4b5a0ea66bdd.pdf",
+    "labels": [
+      "בית"
+    ],
+    "comments": "",
+    "status": "Processed"
+  },
+  "19960f3350aed8a8": {
+    "id": "19960f3350aed8a8",
+    "filename": "unknown.pdf",
+    "sender_email": "Temu <temu@commerce.temuemail.com>",
+    "subject": "(פרסומת)וואו, ההטבות שנפתחו פשוט מדהימות! 🎈",
+    "invoice_date": "2025-09-19",
+    "vendor_name": "Temu",
+    "total_amount": null,
+    "currency": "ILS",
+    "vat_amount": null,
+    "download_url": "http://localhost:8000/files/generated_19960f3350aed8a8.pdf",
+    "labels": [
+      "ספאם"
+    ],
+    "comments": null,
+    "status": "Cancelled"
+  },
+  "1995c718c2fdce04": {
+    "id": "1995c718c2fdce04",
+    "filename": "unknown.pdf",
+    "sender_email": "Temu <temu@shop.temuemail.com>",
+    "subject": "(פרסומת)כמעט אזל!",
+    "invoice_date": "2025-09-18",
+    "vendor_name": "Temu",
+    "total_amount": null,
+    "currency": "ILS",
+    "vat_amount": null,
+    "download_url": "http://localhost:8000/files/generated_1995c718c2fdce04.pdf",
+    "labels": [
+      "ספאם"
+    ],
+    "comments": null,
+    "status": "Cancelled"
+  },
+  "1995b5df4654cd1c": {
+    "id": "1995b5df4654cd1c",
+    "filename": "unknown.pdf",
+    "sender_email": "Temu <temu@commerce.temuemail.com>",
+    "subject": "(פרסומת)₪1 פותח לכם חוויית קנייה קסומה!",
+    "invoice_date": "2025-09-18",
+    "vendor_name": "Temu",
+    "total_amount": null,
+    "currency": "ILS",
+    "vat_amount": null,
+    "download_url": "http://localhost:8000/files/generated_1995b5df4654cd1c.pdf",
+    "labels": [
+      "ספאם"
+    ],
+    "comments": null,
+    "status": "Cancelled"
+  },
+  "199498ff344166a0": {
+    "id": "199498ff344166a0",
+    "filename": "unknown.pdf",
+    "sender_email": "Temu <temu@commerce.temuemail.com>",
+    "subject": "(פרסומת)פתחו מבצעים במחיר מדהים של ₪1!",
+    "invoice_date": "2025-09-14",
+    "vendor_name": "Temu",
+    "total_amount": null,
+    "currency": "ILS",
+    "vat_amount": null,
+    "download_url": "http://localhost:8000/files/generated_199498ff344166a0.pdf",
+    "labels": [
+      "ספאם"
+    ],
+    "comments": null,
+    "status": "Cancelled"
+  },
+  "19946fc6653ad3c0": {
+    "id": "19946fc6653ad3c0",
+    "filename": "unknown.pdf",
+    "sender_email": "Temu <temu@commerce.temuemail.com>",
+    "subject": "(פרסומת)₪1 פותח לכם חוויית קנייה קסומה!",
+    "invoice_date": "2025-09-14",
+    "vendor_name": "Temu",
+    "total_amount": null,
+    "currency": "ILS",
+    "vat_amount": null,
+    "download_url": "http://localhost:8000/files/generated_19946fc6653ad3c0.pdf",
+    "labels": [
+      "ספאם"
+    ],
+    "comments": null,
+    "status": "Cancelled"
+  },
+  "19940ee3477755de": {
+    "id": "19940ee3477755de",
+    "filename": "unknown.pdf",
+    "sender_email": "Apple <no_reply@email.apple.com>",
+    "subject": "‫הקבלה שלך מ‑Apple‬",
+    "invoice_date": "2025-09-13",
+    "vendor_name": "Apple",
+    "total_amount": 11.9,
+    "currency": "ILS",
+    "vat_amount": 1.82,
+    "download_url": "http://localhost:8000/files/generated_19946fc6653ad3c0.pdf",
+    "labels": [
+      "עסק"
+    ],
+    "comments": "",
+    "status": "Processed"
+  },
+  "1993e4b300829273": {
+    "id": "1993e4b300829273",
+    "filename": "unknown.pdf",
+    "sender_email": "donotreply@rivhit.co.il",
+    "subject": "nh שיווק והפצה - חשבונית מס קבלה מספר 889",
+    "invoice_date": "2025-09-12",
+    "vendor_name": "donotreply@rivhit.co.il",
+    "total_amount": null,
+    "currency": "ILS",
+    "vat_amount": null,
+    "download_url": "http://localhost:8000/files/generated_1993e4b300829273.pdf",
+    "labels": [],
+    "comments": "קובץ מצורף למייל - להקים ידנית\nאו להוסיף פיצר הוספת קובץ",
+    "status": "Pending"
+  },
+  "1993a1cb0b17cf72": {
+    "id": "1993a1cb0b17cf72",
+    "filename": "unknown.pdf",
+    "sender_email": "Temu <temu@commerce.temuemail.com>",
+    "subject": "(פרסומת)₪1 פותח לכם חוויית קנייה קסומה!",
+    "invoice_date": "2025-09-11",
+    "vendor_name": "Temu",
+    "total_amount": null,
+    "currency": "ILS",
+    "vat_amount": null,
+    "download_url": "http://localhost:8000/files/generated_1993a1cb0b17cf72.pdf",
+    "labels": [
+      "ספאם"
+    ],
+    "comments": null,
+    "status": "Cancelled"
+  },
+  "19922b87f08cc246": {
+    "id": "19922b87f08cc246",
+    "filename": "unknown.pdf",
+    "sender_email": "Temu <temu@commerce.temuemail.com>",
+    "subject": "(פרסומת)₪1 פותח לכם חוויית קנייה קסומה!",
+    "invoice_date": "2025-09-07",
+    "vendor_name": "Temu",
+    "total_amount": null,
+    "currency": "ILS",
+    "vat_amount": null,
+    "download_url": "http://localhost:8000/files/generated_19922b87f08cc246.pdf",
+    "labels": [
+      "ספאם"
+    ],
+    "comments": null,
+    "status": "Cancelled"
+  },
+  "1990fd7cb02ea5df": {
+    "id": "1990fd7cb02ea5df",
+    "filename": "unknown.pdf",
+    "sender_email": "Apple <no_reply@email.apple.com>",
+    "subject": "‫הקבלה שלך מ‑Apple‬",
+    "invoice_date": "2025-09-03",
+    "vendor_name": "Apple",
+    "total_amount": 33.9,
+    "currency": "ILS",
+    "vat_amount": 5.17,
+    "download_url": "http://localhost:8000/files/generated_1990fd7cb02ea5df.pdf",
+    "labels": [
+      "עסק"
+    ],
+    "comments": null,
+    "status": "Processed"
+  },
+  "1990e328d565ea2c": {
+    "id": "1990e328d565ea2c",
+    "filename": "unknown.pdf",
+    "sender_email": "Cloud Be <no-reply@payplus.co.il>",
+    "subject": "Tax Invoice Receipt - Cloud Be",
+    "invoice_date": "2025-09-03",
+    "vendor_name": "Cloud Be",
+    "total_amount": null,
+    "currency": "ILS",
+    "vat_amount": null,
+    "download_url": "http://localhost:8000/files/generated_1990e328d565ea2c.pdf",
+    "labels": [],
+    "comments": "להקים ידנית או להוסיף פיצר הוספת קובץ",
+    "status": "Pending"
+  },
+  "1991dc9510cbaa07": {
+    "id": "1991dc9510cbaa07",
+    "filename": "unknown.pdf",
+    "sender_email": "Temu <temu@commerce.temuemail.com>",
+    "subject": "(פרסומת)מביעים תודה עם הפתעה ב־₪1 🎉",
+    "invoice_date": "2025-09-06",
+    "vendor_name": "Temu",
+    "total_amount": null,
+    "currency": "ILS",
+    "vat_amount": null,
+    "download_url": "http://localhost:8000/files/generated_1991dc9510cbaa07.pdf",
     "labels": [
       "ספאם"
     ],

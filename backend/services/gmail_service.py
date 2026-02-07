@@ -335,18 +335,27 @@ class GmailService:
                     pdf_data_exists = False
                 # ----------------------------------------------------
 
+            # Extract Email Date (internalDate is in milliseconds)
+            email_date = None
+            if 'internalDate' in msg_detail:
+                try:
+                    timestamp = int(msg_detail['internalDate']) / 1000
+                    email_date = datetime.fromtimestamp(timestamp).date()
+                except Exception as e:
+                    print(f"Error parsing internalDate for {msg['id']}: {e}")
+
             invoice = InvoiceData(
                 id=msg['id'],
                 filename=filename, 
                 sender_email=sender,
                 subject=subject,
-                invoice_date=extracted.get("invoice_date"),
+                invoice_date=email_date, # Use email receipt date instead of extracted date
                 vendor_name=extracted.get("vendor_name") or sender.split('<')[0].strip().replace('"', ''),
                 total_amount=extracted.get("total_amount"),
                 currency="ILS",
                 vat_amount=extracted.get("vat_amount"),
                 download_url=f"http://127.0.0.1:8000/files/{msg['id']}_{filename}" if pdf_data else (generated_url if 'generated_url' in locals() and generated_url else None),
-                status="Processed" if extracted.get("total_amount") else "Pending"
+                status="Pending" # Default to Pending, Rules will override if applicable
             )
             invoices.append(invoice)
 

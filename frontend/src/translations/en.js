@@ -25,7 +25,7 @@ export const en = {
         button: "Scan Now",
         scanning: "Scanning...",
         results_title: "Scanning your inbox...",
-        results_desc: "This might take a moment depending on the date range."
+        results_desc: "This might take a moment depending on the date range and number of emails."
     },
     history: {
         title: "Invoice History",

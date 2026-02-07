@@ -20,5 +20,23 @@
       }
     ],
     "is_active": true
+  },
+  {
+    "id": "d30c0bb6-deda-45b6-9b79-fd2b9466873a",
+    "name": "\u05e7\u05d1\u05e2\u05e0\u05d5",
+    "conditions": [
+      {
+        "field": "sender_email",
+        "operator": "contains",
+        "value": "@kavanu"
+      }
+    ],
+    "actions": [
+      {
+        "action_type": "add_label",
+        "value": "\u05e2\u05e1\u05e7"
+      }
+    ],
+    "is_active": true
   }
 ]
