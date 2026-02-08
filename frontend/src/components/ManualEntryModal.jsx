@@ -9,6 +9,8 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
         total_amount: '',
         currency: 'ILS',
         subject: '',
+        status: 'Pending',
+        label: '',
     });
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -19,6 +21,12 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
         e.preventDefault();
         setLoading(true);
 
+        if (!formData.invoice_date) {
+            alert(t('manual.date_required') || "Date is required");
+            setLoading(false);
+            return;
+        }
+
         try {
             const data = new FormData();
             data.append('vendor_name', formData.vendor_name);
@@ -26,6 +34,8 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
             data.append('total_amount', formData.total_amount);
             data.append('currency', formData.currency);
             data.append('subject', formData.subject);
+            data.append('status', formData.status);
+            if (formData.label) data.append('label', formData.label);
             if (file) {
                 data.append('file', file);
             }
@@ -35,7 +45,14 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
                 body: data,
             });
 
-            if (!res.ok) throw new Error("Failed to create invoice");
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                console.error("Manual entry failed:", errData);
+                const errorMsg = Array.isArray(errData.detail)
+                    ? errData.detail.map(e => `${e.loc[1]}: ${e.msg}`).join('\n')
+                    : (errData.detail || "Failed to create invoice");
+                throw new Error(errorMsg);
+            }
 
             const newInvoice = await res.json();
             onSave(newInvoice);
@@ -53,7 +70,7 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
 
         } catch (err) {
             console.error(err);
-            alert("Error creating invoice");
+            alert(err.message || "Error creating invoice");
         } finally {
             setLoading(false);
         }
@@ -156,6 +173,34 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
                             onChange={e => setFormData({ ...formData, subject: e.target.value })}
                             className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                            <label className="text-xs font-semibold text-slate-500 uppercase">{t('table.status')}</label>
+                            <select
+                                value={formData.status}
+                                onChange={e => setFormData({ ...formData, status: e.target.value })}
+                                className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            >
+                                <option value="Pending">Pending</option>
+                                <option value="Processed">Processed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-xs font-semibold text-slate-500 uppercase">{t('table.labels')}</label>
+                            <select
+                                value={formData.label}
+                                onChange={e => setFormData({ ...formData, label: e.target.value })}
+                                className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            >
+                                <option value="">{t('manual.select_label') || "Select Label..."}</option>
+                                {availableLabels.map(label => (
+                                    <option key={label} value={label}>{label}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
 
                     <div className="pt-2">

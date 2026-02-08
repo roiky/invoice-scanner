@@ -474,7 +474,8 @@ function AppContent() {
       <ManualEntryModal
         isOpen={isManualModalOpen}
         onClose={() => setIsManualModalOpen(false)}
-        onSubmit={handleManualEntrySuccess}
+        onSave={handleManualEntrySuccess}
+        availableLabels={labels}
         t={t}
       />
     </div>

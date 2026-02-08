@@ -103,7 +103,9 @@ export const he = {
         file_change: "שינוי קובץ",
         vendor_placeholder: "שם הספק (לדוגמה: בזק)",
         subject: "נושא",
-        subject_placeholder: "פירוט העסקה (אופציונלי)"
+        subject_placeholder: "פירוט העסקה (אופציונלי)",
+        date_required: "נא לבחור תאריך",
+        select_label: "בחר תווית..."
     },
     common: {
         loading: "טוען...",

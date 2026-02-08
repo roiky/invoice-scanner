@@ -164,7 +164,7 @@
     "vat_amount": null,
     "download_url": "http://localhost:8000/files/generated_1993e4b300829273.pdf",
     "labels": [],
-    "comments": "קובץ מצורף למייל - להקים ידנית\nאו להוסיף פיצר הוספת קובץ",
+    "comments": "קובץ מצורף למייל - להקים ידנית",
     "status": "Pending"
   },
   "1993a1cb0b17cf72": {
@@ -249,5 +249,67 @@
     ],
     "comments": null,
     "status": "Cancelled"
+  },
+  "19c24dc9fdefee8c": {
+    "id": "19c24dc9fdefee8c",
+    "filename": "unknown.pdf",
+    "sender_email": "Apple <no_reply@email.apple.com>",
+    "subject": "‫הקבלה שלך מ‑Apple‬",
+    "invoice_date": "2026-02-03",
+    "vendor_name": "Apple",
+    "total_amount": 33.9,
+    "currency": "ILS",
+    "vat_amount": 5.17,
+    "download_url": "http://localhost:8000/files/generated_19c24dc9fdefee8c.pdf",
+    "labels": [],
+    "comments": null,
+    "status": "Processed"
+  },
+  "19c225be4dcf66ef": {
+    "id": "19c225be4dcf66ef",
+    "filename": "unknown.pdf",
+    "sender_email": "Cloud Be <no-reply@payplus.co.il>",
+    "subject": "חשבונית מס קבלה - Cloud Be",
+    "invoice_date": "2026-02-03",
+    "vendor_name": "Cloud Be",
+    "total_amount": null,
+    "currency": "ILS",
+    "vat_amount": null,
+    "download_url": "http://localhost:8000/files/generated_19c225be4dcf66ef.pdf",
+    "labels": [],
+    "comments": "לטפל",
+    "status": "Pending"
+  },
+  "d00a853d-a0d6-4c3f-aa70-3d62f191416b": {
+    "id": "d00a853d-a0d6-4c3f-aa70-3d62f191416b",
+    "filename": "manual_d00a853d-a0d6-4c3f-aa70-3d62f191416b",
+    "sender_email": "manual@entry",
+    "subject": "Manual Entry",
+    "invoice_date": "2024-02-08",
+    "vendor_name": "Test Vendor",
+    "total_amount": 100.5,
+    "currency": "ILS",
+    "vat_amount": 0.0,
+    "download_url": null,
+    "labels": [],
+    "comments": null,
+    "status": "Pending"
+  },
+  "2162fd0e-4c1c-44a5-8b47-84dda99c4b33": {
+    "id": "2162fd0e-4c1c-44a5-8b47-84dda99c4b33",
+    "filename": "manual_2162fd0e-4c1c-44a5-8b47-84dda99c4b33",
+    "sender_email": "manual@entry",
+    "subject": "Manual Entry V2",
+    "invoice_date": "2024-02-08",
+    "vendor_name": "Test Vendor V2",
+    "total_amount": 200.0,
+    "currency": "USD",
+    "vat_amount": 0.0,
+    "download_url": null,
+    "labels": [
+      "TestLabel"
+    ],
+    "comments": null,
+    "status": "Processed"
   }
 }

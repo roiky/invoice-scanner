@@ -40,9 +40,6 @@ export const en = {
         no_labels: "No labels created yet."
     },
     filters: {
-        search_placeholder: "Search invoices...",
-        all_vendors: "All Vendors",
-        all_labels: "All Labels",
         status: {
             all: "All Statuses",
             pending: "Pending",
@@ -102,7 +99,9 @@ export const en = {
         file_change: "Change file",
         vendor_placeholder: "Vendor Name (e.g. Acme Corp)",
         subject: "Subject",
-        subject_placeholder: "Transaction details (optional)"
+        subject_placeholder: "Transaction details (optional)",
+        select_label: "Select Label...",
+        date_required: "Please select a date"
     },
     common: {
         loading: "Loading...",
