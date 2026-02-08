@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Upload, X, Plus, Calendar, DollarSign, FileText } from 'lucide-react';
 import { DateInput } from './DateInput';
+import { getLabelColor } from '../utils/colors';
 
 export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = [], t = (s) => s }) {
     const [formData, setFormData] = useState({
@@ -10,7 +11,7 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
         currency: 'ILS',
         subject: '',
         status: 'Pending',
-        label: '',
+        labels: [],
     });
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -35,7 +36,9 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
             data.append('currency', formData.currency);
             data.append('subject', formData.subject);
             data.append('status', formData.status);
-            if (formData.label) data.append('label', formData.label);
+            (formData.labels || []).forEach(label => {
+                data.append('labels', label);
+            });
             if (file) {
                 data.append('file', file);
             }
@@ -202,28 +205,56 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1">
                             <label className="text-xs font-semibold text-slate-500 uppercase">{t('table.status')}</label>
-                            <select
-                                value={formData.status}
-                                onChange={e => setFormData({ ...formData, status: e.target.value })}
-                                className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                            >
-                                <option value="Pending">Pending</option>
-                                <option value="Processed">Processed</option>
-                                <option value="Cancelled">Cancelled</option>
-                            </select>
+                            <div className="flex flex-col gap-2">
+                                {[
+                                    { val: 'Processed', color: 'green', icon: <div className="w-2 h-2 rounded-full bg-green-500" /> },
+                                    { val: 'Pending', color: 'amber', icon: <div className="w-2 h-2 rounded-full bg-amber-500" /> },
+                                    { val: 'Cancelled', color: 'red', icon: <div className="w-2 h-2 rounded-full bg-red-500" /> }
+                                ].map(({ val, color, icon }) => (
+                                    <button
+                                        key={val}
+                                        type="button"
+                                        onClick={() => setFormData({ ...formData, status: val })}
+                                        className={`px-3 py-2 rounded-lg text-xs font-bold border transition-all flex items-center justify-start gap-2
+                                        ${formData.status === val
+                                                ? `bg-${color}-50 text-${color}-700 border-${color}-200 shadow-sm ring-1 ring-${color}-200`
+                                                : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`}
+                                    >
+                                        {icon}
+                                        {val}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                         <div className="space-y-1">
                             <label className="text-xs font-semibold text-slate-500 uppercase">{t('table.labels')}</label>
-                            <select
-                                value={formData.label}
-                                onChange={e => setFormData({ ...formData, label: e.target.value })}
-                                className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                            >
-                                <option value="">{t('manual.select_label') || "Select Label..."}</option>
-                                {availableLabels.map(label => (
-                                    <option key={label} value={label}>{label}</option>
-                                ))}
-                            </select>
+                            <div className="flex flex-wrap gap-2 min-h-[42px] content-center">
+                                {availableLabels.length > 0 ? availableLabels.map(label => {
+                                    const color = getLabelColor(label);
+                                    const isSelected = (formData.labels || []).includes(label);
+                                    return (
+                                        <button
+                                            key={label}
+                                            type="button"
+                                            onClick={() => {
+                                                const currentLabels = formData.labels || [];
+                                                const newLabels = isSelected
+                                                    ? currentLabels.filter(l => l !== label)
+                                                    : [...currentLabels, label];
+                                                setFormData({ ...formData, labels: newLabels });
+                                            }}
+                                            className={`px-2.5 py-1 rounded text-xs border transition-all ${isSelected
+                                                ? `${color.bg} ${color.text} ${color.border} font-bold shadow-sm ring-1 ring-offset-1 ring-${color.border.replace('border-', '')}`
+                                                : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:border-slate-300'
+                                                }`}
+                                        >
+                                            {label}
+                                        </button>
+                                    );
+                                }) : (
+                                    <p className="text-xs text-slate-400 italic py-2">No labels available</p>
+                                )}
+                            </div>
                         </div>
                     </div>
 

@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, Save, X, AlertCircle, Play, CheckCircle } from 'lucide-react';
+import { Plus, Trash2, Save, X, AlertCircle, Play, CheckCircle, XCircle } from 'lucide-react';
 import { getRules, createRule, updateRule, deleteRule } from '../api';
+import { getLabelColor } from '../utils/colors';
 
 export function RulesTab({ t, labels }) {
     const [rules, setRules] = useState([]);
@@ -75,6 +76,7 @@ export function RulesTab({ t, labels }) {
             name: '',
             conditions: [emptyCondition],
             actions: [emptyAction],
+            logic: 'AND',
             is_active: true
         });
     };
@@ -161,7 +163,26 @@ export function RulesTab({ t, labels }) {
                                                 <div key={i} className="text-slate-700 flex items-center gap-1.5 ml-1 truncate">
                                                     <span className="w-1 h-1 rounded-full bg-blue-400 flex-shrink-0"></span>
                                                     <span className="truncate">
-                                                        {a.action_type === 'set_status' ? 'Status' : 'Label'}: <span className="font-medium text-blue-700">{a.value}</span>
+                                                        {a.action_type === 'set_status' ? (
+                                                            <>Status: <span className="font-medium text-blue-700">{a.value}</span></>
+                                                        ) : (
+                                                            (() => {
+                                                                const labels = a.value ? a.value.split(',').map(l => l.trim()).filter(l => l) : [];
+                                                                return (
+                                                                    <div className="flex items-center gap-1 flex-wrap">
+                                                                        Label:
+                                                                        {labels.map((label, idx) => {
+                                                                            const color = getLabelColor(label);
+                                                                            return (
+                                                                                <span key={idx} className={`px-1.5 py-0.5 rounded text-[10px] font-medium border ${color.bg} ${color.text} ${color.border}`}>
+                                                                                    {label}
+                                                                                </span>
+                                                                            );
+                                                                        })}
+                                                                    </div>
+                                                                );
+                                                            })()
+                                                        )}
                                                     </span>
                                                 </div>
                                             ))}
@@ -356,36 +377,63 @@ export function RulesTab({ t, labels }) {
                                     </select>
 
                                     {action.action_type === 'set_status' ? (
-                                        <select
-                                            className="text-sm border-slate-300 rounded-lg px-3 py-2 flex-grow focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 outline-none"
-                                            value={action.value}
-                                            onChange={e => {
-                                                const newActions = [...editingRule.actions];
-                                                newActions[idx].value = e.target.value;
-                                                setEditingRule({ ...editingRule, actions: newActions });
-                                            }}
-                                        >
-                                            <option value="Processed">Processed</option>
-                                            <option value="Pending">Pending</option>
-                                            <option value="Cancelled">Cancelled</option>
-                                        </select>
-                                    ) : (
-                                        <select
-                                            className="text-sm border-slate-300 rounded-lg px-3 py-2 flex-grow focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 outline-none"
-                                            value={action.value}
-                                            onChange={e => {
-                                                const newActions = [...editingRule.actions];
-                                                newActions[idx].value = e.target.value;
-                                                setEditingRule({ ...editingRule, actions: newActions });
-                                            }}
-                                        >
-                                            <option value="">{t('rules.select_label') || "Select Label..."}</option>
-                                            {(labels || []).map(label => (
-                                                <option key={label} value={label}>{label}</option>
+                                        <div className="flex gap-1">
+                                            {[
+                                                { val: 'Processed', color: 'green', icon: <CheckCircle size={12} /> },
+                                                { val: 'Pending', color: 'amber', icon: <AlertCircle size={12} /> },
+                                                { val: 'Cancelled', color: 'red', icon: <XCircle size={12} /> }
+                                            ].map(({ val, color, icon }) => (
+                                                <button
+                                                    key={val}
+                                                    onClick={() => {
+                                                        const newActions = [...editingRule.actions];
+                                                        newActions[idx].value = val;
+                                                        setEditingRule({ ...editingRule, actions: newActions });
+                                                    }}
+                                                    className={`px-2 py-1.5 rounded text-xs font-bold border transition-all flex items-center gap-1.5
+                                                    ${action.value === val
+                                                            ? `bg-${color}-100 text-${color}-700 border-${color}-300 shadow-sm`
+                                                            : `bg-white text-slate-400 border-slate-200 hover:border-${color}-300 hover:text-${color}-600`}`}
+                                                >
+                                                    {icon} {val}
+                                                </button>
                                             ))}
-                                        </select>
-                                    )}
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-wrap gap-1.5 flex-grow bg-white p-2 rounded-lg border border-slate-200">
+                                            {(labels || []).map(label => {
+                                                const currentLabels = action.value ? action.value.split(',').map(l => l.trim()) : [];
+                                                // Clean up any empty strings from split
+                                                const cleanLabels = currentLabels.filter(l => l);
+                                                const isSelected = cleanLabels.includes(label);
+                                                const color = getLabelColor(label);
 
+                                                return (
+                                                    <button
+                                                        key={label}
+                                                        onClick={() => {
+                                                            let newLabels;
+                                                            if (isSelected) {
+                                                                newLabels = cleanLabels.filter(l => l !== label);
+                                                            } else {
+                                                                newLabels = [...cleanLabels, label];
+                                                            }
+                                                            const newActions = [...editingRule.actions];
+                                                            newActions[idx].value = newLabels.join(',');
+                                                            setEditingRule({ ...editingRule, actions: newActions });
+                                                        }}
+                                                        className={`px-2 py-1 rounded text-[10px] border transition-all ${isSelected
+                                                            ? `${color.bg} ${color.text} ${color.border} font-bold shadow-sm`
+                                                            : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-slate-100'
+                                                            }`}
+                                                    >
+                                                        {label}
+                                                    </button>
+                                                )
+                                            })}
+                                            {(labels || []).length === 0 && <span className="text-xs text-slate-400 italic">No labels available</span>}
+                                        </div>
+                                    )}
                                     <button
                                         onClick={() => {
                                             const newActions = editingRule.actions.filter((_, i) => i !== idx);
@@ -399,37 +447,37 @@ export function RulesTab({ t, labels }) {
                             ))}
                         </div>
                     </div>
-                </div>
 
-                <div className="bg-slate-50 px-8 py-4 border-t border-slate-200 flex justify-between items-center">
-                    <button
-                        onClick={() => {
-                            if (confirm(t('rules.delete_confirm'))) {
-                                // Close modal (if we had one) or iterate back
-                                // Actually here we are in create/edit mode. 
-                                // Ideally we show Delete only if editing.
-                                if (editingRule.id) handleDelete({ stopPropagation: () => { } }, editingRule.id);
-                                else setEditingRule(null);
-                            }
-                        }}
-                        className={`text-red-500 text-sm font-medium hover:underline ${!editingRule.id ? 'invisible' : ''}`}
-                    >
-                        {t('actions.delete')}
-                    </button>
-                    <div className="flex gap-3">
+                    <div className="bg-slate-50 px-8 py-4 border-t border-slate-200 flex justify-between items-center">
                         <button
-                            onClick={() => setEditingRule(null)}
-                            className="px-5 py-2.5 text-slate-600 hover:bg-white hover:shadow-sm border border-transparent hover:border-slate-200 rounded-lg font-medium transition-all"
+                            onClick={() => {
+                                if (confirm(t('rules.delete_confirm'))) {
+                                    // Close modal (if we had one) or iterate back
+                                    // Actually here we are in create/edit mode. 
+                                    // Ideally we show Delete only if editing.
+                                    if (editingRule.id) handleDelete({ stopPropagation: () => { } }, editingRule.id);
+                                    else setEditingRule(null);
+                                }
+                            }}
+                            className={`text-red-500 text-sm font-medium hover:underline ${!editingRule.id ? 'invisible' : ''}`}
                         >
-                            {t('actions.cancel')}
+                            {t('actions.delete')}
                         </button>
-                        <button
-                            onClick={handleSave}
-                            className="px-6 py-2.5 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-medium flex items-center gap-2 shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30 hover:-translate-y-0.5 transition-all"
-                        >
-                            <Save size={18} />
-                            {t('actions.save')}
-                        </button>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setEditingRule(null)}
+                                className="px-5 py-2.5 text-slate-600 hover:bg-white hover:shadow-sm border border-transparent hover:border-slate-200 rounded-lg font-medium transition-all"
+                            >
+                                {t('actions.cancel')}
+                            </button>
+                            <button
+                                onClick={handleSave}
+                                className="px-6 py-2.5 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-medium flex items-center gap-2 shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30 hover:-translate-y-0.5 transition-all"
+                            >
+                                <Save size={18} />
+                                {t('actions.save')}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

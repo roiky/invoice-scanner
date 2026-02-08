@@ -120,7 +120,10 @@ class RuleService:
             if action.action_type == "set_status":
                 invoice.status = action.value
             elif action.action_type == "add_label":
-                if action.value not in invoice.labels:
-                    invoice.labels.append(action.value)
+                # Support multiple labels (comma-separated)
+                labels_to_add = [l.strip() for l in action.value.split(",") if l.strip()]
+                for label in labels_to_add:
+                    if label not in invoice.labels:
+                        invoice.labels.append(label)
 
 rule_service = RuleService()

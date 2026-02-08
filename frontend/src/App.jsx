@@ -335,7 +335,7 @@ function AppContent() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-[80%] mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <main className="max-w-[90%] mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
         {activeTab === 'dashboard' ? (
           <div className="space-y-8">

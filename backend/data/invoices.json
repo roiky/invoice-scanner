@@ -151,5 +151,75 @@
     ],
     "comments": "",
     "status": "Processed"
+  },
+  "19c01b8e5a7f61b6": {
+    "id": "19c01b8e5a7f61b6",
+    "filename": "Invoice_1007848812.pdf",
+    "sender_email": "upapp <ipos@hyp.co.il>",
+    "subject": "חשבונית מס / קבלה עבור תשלום לupapp",
+    "invoice_date": "2026-01-28",
+    "vendor_name": "upapp",
+    "total_amount": 25.0,
+    "currency": "ILS",
+    "vat_amount": 3.82,
+    "download_url": "http://127.0.0.1:8000/files/19c01b8e5a7f61b6_Invoice_1007848812.pdf",
+    "labels": [
+      "אישי"
+    ],
+    "comments": "",
+    "status": "Processed"
+  },
+  "19bfe6d8f921ec77": {
+    "id": "19bfe6d8f921ec77",
+    "filename": "347416318.pdf",
+    "sender_email": "\"חברת חשמל לישראל\" <noreplys@iec.co.il>",
+    "subject": "אקנין ספיר  עבור תשלום קבלה  347416318",
+    "invoice_date": "2026-01-27",
+    "vendor_name": "חברת חשמל לישראל",
+    "total_amount": 631.84,
+    "currency": "ILS",
+    "vat_amount": 96.38,
+    "download_url": "http://127.0.0.1:8000/files/19bfe6d8f921ec77_347416318.pdf",
+    "labels": [
+      "עסק",
+      "אישי"
+    ],
+    "comments": "",
+    "status": "Processed"
+  },
+  "19bfe6aeca65930d": {
+    "id": "19bfe6aeca65930d",
+    "filename": "חשבונית מס קבלה 1000360.pdf",
+    "sender_email": "Sagiv Food Zone <invoice@grow.security>",
+    "subject": "חשבונית מס קבלה עבור עסקה 1000360 ב- Sagiv Food Zone",
+    "invoice_date": "2026-01-27",
+    "vendor_name": "Sagiv Food Zone",
+    "total_amount": 104.7,
+    "currency": "ILS",
+    "vat_amount": 15.97,
+    "download_url": "http://127.0.0.1:8000/files/19bfe6aeca65930d_חשבונית מס קבלה 1000360.pdf",
+    "labels": [
+      "אישי"
+    ],
+    "comments": null,
+    "status": "Processed"
+  },
+  "e47de1a1-a1ef-40e9-a426-67acde3771cc": {
+    "id": "e47de1a1-a1ef-40e9-a426-67acde3771cc",
+    "filename": "manual_e47de1a1-a1ef-40e9-a426-67acde3771cc",
+    "sender_email": "manual@entry",
+    "subject": "חשבונית פרטנר",
+    "invoice_date": "2026-01-08",
+    "vendor_name": "Partner",
+    "total_amount": 94.43,
+    "currency": "ILS",
+    "vat_amount": 0.0,
+    "download_url": "http://127.0.0.1:8000/files/manual_e47de1a1-a1ef-40e9-a426-67acde3771cc_1015811464_16175963_20260101_mail.pdf",
+    "labels": [
+      "עסק",
+      "אישי"
+    ],
+    "comments": null,
+    "status": "Processed"
   }
 }

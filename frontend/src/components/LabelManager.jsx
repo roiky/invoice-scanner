@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Tag, Plus, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { getLabelColor } from '../utils/colors';
 
 export function LabelManager({ labels, onAddLabel, onDeleteLabel, t = (s) => s }) {
     const [newLabel, setNewLabel] = useState("");
@@ -34,18 +35,21 @@ export function LabelManager({ labels, onAddLabel, onDeleteLabel, t = (s) => s }
                         {/* Tags List */}
                         <div className="flex flex-wrap gap-2">
                             {labels.length > 0 ? (
-                                labels.map(label => (
-                                    <span key={label} className="group inline-flex items-center gap-1.5 px-3 py-1 bg-slate-50 text-slate-600 border border-slate-200 rounded-full text-xs font-medium hover:bg-white hover:border-blue-200 hover:text-blue-600 hover:shadow-sm transition-all">
-                                        {label}
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); onDeleteLabel(label); }}
-                                            className="text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full p-0.5 transition-colors opacity-0 group-hover:opacity-100"
-                                            title="Delete label"
-                                        >
-                                            <X size={12} />
-                                        </button>
-                                    </span>
-                                ))
+                                labels.map(label => {
+                                    const color = getLabelColor(label);
+                                    return (
+                                        <span key={label} className={`group inline-flex items-center gap-1.5 px-3 py-1 ${color.bg} ${color.text} ${color.border} border rounded-full text-xs font-medium hover:bg-white hover:${color.border} hover:shadow-sm transition-all`}>
+                                            {label}
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); onDeleteLabel(label); }}
+                                                className={`text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full p-0.5 transition-colors opacity-0 group-hover:opacity-100`}
+                                                title="Delete label"
+                                            >
+                                                <X size={12} />
+                                            </button>
+                                        </span>
+                                    );
+                                })
                             ) : (
                                 <p className="text-slate-400 text-xs italic">{t('labels.no_labels')}</p>
                             )}

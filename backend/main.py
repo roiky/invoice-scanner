@@ -204,13 +204,13 @@ async def create_manual_invoice(
     currency: str = Form("ILS"),
     vat_amount: float = Form(0.0),
     status: str = Form("Pending"),
-    label: str = Form(None),
+    labels: List[str] = Form([]),
     file: UploadFile = File(None)
 ):
     """
     Manually create an invoice, optionally uploading a file.
     """
-    print(f"Manual Entry: {vendor_name} - {total_amount} - Status: {status} - Label: {label}")
+    print(f"Manual Entry: {vendor_name} - {total_amount} - Status: {status} - Labels: {labels}")
     
     invoice_id = str(uuid.uuid4())
     download_url = None
@@ -241,7 +241,7 @@ async def create_manual_invoice(
         subject=subject or "Manual Entry",
         download_url=download_url,
         status=status,
-        labels=[label] if label else []
+        labels=labels
     )
 
     storage_service.save_invoice(new_invoice)

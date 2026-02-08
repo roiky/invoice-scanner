@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { FileText, CheckCircle, AlertCircle, Download, Search, XCircle, Edit2, Trash2, Check, X, ArrowUp, ArrowDown, ArrowUpDown, Calendar, Tag, Upload } from 'lucide-react';
 import { updateInvoice, deleteInvoice, uploadInvoiceFile } from '../api';
 import { DateInput } from './DateInput';
+import { getLabelColor } from '../utils/colors';
 
 export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, onDeleteInvoice, onBulkDelete, onBulkStatusChange, onBulkAddLabel, t = (s) => s }) {
     const [filterText, setFilterText] = useState("");
@@ -115,7 +116,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
     const handleBulkStatusChange = async (newStatus) => {
         if (onBulkStatusChange) {
             onBulkStatusChange(Array.from(selectedIds), newStatus);
-            setSelectedIds(new Set());
+            // setSelectedIds(new Set()); // Keep selection active as per user request
         }
     };
 
@@ -301,20 +302,25 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                     {availableLabels.length === 0 ? (
                                         <p className="text-xs text-slate-400 p-2 text-center">No labels available</p>
                                     ) : (
-                                        availableLabels.map(l => (
-                                            <label key={l} className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={filterLabel.includes(l)}
-                                                    onChange={() => {
-                                                        if (filterLabel.includes(l)) setFilterLabel(prev => prev.filter(x => x !== l));
-                                                        else setFilterLabel(prev => [...prev, l]);
-                                                    }}
-                                                    className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5"
-                                                />
-                                                <span className="text-sm text-slate-700">{l}</span>
-                                            </label>
-                                        ))
+                                        availableLabels.map(l => {
+                                            const color = getLabelColor(l);
+                                            return (
+                                                <label key={l} className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={filterLabel.includes(l)}
+                                                        onChange={() => {
+                                                            if (filterLabel.includes(l)) setFilterLabel(prev => prev.filter(x => x !== l));
+                                                            else setFilterLabel(prev => [...prev, l]);
+                                                        }}
+                                                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5"
+                                                    />
+                                                    <span className={`px-2 py-0.5 rounded text-[10px] font-medium border ${color.bg} ${color.text} ${color.border}`}>
+                                                        {l}
+                                                    </span>
+                                                </label>
+                                            );
+                                        })
                                     )}
                                     {filterLabel.length > 0 && (
                                         <button
@@ -358,67 +364,89 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                             placeholder={t('scan.end_date')}
                             className="w-32 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-md text-sm focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
                         />
-                    </div>
 
-                    {selectedIds.size > 0 && (
-                        <div className="flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300 bg-blue-50/80 backdrop-blur-sm px-4 py-2 rounded-lg border border-blue-100/50 w-full sm:w-auto justify-between sm:justify-start shadow-sm">
-                            <span className="text-sm font-bold text-blue-900 flex items-center gap-2">
-                                <span className="bg-blue-600 text-white text-[10px] px-1.5 rounded-full h-5 min-w-[1.25rem] flex items-center justify-center">
-                                    {selectedIds.size}
-                                </span>
+
+                    </div>
+                </div>
+            </div>
+
+            {/* Sticky Bulk Actions Toolbar */}
+            {selectedIds.size > 0 && (
+                <div className="sticky top-24 z-40 animate-in fade-in slide-in-from-top-2 duration-300 flex justify-end">
+                    <div className="bg-blue-50/95 backdrop-blur-md px-3 py-2 rounded-xl border border-blue-100 shadow-xl flex items-center gap-3 w-auto mx-4 sm:mx-0">
+                        <div className="flex items-center gap-3">
+                            <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[1.5rem] flex items-center justify-center shadow-sm">
+                                {selectedIds.size}
+                            </span>
+                            <span className="text-sm font-bold text-blue-900 whitespace-nowrap">
                                 {t('actions.selected')}
                             </span>
-                            <div className="h-4 w-px bg-blue-200/50 mx-1"></div>
-                            <div className="flex items-center gap-2">
 
-                                {/* Add Label Bulk Action */}
-                                <div className="relative">
-                                    <button
-                                        onClick={() => setIsBulkLabelOpen(!isBulkLabelOpen)}
-                                        className="px-3 py-1.5 text-xs font-medium bg-white text-blue-700 border border-blue-200/50 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-800 rounded-md shadow-sm transition-all flex items-center gap-1"
-                                    >
-                                        <Tag size={12} />
-                                        {t('actions.add_label')}
-                                    </button>
-                                    {isBulkLabelOpen && (
-                                        <div className="absolute bottom-full mb-2 left-0 bg-white rounded-lg shadow-xl border border-slate-100 p-2 w-48 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
-                                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Select Label to Add</div>
-                                            {availableLabels.length === 0 ? (
-                                                <p className="text-xs text-slate-400 p-2 text-center">No labels available</p>
-                                            ) : (
-                                                <div className="max-h-48 overflow-y-auto space-y-1">
-                                                    {availableLabels.map(l => (
+                            {/* Clear Selection X Button - Moved here */}
+                            <button
+                                onClick={() => setSelectedIds(new Set())}
+                                className="h-6 w-6 flex items-center justify-center text-blue-400 hover:text-blue-600 hover:bg-blue-100 rounded-full transition-all ml-1"
+                                title="Clear Selection"
+                            >
+                                <X size={14} />
+                            </button>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            {/* Add Label Bulk Action */}
+                            <div className="relative">
+                                <button
+                                    onClick={() => setIsBulkLabelOpen(!isBulkLabelOpen)}
+                                    className="h-8 px-3 text-xs font-medium bg-white text-blue-700 border border-blue-200 hover:border-blue-300 hover:text-blue-800 rounded-lg shadow-sm transition-all flex items-center gap-1.5"
+                                >
+                                    <Tag size={12} />
+                                    {t('actions.add_label')}
+                                </button>
+                                {isBulkLabelOpen && (
+                                    <div className="absolute top-full mt-2 left-0 bg-white rounded-xl shadow-xl border border-slate-100 p-2 w-56 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Select Label to Add</div>
+                                        {availableLabels.length === 0 ? (
+                                            <p className="text-xs text-slate-400 p-2 text-center">No labels available</p>
+                                        ) : (
+                                            <div className="max-h-48 overflow-y-auto space-y-1">
+                                                {availableLabels.map(l => {
+                                                    const color = getLabelColor(l);
+                                                    return (
                                                         <button
                                                             key={l}
                                                             onClick={() => {
                                                                 if (onBulkAddLabel) onBulkAddLabel(Array.from(selectedIds), l);
                                                                 setIsBulkLabelOpen(false);
                                                             }}
-                                                            className="w-full text-start px-2 py-1.5 hover:bg-blue-50 rounded text-xs text-slate-700 block truncate transition-colors"
+                                                            className="w-full text-start px-2 py-1.5 hover:bg-slate-50 rounded-lg group transition-colors"
                                                         >
-                                                            {l}
+                                                            <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-medium border ${color.bg} ${color.text} ${color.border} group-hover:shadow-sm`}>
+                                                                {l}
+                                                            </span>
                                                         </button>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="w-px h-4 bg-blue-200 mx-1"></div>
-
-                                <button onClick={() => handleBulkStatusChange("Processed")} className="px-3 py-1.5 text-xs font-medium bg-white text-green-700 border border-green-200/50 hover:bg-green-50 hover:border-green-300 hover:text-green-800 rounded-md shadow-sm transition-all">{t('actions.mark_processed')}</button>
-                                <button onClick={() => handleBulkStatusChange("Pending")} className="px-3 py-1.5 text-xs font-medium bg-white text-amber-700 border border-amber-200/50 hover:bg-amber-50 hover:border-amber-300 hover:text-amber-800 rounded-md shadow-sm transition-all">{t('actions.mark_pending')}</button>
-                                <button onClick={() => handleBulkStatusChange("Cancelled")} className="px-3 py-1.5 text-xs font-medium bg-white text-red-700 border border-red-200/50 hover:bg-red-50 hover:border-red-300 hover:text-red-800 rounded-md shadow-sm transition-all">{t('actions.mark_cancelled')}</button>
-                                <div className="w-px h-4 bg-blue-200 mx-1"></div>
-                                <button onClick={handleBulkDelete} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors" title={t('actions.delete_selected')}>
-                                    <Trash2 size={16} />
-                                </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
+                            <div className="w-px h-4 bg-blue-200 mx-1"></div>
+
+                            <button onClick={() => handleBulkStatusChange("Processed")} className="h-8 px-3 text-xs font-medium bg-white text-green-700 border border-green-200 hover:bg-green-50 hover:border-green-300 rounded-lg shadow-sm transition-all">{t('actions.mark_processed')}</button>
+                            <button onClick={() => handleBulkStatusChange("Pending")} className="h-8 px-3 text-xs font-medium bg-white text-amber-700 border border-amber-200 hover:bg-amber-50 hover:border-amber-300 rounded-lg shadow-sm transition-all">{t('actions.mark_pending')}</button>
+                            <button onClick={() => handleBulkStatusChange("Cancelled")} className="h-8 px-3 text-xs font-medium bg-white text-red-700 border border-red-200 hover:bg-red-50 hover:border-red-300 rounded-lg shadow-sm transition-all">{t('actions.mark_cancelled')}</button>
+
+                            <div className="h-6 w-px bg-blue-200 mx-1"></div>
+
+                            <button onClick={handleBulkDelete} className="h-8 w-8 flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 rounded-lg transition-all" title={t('actions.delete_selected')}>
+                                <Trash2 size={16} />
+                            </button>
                         </div>
-                    )}
+                    </div>
                 </div>
-            </div>
+            )}
+
 
             {/* Table */}
             <div className="bg-white rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-slate-100 overflow-hidden">
@@ -431,7 +459,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                         type="checkbox"
                                         checked={filteredInvoices.length > 0 && selectedIds.size === filteredInvoices.length}
                                         onChange={toggleSelectAll}
-                                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4"
+                                        className="rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500 cursor-pointer w-4 h-4"
                                     />
                                 </th>
                                 <th className="px-6 py-4 cursor-pointer hover:text-blue-600 transition-colors group text-start" onClick={() => handleSort('status')}>
@@ -452,9 +480,11 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                 <th className="px-6 py-4 text-end cursor-pointer hover:text-blue-600 transition-colors group" onClick={() => handleSort('vat_amount')}>
                                     <div className="flex items-center justify-end gap-1">VAT <SortIcon column="vat_amount" /></div>
                                 </th>
-                                <th className="px-6 py-4 text-start">{t('table.labels')}</th>
-                                <th className="px-6 py-4 text-start">{t('table.comments')}</th>
-                                <th className="px-6 py-4 text-center">{t('table.actions')}</th>
+                                <th className="px-6 py-4 text-start cursor-pointer hover:text-blue-600 transition-colors group" onClick={() => handleSort('comments')}>
+                                    <div className="flex items-center gap-1">{t('table.comments')} <SortIcon column="comments" /></div>
+                                </th>
+                                <th className="px-6 py-4 w-24 text-center">{t('table.labels')}</th>
+                                <th className="px-6 py-4 w-20 text-center">{t('table.actions')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -481,15 +511,35 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                             </td>
                                             <td className="px-6 py-4">
                                                 {isEditing ? (
-                                                    <select
-                                                        value={editForm.status || "Pending"}
-                                                        onChange={e => setEditForm({ ...editForm, status: e.target.value })}
-                                                        className="border border-slate-300 rounded px-2 py-1 text-xs w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                                    >
-                                                        <option value="Pending">Pending</option>
-                                                        <option value="Processed">Processed</option>
-                                                        <option value="Cancelled">Cancelled</option>
-                                                    </select>
+                                                    <div className="flex flex-col gap-1">
+                                                        <button
+                                                            onClick={() => setEditForm({ ...editForm, status: "Processed" })}
+                                                            className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all flex items-center justify-center gap-1
+                                                            ${editForm.status === 'Processed'
+                                                                    ? 'bg-green-100 text-green-700 border-green-300 shadow-sm'
+                                                                    : 'bg-white text-slate-400 border-slate-200 hover:border-green-300 hover:text-green-600'}`}
+                                                        >
+                                                            <CheckCircle size={10} /> Processed
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setEditForm({ ...editForm, status: "Pending" })}
+                                                            className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all flex items-center justify-center gap-1
+                                                            ${editForm.status === 'Pending'
+                                                                    ? 'bg-amber-100 text-amber-700 border-amber-300 shadow-sm'
+                                                                    : 'bg-white text-slate-400 border-slate-200 hover:border-amber-300 hover:text-amber-600'}`}
+                                                        >
+                                                            <AlertCircle size={10} /> Pending
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setEditForm({ ...editForm, status: "Cancelled" })}
+                                                            className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all flex items-center justify-center gap-1
+                                                            ${editForm.status === 'Cancelled'
+                                                                    ? 'bg-red-100 text-red-700 border-red-300 shadow-sm'
+                                                                    : 'bg-white text-slate-400 border-slate-200 hover:border-red-300 hover:text-red-600'}`}
+                                                        >
+                                                            <XCircle size={10} /> Cancelled
+                                                        </button>
+                                                    </div>
                                                 ) : (
                                                     <span className={`inline-flex items-center gap-1.5 pl-2 pr-3 py-1 rounded-full text-xs font-semibold border shadow-sm
                                                     ${inv.status === 'Processed' ? 'text-green-700 bg-green-50 border-green-200/60' :
@@ -555,7 +605,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                         </select>
                                                     </div>
                                                 ) : (
-                                                    `${Number(inv.total_amount || 0).toFixed(2)} ${inv.currency}`
+                                                    `${Number(inv.total_amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${inv.currency}`
                                                 )}
                                             </td>
 
@@ -572,18 +622,32 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                         <span className="text-xs text-slate-400">{editForm.currency}</span>
                                                     </div>
                                                 ) : (
-                                                    `${Number(inv.vat_amount || 0).toFixed(2)} ${inv.currency}`
+                                                    `${Number(inv.vat_amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${inv.currency}`
+                                                )}
+                                            </td>
+
+                                            <td className="px-6 py-4 text-slate-500 max-w-xs truncate text-[13px]">
+                                                {isEditing ? (
+                                                    <textarea
+                                                        value={editForm.comments || ""}
+                                                        onChange={e => setEditForm({ ...editForm, comments: e.target.value })}
+                                                        className="border border-slate-300 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
+                                                        rows={1}
+                                                    />
+                                                ) : (
+                                                    <span title={inv.comments} className="truncate block max-w-[150px]">{inv.comments}</span>
                                                 )}
                                             </td>
 
                                             {/* TAGS COLUMN */}
                                             <td className="px-6 py-4">
                                                 {isEditing ? (
-                                                    <div className="flex flex-wrap gap-1.5 max-w-[200px]">
+                                                    <div className="grid grid-cols-3 gap-1 min-w-[180px]">
                                                         {availableLabels.map(label => {
                                                             const isSelected = (editForm.labels || []).includes(label);
+                                                            const color = getLabelColor(label);
                                                             return (
-                                                                <span
+                                                                <button
                                                                     key={label}
                                                                     onClick={() => {
                                                                         const currentLabels = editForm.labels || [];
@@ -592,42 +656,31 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                                             : [...currentLabels, label];
                                                                         setEditForm({ ...editForm, labels: newLabels });
                                                                     }}
-                                                                    className={`cursor-pointer px-2 py-0.5 rounded text-[10px] border select-none transition-all ${isSelected
-                                                                        ? 'bg-blue-100 text-blue-700 border-blue-200 font-medium'
-                                                                        : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-slate-100'
+                                                                    className={`px-1 py-0.5 rounded text-[9px] border transition-all truncate w-full text-center ${isSelected
+                                                                        ? `${color.bg} ${color.text} ${color.border} font-bold shadow-sm`
+                                                                        : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100'
                                                                         }`}
+                                                                    title={label}
                                                                 >
                                                                     {label}
-                                                                </span>
+                                                                </button>
                                                             )
                                                         })}
                                                     </div>
                                                 ) : (
-                                                    <div className="flex flex-wrap gap-1.5">
+                                                    <div className="grid grid-cols-3 gap-1 min-w-[180px]">
                                                         {(inv.labels && inv.labels.length > 0) ? (
-                                                            inv.labels.map(l => (
-                                                                <span key={l} className="px-2 py-0.5 bg-blue-50/50 text-blue-600 rounded text-[10px] font-medium border border-blue-100">
-                                                                    {l}
-                                                                </span>
-                                                            ))
+                                                            inv.labels.map(l => {
+                                                                const color = getLabelColor(l);
+                                                                return (
+                                                                    <span key={l} title={l} className={`px-1 py-0.5 ${color.bg} ${color.text} rounded text-[9px] font-medium border ${color.border} shadow-sm truncate text-center block`}>
+                                                                        {l}
+                                                                    </span>
+                                                                )
+                                                            })
                                                         ) : (
-                                                            <span className="text-slate-300 text-xs italic tracking-wide">{t('table.no_labels')}</span>
+                                                            <span className="col-span-3 text-slate-300 text-xs italic tracking-wide text-center">-</span>
                                                         )}
-                                                    </div>
-                                                )}
-                                            </td>
-
-                                            <td className="px-6 py-4">
-                                                {isEditing ? (
-                                                    <textarea
-                                                        value={editForm.comments || ""}
-                                                        onChange={e => setEditForm({ ...editForm, comments: e.target.value })}
-                                                        className="border border-slate-300 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs min-h-[2.5rem] resize-y"
-                                                        placeholder={t('table.add_comment')}
-                                                    />
-                                                ) : (
-                                                    <div className="max-w-xs text-xs text-slate-600 truncate" title={inv.comments}>
-                                                        {inv.comments || <span className="text-slate-300 italic">-</span>}
                                                     </div>
                                                 )}
                                             </td>
@@ -649,9 +702,6 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                                     onChange={(e) => {
                                                                         if (e.target.files?.[0]) {
                                                                             setEditForm(prev => ({ ...prev, file: e.target.files[0] }));
-                                                                            // Optional: Show some visual indicator that file is selected?
-                                                                            // For now the updated state will be used on save.
-                                                                            // Maybe change icon color?
                                                                         }
                                                                     }}
                                                                 />
@@ -700,6 +750,6 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                     </table>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

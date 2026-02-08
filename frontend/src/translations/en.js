@@ -40,6 +40,9 @@ export const en = {
         no_labels: "No labels created yet."
     },
     filters: {
+        search_placeholder: "Search invoices...",
+        all_vendors: "All Vendors",
+        all_labels: "All Labels",
         status: {
             all: "All Statuses",
             pending: "Pending",
