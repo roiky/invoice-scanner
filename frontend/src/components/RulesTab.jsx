@@ -140,7 +140,12 @@ export function RulesTab({ t, labels }) {
 
                                     <div className="space-y-2">
                                         <div className="bg-slate-50 rounded-lg p-2.5 text-xs space-y-1">
-                                            <span className="font-bold text-slate-400 uppercase tracking-wider block mb-0.5 text-[10px]">If</span>
+                                            <div className="flex justify-between items-center mb-0.5">
+                                                <span className="font-bold text-slate-400 uppercase tracking-wider text-[10px]">If</span>
+                                                <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono font-medium ${rule.logic === 'OR' ? 'bg-amber-100 text-amber-700' : 'bg-slate-200 text-slate-600'}`}>
+                                                    {rule.logic === 'OR' ? 'ANY' : 'ALL'}
+                                                </span>
+                                            </div>
                                             {rule.conditions.slice(0, 2).map((c, i) => (
                                                 <div key={i} className="text-slate-600 flex items-center gap-1.5 ml-1 truncate">
                                                     <span className="w-1 h-1 rounded-full bg-slate-400 flex-shrink-0"></span>
@@ -231,14 +236,32 @@ export function RulesTab({ t, labels }) {
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
                                 <span className="w-1 h-4 bg-slate-800 rounded-full"></span>
-                                {t('rules.conditions')} (AND)
+                                {t('rules.conditions')}
                             </h3>
-                            <button
-                                onClick={() => setEditingRule({ ...editingRule, conditions: [...editingRule.conditions, emptyCondition] })}
-                                className="text-xs text-blue-600 font-medium hover:bg-blue-50 px-3 py-1.5 rounded-full border border-blue-100 hover:border-blue-200 transition-colors"
-                            >
-                                + Add Condition
-                            </button>
+
+                            <div className="flex items-center gap-2">
+                                <div className="flex bg-slate-100 p-1 rounded-lg">
+                                    <button
+                                        onClick={() => setEditingRule({ ...editingRule, logic: 'AND' })}
+                                        className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${(!editingRule.logic || editingRule.logic === 'AND') ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                    >
+                                        Match ALL (AND)
+                                    </button>
+                                    <button
+                                        onClick={() => setEditingRule({ ...editingRule, logic: 'OR' })}
+                                        className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${(editingRule.logic === 'OR') ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                    >
+                                        Match ANY (OR)
+                                    </button>
+                                </div>
+
+                                <button
+                                    onClick={() => setEditingRule({ ...editingRule, conditions: [...editingRule.conditions, emptyCondition] })}
+                                    className="text-xs text-blue-600 font-medium hover:bg-blue-50 px-3 py-1.5 rounded-full border border-blue-100 hover:border-blue-200 transition-colors"
+                                >
+                                    + Add Condition
+                                </button>
+                            </div>
                         </div>
                         <div className="space-y-3">
                             {editingRule.conditions.map((cond, idx) => (

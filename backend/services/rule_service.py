@@ -68,7 +68,12 @@ class RuleService:
         return invoice
 
     def _check_conditions(self, rule: Rule, invoice: InvoiceData) -> bool:
-        # ALL conditions must match (AND logic)
+        if not rule.conditions:
+            return True # No conditions = match all?
+            
+        # Logic: AND (all must match) vs OR (any must match)
+        is_or_logic = (getattr(rule, 'logic', 'AND') == 'OR')
+        
         for condition in rule.conditions:
             field_value = getattr(invoice, condition.field, None)
             
@@ -79,25 +84,36 @@ class RuleService:
             field_value_str = str(field_value).lower()
             cond_value_str = str(condition.value).lower()
             
+            match = False
             if condition.operator == "contains":
-                if cond_value_str not in field_value_str: return False
+                if cond_value_str in field_value_str: match = True
             elif condition.operator == "equals":
-                if field_value_str != cond_value_str: return False
+                if field_value_str == cond_value_str: match = True
             elif condition.operator == "starts_with":
-                if not field_value_str.startswith(cond_value_str): return False
+                if field_value_str.startswith(cond_value_str): match = True
             elif condition.operator == "ends_with":
-                if not field_value_str.endswith(cond_value_str): return False
-            # Numeric comparisons (try to convert back to float)
+                if field_value_str.endswith(cond_value_str): match = True
+            # Numeric comparisons
             elif condition.operator in ["gt", "lt"]:
                 try:
                     f_val = float(field_value)
                     c_val = float(condition.value)
-                    if condition.operator == "gt" and not (f_val > c_val): return False
-                    if condition.operator == "lt" and not (f_val < c_val): return False
+                    if condition.operator == "gt" and f_val > c_val: match = True
+                    elif condition.operator == "lt" and f_val < c_val: match = True
                 except ValueError:
-                    return False # Cannot compare non-numbers
-                    
-        return True
+                    match = False # Cannot compare non-numbers
+            
+            # Logic Check
+            if is_or_logic:
+                if match: return True # Found one match in OR -> Rule applies
+            else:
+                if not match: return False # Found one mismatch in AND -> Rule fails
+                
+        # End of loop
+        if is_or_logic:
+            return False # No matches found in OR -> Rule fails
+        else:
+            return True # No mismatches found in AND -> Rule applies
 
     def _apply_actions(self, rule: Rule, invoice: InvoiceData):
         for action in rule.actions:

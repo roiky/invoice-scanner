@@ -2,6 +2,7 @@
   {
     "id": "ecae64da-7153-4e3a-970f-3b9b489907ff",
     "name": "\u05e4\u05e8\u05e1\u05d5\u05de\u05ea",
+    "logic": "AND",
     "conditions": [
       {
         "field": "subject",
@@ -24,11 +25,17 @@
   {
     "id": "d30c0bb6-deda-45b6-9b79-fd2b9466873a",
     "name": "\u05e7\u05d1\u05e2\u05e0\u05d5",
+    "logic": "OR",
     "conditions": [
       {
         "field": "sender_email",
         "operator": "contains",
         "value": "@kavanu"
+      },
+      {
+        "field": "sender_email",
+        "operator": "contains",
+        "value": "Cloud Be"
       }
     ],
     "actions": [

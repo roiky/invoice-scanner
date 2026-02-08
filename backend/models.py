@@ -39,6 +39,7 @@ class RuleAction(BaseModel):
 class Rule(BaseModel):
     id: Optional[str] = None
     name: str
+    logic: str = "AND" # "AND" or "OR"
     conditions: List[RuleCondition]
     actions: List[RuleAction]
     is_active: bool = True
