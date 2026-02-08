@@ -480,9 +480,9 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                 <th className="px-6 py-4 text-end cursor-pointer hover:text-blue-600 transition-colors group" onClick={() => handleSort('vat_amount')}>
                                     <div className="flex items-center justify-end gap-1">VAT <SortIcon column="vat_amount" /></div>
                                 </th>
-                                <th className="px-6 py-4 text-start cursor-pointer hover:text-blue-600 transition-colors group" onClick={() => handleSort('comments')}>
+                                {/* <th className="px-6 py-4 text-start cursor-pointer hover:text-blue-600 transition-colors group" onClick={() => handleSort('comments')}>
                                     <div className="flex items-center gap-1">{t('table.comments')} <SortIcon column="comments" /></div>
-                                </th>
+                                </th> */}
                                 <th className="px-6 py-4 w-24 text-center">{t('table.labels')}</th>
                                 <th className="px-6 py-4 w-20 text-center">{t('table.actions')}</th>
                             </tr>
@@ -626,7 +626,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                 )}
                                             </td>
 
-                                            <td className="px-6 py-4 text-slate-500 max-w-xs truncate text-[13px]">
+                                            {/* <td className="px-6 py-4 text-slate-500 max-w-xs truncate text-[13px]">
                                                 {isEditing ? (
                                                     <textarea
                                                         value={editForm.comments || ""}
@@ -637,7 +637,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                 ) : (
                                                     <span title={inv.comments} className="truncate block max-w-[150px]">{inv.comments}</span>
                                                 )}
-                                            </td>
+                                            </td> */}
 
                                             {/* TAGS COLUMN */}
                                             <td className="px-6 py-4">
@@ -738,7 +738,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                 })
                             ) : (
                                 <tr>
-                                    <td colSpan="10" className="px-6 py-12 text-center text-slate-400 italic">
+                                    <td colSpan="9" className="px-6 py-12 text-center text-slate-400 italic">
                                         <div className="flex flex-col items-center gap-2">
                                             <Search className="opacity-20 inline-block mb-1" size={32} />
                                             <span>{t('table.no_invoices')}</span>
