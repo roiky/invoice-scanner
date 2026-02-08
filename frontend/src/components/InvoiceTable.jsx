@@ -533,7 +533,15 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                             type="number"
                                                             step="0.01"
                                                             value={editForm.total_amount || ""}
-                                                            onChange={e => setEditForm({ ...editForm, total_amount: e.target.value ? parseFloat(e.target.value) : null })}
+                                                            onChange={e => {
+                                                                const val = e.target.value ? parseFloat(e.target.value) : null;
+                                                                let vat = editForm.vat_amount;
+                                                                if (val !== null) {
+                                                                    // Auto calc VAT 18%
+                                                                    vat = parseFloat((val - (val / 1.18)).toFixed(2));
+                                                                }
+                                                                setEditForm({ ...editForm, total_amount: val, vat_amount: vat });
+                                                            }}
                                                             className="border border-slate-300 rounded px-1 py-1 w-20 text-right focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
                                                         />
                                                         <span className="text-xs text-slate-400">{inv.currency}</span>

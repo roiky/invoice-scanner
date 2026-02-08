@@ -202,6 +202,7 @@ async def create_manual_invoice(
     total_amount: float = Form(...),
     subject: str = Form(None),
     currency: str = Form("ILS"),
+    vat_amount: float = Form(0.0),
     status: str = Form("Pending"),
     label: str = Form(None),
     file: UploadFile = File(None)
@@ -236,7 +237,7 @@ async def create_manual_invoice(
         vendor_name=vendor_name,
         total_amount=total_amount,
         currency=currency,
-        vat_amount=0, 
+        vat_amount=vat_amount, 
         subject=subject or "Manual Entry",
         download_url=download_url,
         status=status,

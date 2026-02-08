@@ -159,13 +159,15 @@
     "subject": "nh שיווק והפצה - חשבונית מס קבלה מספר 889",
     "invoice_date": "2025-09-12",
     "vendor_name": "donotreply@rivhit.co.il",
-    "total_amount": null,
+    "total_amount": 352.0,
     "currency": "ILS",
-    "vat_amount": null,
+    "vat_amount": 53.69,
     "download_url": "http://127.0.0.1:8000/files/manual_1993e4b300829273_1770555788_rivhit.pdf",
-    "labels": [],
+    "labels": [
+      "עסק"
+    ],
     "comments": "",
-    "status": "Pending"
+    "status": "Processed"
   },
   "1993a1cb0b17cf72": {
     "id": "1993a1cb0b17cf72",
@@ -218,21 +220,6 @@
     "comments": null,
     "status": "Processed"
   },
-  "1990e328d565ea2c": {
-    "id": "1990e328d565ea2c",
-    "filename": "unknown.pdf",
-    "sender_email": "Cloud Be <no-reply@payplus.co.il>",
-    "subject": "Tax Invoice Receipt - Cloud Be",
-    "invoice_date": "2025-09-03",
-    "vendor_name": "Cloud Be",
-    "total_amount": null,
-    "currency": "ILS",
-    "vat_amount": null,
-    "download_url": "http://localhost:8000/files/generated_1990e328d565ea2c.pdf",
-    "labels": [],
-    "comments": "להקים ידנית או להוסיף פיצר הוספת קובץ",
-    "status": "Pending"
-  },
   "1991dc9510cbaa07": {
     "id": "1991dc9510cbaa07",
     "filename": "unknown.pdf",
@@ -261,8 +248,10 @@
     "currency": "ILS",
     "vat_amount": 5.17,
     "download_url": "http://localhost:8000/files/generated_19c24dc9fdefee8c.pdf",
-    "labels": [],
-    "comments": null,
+    "labels": [
+      "אישי"
+    ],
+    "comments": "",
     "status": "Processed"
   },
   "19c225be4dcf66ef": {
@@ -276,40 +265,10 @@
     "currency": "ILS",
     "vat_amount": 11.37,
     "download_url": "http://127.0.0.1:8000/files/manual_19c225be4dcf66ef_1770555700_חשבוניתמסקבלהמספר3029095-YehudaLeib46-03.02.2026.pdf",
-    "labels": [],
-    "comments": "",
-    "status": "Processed"
-  },
-  "d00a853d-a0d6-4c3f-aa70-3d62f191416b": {
-    "id": "d00a853d-a0d6-4c3f-aa70-3d62f191416b",
-    "filename": "manual_d00a853d-a0d6-4c3f-aa70-3d62f191416b",
-    "sender_email": "manual@entry",
-    "subject": "Manual Entry",
-    "invoice_date": "2024-02-08",
-    "vendor_name": "Test Vendor",
-    "total_amount": 100.5,
-    "currency": "ILS",
-    "vat_amount": 0.0,
-    "download_url": null,
-    "labels": [],
-    "comments": null,
-    "status": "Pending"
-  },
-  "2162fd0e-4c1c-44a5-8b47-84dda99c4b33": {
-    "id": "2162fd0e-4c1c-44a5-8b47-84dda99c4b33",
-    "filename": "manual_2162fd0e-4c1c-44a5-8b47-84dda99c4b33",
-    "sender_email": "manual@entry",
-    "subject": "Manual Entry V2",
-    "invoice_date": "2024-02-08",
-    "vendor_name": "Test Vendor V2",
-    "total_amount": 200.0,
-    "currency": "USD",
-    "vat_amount": 0.0,
-    "download_url": null,
     "labels": [
-      "TestLabel"
+      "עסק"
     ],
-    "comments": null,
+    "comments": "",
     "status": "Processed"
   }
 }

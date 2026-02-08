@@ -157,7 +157,31 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
                                 step="0.01"
                                 placeholder="0.00"
                                 value={formData.total_amount}
-                                onChange={e => setFormData({ ...formData, total_amount: e.target.value })}
+                                onChange={e => {
+                                    const val = e.target.value;
+                                    let vat = '';
+                                    if (val) {
+                                        // VAT = Total - (Total / 1.18)
+                                        const total = parseFloat(val);
+                                        vat = (total - (total / 1.18)).toFixed(2);
+                                    }
+                                    setFormData({ ...formData, total_amount: val, vat_amount: vat });
+                                }}
+                                className="w-full rtl:pl-3 rtl:pr-8 ltr:pl-8 ltr:pr-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            />
+                            <DollarSign className="absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-400" size={16} />
+                        </div>
+                    </div>
+
+                    <div className="space-y-1">
+                        <label className="text-xs font-semibold text-slate-500 uppercase">VAT (18%)</label>
+                        <div className="relative">
+                            <input
+                                type="number"
+                                step="0.01"
+                                placeholder="0.00"
+                                value={formData.vat_amount || ''}
+                                onChange={e => setFormData({ ...formData, vat_amount: e.target.value })}
                                 className="w-full rtl:pl-3 rtl:pr-8 ltr:pl-8 ltr:pr-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                             />
                             <DollarSign className="absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-400" size={16} />
@@ -219,7 +243,7 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
                     </div>
 
                 </form>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
