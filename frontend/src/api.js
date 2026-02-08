@@ -42,6 +42,20 @@ export const deleteInvoice = async (id) => {
     return response.json();
 };
 
+export const uploadInvoiceFile = async (id, file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch(`${API_URL}/invoices/${id}/upload`, {
+        method: 'POST',
+        body: formData,
+    });
+    if (!response.ok) {
+        throw new Error('Upload failed');
+    }
+    return response.json();
+};
+
 // --- Label Management ---
 
 // --- User Auth ---

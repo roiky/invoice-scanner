@@ -154,7 +154,7 @@
   },
   "1993e4b300829273": {
     "id": "1993e4b300829273",
-    "filename": "unknown.pdf",
+    "filename": "manual_1993e4b300829273_1770555788_rivhit.pdf",
     "sender_email": "donotreply@rivhit.co.il",
     "subject": "nh שיווק והפצה - חשבונית מס קבלה מספר 889",
     "invoice_date": "2025-09-12",
@@ -162,9 +162,9 @@
     "total_amount": null,
     "currency": "ILS",
     "vat_amount": null,
-    "download_url": "http://localhost:8000/files/generated_1993e4b300829273.pdf",
+    "download_url": "http://127.0.0.1:8000/files/manual_1993e4b300829273_1770555788_rivhit.pdf",
     "labels": [],
-    "comments": "קובץ מצורף למייל - להקים ידנית",
+    "comments": "",
     "status": "Pending"
   },
   "1993a1cb0b17cf72": {
@@ -267,18 +267,18 @@
   },
   "19c225be4dcf66ef": {
     "id": "19c225be4dcf66ef",
-    "filename": "unknown.pdf",
+    "filename": "manual_19c225be4dcf66ef_1770555700_חשבוניתמסקבלהמספר3029095-YehudaLeib46-03.02.2026.pdf",
     "sender_email": "Cloud Be <no-reply@payplus.co.il>",
     "subject": "חשבונית מס קבלה - Cloud Be",
     "invoice_date": "2026-02-03",
     "vendor_name": "Cloud Be",
-    "total_amount": null,
+    "total_amount": 74.54,
     "currency": "ILS",
-    "vat_amount": null,
-    "download_url": "http://localhost:8000/files/generated_19c225be4dcf66ef.pdf",
+    "vat_amount": 11.37,
+    "download_url": "http://127.0.0.1:8000/files/manual_19c225be4dcf66ef_1770555700_חשבוניתמסקבלהמספר3029095-YehudaLeib46-03.02.2026.pdf",
     "labels": [],
-    "comments": "לטפל",
-    "status": "Pending"
+    "comments": "",
+    "status": "Processed"
   },
   "d00a853d-a0d6-4c3f-aa70-3d62f191416b": {
     "id": "d00a853d-a0d6-4c3f-aa70-3d62f191416b",

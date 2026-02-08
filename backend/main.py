@@ -1,17 +1,25 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, UploadFile, File, HTTPException
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import date
 from .services.gmail_service import gmail_service
 from .services.storage_service import storage_service
 from .services.settings_service import settings_service
-from .models import ScanResult, InvoiceData
+from .models import ScanResult, InvoiceData, Rule
 from typing import List
 from pydantic import BaseModel
-
-from fastapi.staticfiles import StaticFiles
 import os
+import shutil
+import uuid
+import time
 
 app = FastAPI(title="Gmail Invoice Scanner")
+app.mount("/files", StaticFiles(directory="backend/static/invoices"), name="files")
+
+# Ensure static directory exists
+os.makedirs("backend/static/invoices", exist_ok=True)
+import shutil
+from fastapi import UploadFile, File
 
 # --- Auth Endpoints ---
 
@@ -238,4 +246,37 @@ async def create_manual_invoice(
     storage_service.save_invoice(new_invoice)
     return new_invoice
 
+@app.post("/invoices/{invoice_id}/upload")
+async def upload_invoice_file(invoice_id: str, file: UploadFile = File(...)):
+    # Verify invoice exists
+    invoice = storage_service.get_by_id(invoice_id)
+    if not invoice:
+        # If it's a new manual invoice that doesn't exist yet, we might need to handle differently
+        # But usually we create the invoice first then upload? 
+        # Or if the user is editing an existing one.
+        pass # For now assume it exists or we just proceed if we want to allow standalone uploads
 
+    # Generate filename
+    # Sanitize filename
+    safe_filename = "".join(c for c in file.filename if c.isalnum() or c in "._-").strip()
+    # Unique prefix
+    import time
+    timestamp = int(time.time())
+    new_filename = f"manual_{invoice_id}_{timestamp}_{safe_filename}"
+    
+    file_path = os.path.join("backend/static/invoices", new_filename)
+    
+    # Save file
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+        
+    # Construct URL
+    # Use request.base_url ideally, but hardcoding for now as per other parts
+    download_url = f"http://127.0.0.1:8000/files/{new_filename}"
+    
+    # Update invoice if it exists
+    if invoice:
+        updated_invoice = storage_service.update_invoice(invoice_id, {"download_url": download_url, "filename": new_filename})
+        return updated_invoice
+    
+    return {"download_url": download_url, "filename": new_filename}

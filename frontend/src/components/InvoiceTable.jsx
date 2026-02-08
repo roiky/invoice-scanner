@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { FileText, CheckCircle, AlertCircle, Download, Search, XCircle, Edit2, Trash2, Check, X, ArrowUp, ArrowDown, ArrowUpDown, Calendar, Tag } from 'lucide-react';
-import { updateInvoice, deleteInvoice } from '../api';
+import { FileText, CheckCircle, AlertCircle, Download, Search, XCircle, Edit2, Trash2, Check, X, ArrowUp, ArrowDown, ArrowUpDown, Calendar, Tag, Upload } from 'lucide-react';
+import { updateInvoice, deleteInvoice, uploadInvoiceFile } from '../api';
 import { DateInput } from './DateInput';
 
 export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, onDeleteInvoice, onBulkDelete, onBulkStatusChange, onBulkAddLabel, t = (s) => s }) {
@@ -141,7 +141,23 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
     };
 
     const saveEdit = async (inv) => {
-        const updatedInv = { ...inv, ...editForm };
+        let updatedInv = { ...inv, ...editForm };
+
+        // Handle File Upload if present
+        if (editForm.file) {
+            try {
+                const uploadResult = await uploadInvoiceFile(inv.id, editForm.file);
+                // Update the invoice data with the new url/filename from the upload result
+                updatedInv = { ...updatedInv, ...uploadResult };
+                // Also clear the file from the form so it doesn't get sent to updateInvoice (though it would be ignored)
+                delete updatedInv.file;
+            } catch (e) {
+                console.error("Failed to upload file:", e);
+                alert("Failed to upload file");
+                return; // Stop saving if upload fails
+            }
+        }
+
         if (onUpdateInvoice) await onUpdateInvoice(updatedInv);
         setEditingId(null);
     };
@@ -155,7 +171,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
         if (!filteredInvoices.length) return;
 
         const headers = ["ID", "Date", "Vendor", "Subject", "Amount", "Currency", "VAT", "Status", "Labels", "Comments"];
-        
+
         const escapeCSV = (str) => {
             if (str === null || str === undefined) return '';
             const stringValue = String(str);
@@ -278,7 +294,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                     </button>
                                 )}
                             </div>
-                            
+
                             {/* Dropdown with padding-top to bridge the gap */}
                             <div className="absolute top-full inset-inline-start-0 pt-2 hidden group-hover:block z-20 w-48">
                                 <div className="bg-white rounded-xl shadow-xl border border-slate-100 p-2">
@@ -287,8 +303,8 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                     ) : (
                                         availableLabels.map(l => (
                                             <label key={l} className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer">
-                                                <input 
-                                                    type="checkbox" 
+                                                <input
+                                                    type="checkbox"
                                                     checked={filterLabel.includes(l)}
                                                     onChange={() => {
                                                         if (filterLabel.includes(l)) setFilterLabel(prev => prev.filter(x => x !== l));
@@ -301,7 +317,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                         ))
                                     )}
                                     {filterLabel.length > 0 && (
-                                        <button 
+                                        <button
                                             onClick={() => setFilterLabel([])}
                                             className="w-full text-center text-xs text-red-500 font-medium p-2 border-t border-slate-50 mt-1 hover:bg-red-50 rounded"
                                         >
@@ -323,330 +339,351 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                     </div>
                 </div>
 
-                    {/* Bottom Row: Date Filter & Bulk Actions */}
-                    <div className="flex flex-col sm:flex-row gap-4 justify-between items-center pt-4 border-t border-slate-50">
-                        <div className="flex items-center gap-3 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
-                            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap">
-                                <Calendar size={14} /> {t('table.date')}:
-                            </span>
-                            <DateInput
-                                value={dateRange.start}
-                                onChange={(val) => setDateRange(prev => ({ ...prev, start: val }))}
-                                placeholder={t('scan.start_date')}
-                                className="w-32 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-md text-sm focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
-                            />
-                            <span className="text-slate-300">/</span>
-                            <DateInput
-                                value={dateRange.end}
-                                onChange={(val) => setDateRange(prev => ({ ...prev, end: val }))}
-                                placeholder={t('scan.end_date')}
-                                className="w-32 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-md text-sm focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
-                            />
-                        </div>
-
-                        {selectedIds.size > 0 && (
-                            <div className="flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300 bg-blue-50/80 backdrop-blur-sm px-4 py-2 rounded-lg border border-blue-100/50 w-full sm:w-auto justify-between sm:justify-start shadow-sm">
-                                <span className="text-sm font-bold text-blue-900 flex items-center gap-2">
-                                    <span className="bg-blue-600 text-white text-[10px] px-1.5 rounded-full h-5 min-w-[1.25rem] flex items-center justify-center">
-                                        {selectedIds.size}
-                                    </span>
-                                    {t('actions.selected')}
-                                </span>
-                                <div className="h-4 w-px bg-blue-200/50 mx-1"></div>
-                                <div className="flex items-center gap-2">
-                                    
-                                    {/* Add Label Bulk Action */}
-                                    <div className="relative">
-                                        <button 
-                                            onClick={() => setIsBulkLabelOpen(!isBulkLabelOpen)} 
-                                            className="px-3 py-1.5 text-xs font-medium bg-white text-blue-700 border border-blue-200/50 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-800 rounded-md shadow-sm transition-all flex items-center gap-1"
-                                        >
-                                            <Tag size={12} />
-                                            {t('actions.add_label')}
-                                        </button>
-                                        {isBulkLabelOpen && (
-                                            <div className="absolute bottom-full mb-2 left-0 bg-white rounded-lg shadow-xl border border-slate-100 p-2 w-48 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
-                                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Select Label to Add</div>
-                                                {availableLabels.length === 0 ? (
-                                                    <p className="text-xs text-slate-400 p-2 text-center">No labels available</p>
-                                                ) : (
-                                                    <div className="max-h-48 overflow-y-auto space-y-1">
-                                                        {availableLabels.map(l => (
-                                                            <button
-                                                                key={l}
-                                                                onClick={() => {
-                                                                    if (onBulkAddLabel) onBulkAddLabel(Array.from(selectedIds), l);
-                                                                    setIsBulkLabelOpen(false);
-                                                                }}
-                                                                className="w-full text-start px-2 py-1.5 hover:bg-blue-50 rounded text-xs text-slate-700 block truncate transition-colors"
-                                                            >
-                                                                {l}
-                                                            </button>
-                                                        ))}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="w-px h-4 bg-blue-200 mx-1"></div>
-
-                                    <button onClick={() => handleBulkStatusChange("Processed")} className="px-3 py-1.5 text-xs font-medium bg-white text-green-700 border border-green-200/50 hover:bg-green-50 hover:border-green-300 hover:text-green-800 rounded-md shadow-sm transition-all">{t('actions.mark_processed')}</button>
-                                    <button onClick={() => handleBulkStatusChange("Pending")} className="px-3 py-1.5 text-xs font-medium bg-white text-amber-700 border border-amber-200/50 hover:bg-amber-50 hover:border-amber-300 hover:text-amber-800 rounded-md shadow-sm transition-all">{t('actions.mark_pending')}</button>
-                                    <button onClick={() => handleBulkStatusChange("Cancelled")} className="px-3 py-1.5 text-xs font-medium bg-white text-red-700 border border-red-200/50 hover:bg-red-50 hover:border-red-300 hover:text-red-800 rounded-md shadow-sm transition-all">{t('actions.mark_cancelled')}</button>
-                                    <div className="w-px h-4 bg-blue-200 mx-1"></div>
-                                    <button onClick={handleBulkDelete} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors" title={t('actions.delete_selected')}>
-                                        <Trash2 size={16} />
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+                {/* Bottom Row: Date Filter & Bulk Actions */}
+                <div className="flex flex-col sm:flex-row gap-4 justify-between items-center pt-4 border-t border-slate-50">
+                    <div className="flex items-center gap-3 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap">
+                            <Calendar size={14} /> {t('table.date')}:
+                        </span>
+                        <DateInput
+                            value={dateRange.start}
+                            onChange={(val) => setDateRange(prev => ({ ...prev, start: val }))}
+                            placeholder={t('scan.start_date')}
+                            className="w-32 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-md text-sm focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
+                        />
+                        <span className="text-slate-300">/</span>
+                        <DateInput
+                            value={dateRange.end}
+                            onChange={(val) => setDateRange(prev => ({ ...prev, end: val }))}
+                            placeholder={t('scan.end_date')}
+                            className="w-32 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-md text-sm focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
+                        />
                     </div>
+
+                    {selectedIds.size > 0 && (
+                        <div className="flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300 bg-blue-50/80 backdrop-blur-sm px-4 py-2 rounded-lg border border-blue-100/50 w-full sm:w-auto justify-between sm:justify-start shadow-sm">
+                            <span className="text-sm font-bold text-blue-900 flex items-center gap-2">
+                                <span className="bg-blue-600 text-white text-[10px] px-1.5 rounded-full h-5 min-w-[1.25rem] flex items-center justify-center">
+                                    {selectedIds.size}
+                                </span>
+                                {t('actions.selected')}
+                            </span>
+                            <div className="h-4 w-px bg-blue-200/50 mx-1"></div>
+                            <div className="flex items-center gap-2">
+
+                                {/* Add Label Bulk Action */}
+                                <div className="relative">
+                                    <button
+                                        onClick={() => setIsBulkLabelOpen(!isBulkLabelOpen)}
+                                        className="px-3 py-1.5 text-xs font-medium bg-white text-blue-700 border border-blue-200/50 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-800 rounded-md shadow-sm transition-all flex items-center gap-1"
+                                    >
+                                        <Tag size={12} />
+                                        {t('actions.add_label')}
+                                    </button>
+                                    {isBulkLabelOpen && (
+                                        <div className="absolute bottom-full mb-2 left-0 bg-white rounded-lg shadow-xl border border-slate-100 p-2 w-48 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
+                                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Select Label to Add</div>
+                                            {availableLabels.length === 0 ? (
+                                                <p className="text-xs text-slate-400 p-2 text-center">No labels available</p>
+                                            ) : (
+                                                <div className="max-h-48 overflow-y-auto space-y-1">
+                                                    {availableLabels.map(l => (
+                                                        <button
+                                                            key={l}
+                                                            onClick={() => {
+                                                                if (onBulkAddLabel) onBulkAddLabel(Array.from(selectedIds), l);
+                                                                setIsBulkLabelOpen(false);
+                                                            }}
+                                                            className="w-full text-start px-2 py-1.5 hover:bg-blue-50 rounded text-xs text-slate-700 block truncate transition-colors"
+                                                        >
+                                                            {l}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="w-px h-4 bg-blue-200 mx-1"></div>
+
+                                <button onClick={() => handleBulkStatusChange("Processed")} className="px-3 py-1.5 text-xs font-medium bg-white text-green-700 border border-green-200/50 hover:bg-green-50 hover:border-green-300 hover:text-green-800 rounded-md shadow-sm transition-all">{t('actions.mark_processed')}</button>
+                                <button onClick={() => handleBulkStatusChange("Pending")} className="px-3 py-1.5 text-xs font-medium bg-white text-amber-700 border border-amber-200/50 hover:bg-amber-50 hover:border-amber-300 hover:text-amber-800 rounded-md shadow-sm transition-all">{t('actions.mark_pending')}</button>
+                                <button onClick={() => handleBulkStatusChange("Cancelled")} className="px-3 py-1.5 text-xs font-medium bg-white text-red-700 border border-red-200/50 hover:bg-red-50 hover:border-red-300 hover:text-red-800 rounded-md shadow-sm transition-all">{t('actions.mark_cancelled')}</button>
+                                <div className="w-px h-4 bg-blue-200 mx-1"></div>
+                                <button onClick={handleBulkDelete} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors" title={t('actions.delete_selected')}>
+                                    <Trash2 size={16} />
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
+            </div>
 
-                {/* Table */}
-                <div className="bg-white rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-slate-100 overflow-hidden">
-                    <div className="overflow-x-auto min-h-[400px]">
-                        <table className="w-full text-sm text-start">
-                            <thead className="bg-slate-50/50 text-slate-500 font-semibold border-b border-slate-100 select-none uppercase text-xs tracking-wider">
-                                <tr>
-                                    <th className="px-4 py-4 w-12 text-center">
-                                        <input
-                                            type="checkbox"
-                                            checked={filteredInvoices.length > 0 && selectedIds.size === filteredInvoices.length}
-                                            onChange={toggleSelectAll}
-                                            className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4"
-                                        />
-                                    </th>
-                                    <th className="px-6 py-4 cursor-pointer hover:text-blue-600 transition-colors group text-start" onClick={() => handleSort('status')}>
-                                        <div className="flex items-center gap-1">{t('table.status')} <SortIcon column="status" /></div>
-                                    </th>
-                                    <th className="px-6 py-4 cursor-pointer hover:text-blue-600 transition-colors group text-start" onClick={() => handleSort('invoice_date')}>
-                                        <div className="flex items-center gap-1">{t('table.date')} <SortIcon column="invoice_date" /></div>
-                                    </th>
-                                    <th className="px-6 py-4 cursor-pointer hover:text-blue-600 transition-colors group text-start" onClick={() => handleSort('vendor_name')}>
-                                        <div className="flex items-center gap-1">{t('table.vendor')} <SortIcon column="vendor_name" /></div>
-                                    </th>
-                                    <th className="px-6 py-4 cursor-pointer hover:text-blue-600 transition-colors group text-start" onClick={() => handleSort('subject')}>
-                                        <div className="flex items-center gap-1">{t('table.subject')} <SortIcon column="subject" /></div>
-                                    </th>
-                                    <th className="px-6 py-4 text-end cursor-pointer hover:text-blue-600 transition-colors group" onClick={() => handleSort('total_amount')}>
-                                        <div className="flex items-center justify-end gap-1">{t('table.amount')} <SortIcon column="total_amount" /></div>
-                                    </th>
-                                    <th className="px-6 py-4 text-end cursor-pointer hover:text-blue-600 transition-colors group" onClick={() => handleSort('vat_amount')}>
-                                        <div className="flex items-center justify-end gap-1">VAT <SortIcon column="vat_amount" /></div>
-                                    </th>
-                                    <th className="px-6 py-4 text-start">{t('table.labels')}</th>
-                                    <th className="px-6 py-4 text-start">{t('table.comments')}</th>
-                                    <th className="px-6 py-4 text-center">{t('table.actions')}</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-50">
-                                {filteredInvoices.length > 0 ? (
-                                    filteredInvoices.map((inv) => {
-                                        const isEditing = editingId === inv.id;
-                                        const isSelected = selectedIds.has(inv.id);
+            {/* Table */}
+            <div className="bg-white rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-slate-100 overflow-hidden">
+                <div className="overflow-x-auto min-h-[400px]">
+                    <table className="w-full text-sm text-start">
+                        <thead className="bg-slate-50/50 text-slate-500 font-semibold border-b border-slate-100 select-none uppercase text-xs tracking-wider">
+                            <tr>
+                                <th className="px-4 py-4 w-12 text-center">
+                                    <input
+                                        type="checkbox"
+                                        checked={filteredInvoices.length > 0 && selectedIds.size === filteredInvoices.length}
+                                        onChange={toggleSelectAll}
+                                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4"
+                                    />
+                                </th>
+                                <th className="px-6 py-4 cursor-pointer hover:text-blue-600 transition-colors group text-start" onClick={() => handleSort('status')}>
+                                    <div className="flex items-center gap-1">{t('table.status')} <SortIcon column="status" /></div>
+                                </th>
+                                <th className="px-6 py-4 cursor-pointer hover:text-blue-600 transition-colors group text-start" onClick={() => handleSort('invoice_date')}>
+                                    <div className="flex items-center gap-1">{t('table.date')} <SortIcon column="invoice_date" /></div>
+                                </th>
+                                <th className="px-6 py-4 cursor-pointer hover:text-blue-600 transition-colors group text-start" onClick={() => handleSort('vendor_name')}>
+                                    <div className="flex items-center gap-1">{t('table.vendor')} <SortIcon column="vendor_name" /></div>
+                                </th>
+                                <th className="px-6 py-4 cursor-pointer hover:text-blue-600 transition-colors group text-start" onClick={() => handleSort('subject')}>
+                                    <div className="flex items-center gap-1">{t('table.subject')} <SortIcon column="subject" /></div>
+                                </th>
+                                <th className="px-6 py-4 text-end cursor-pointer hover:text-blue-600 transition-colors group" onClick={() => handleSort('total_amount')}>
+                                    <div className="flex items-center justify-end gap-1">{t('table.amount')} <SortIcon column="total_amount" /></div>
+                                </th>
+                                <th className="px-6 py-4 text-end cursor-pointer hover:text-blue-600 transition-colors group" onClick={() => handleSort('vat_amount')}>
+                                    <div className="flex items-center justify-end gap-1">VAT <SortIcon column="vat_amount" /></div>
+                                </th>
+                                <th className="px-6 py-4 text-start">{t('table.labels')}</th>
+                                <th className="px-6 py-4 text-start">{t('table.comments')}</th>
+                                <th className="px-6 py-4 text-center">{t('table.actions')}</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50">
+                            {filteredInvoices.length > 0 ? (
+                                filteredInvoices.map((inv) => {
+                                    const isEditing = editingId === inv.id;
+                                    const isSelected = selectedIds.has(inv.id);
 
-                                        return (
-                                            <tr
-                                                key={inv.id}
-                                                className={`group transition-all duration-200 
+                                    return (
+                                        <tr
+                                            key={inv.id}
+                                            className={`group transition-all duration-200 
                                                 ${isSelected ? 'bg-blue-50/40 hover:bg-blue-50/60' : 'hover:bg-slate-50/80'} 
                                                 ${isEditing ? 'bg-blue-50/60' : ''}
                                             `}
-                                            >
-                                                <td className="px-4 py-4 text-center">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={selectedIds.has(inv.id)}
-                                                        onChange={() => toggleSelection(inv.id)}
-                                                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4"
-                                                    />
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    {isEditing ? (
-                                                        <select
-                                                            value={editForm.status || "Pending"}
-                                                            onChange={e => setEditForm({ ...editForm, status: e.target.value })}
-                                                            className="border border-slate-300 rounded px-2 py-1 text-xs w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                                        >
-                                                            <option value="Pending">Pending</option>
-                                                            <option value="Processed">Processed</option>
-                                                            <option value="Cancelled">Cancelled</option>
-                                                        </select>
-                                                    ) : (
-                                                        <span className={`inline-flex items-center gap-1.5 pl-2 pr-3 py-1 rounded-full text-xs font-semibold border shadow-sm
+                                        >
+                                            <td className="px-4 py-4 text-center">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedIds.has(inv.id)}
+                                                    onChange={() => toggleSelection(inv.id)}
+                                                    className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4"
+                                                />
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {isEditing ? (
+                                                    <select
+                                                        value={editForm.status || "Pending"}
+                                                        onChange={e => setEditForm({ ...editForm, status: e.target.value })}
+                                                        className="border border-slate-300 rounded px-2 py-1 text-xs w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                                    >
+                                                        <option value="Pending">Pending</option>
+                                                        <option value="Processed">Processed</option>
+                                                        <option value="Cancelled">Cancelled</option>
+                                                    </select>
+                                                ) : (
+                                                    <span className={`inline-flex items-center gap-1.5 pl-2 pr-3 py-1 rounded-full text-xs font-semibold border shadow-sm
                                                     ${inv.status === 'Processed' ? 'text-green-700 bg-green-50 border-green-200/60' :
-                                                                inv.status === 'Cancelled' ? 'text-red-700 bg-red-50 border-red-200/60' :
-                                                                    'text-amber-700 bg-amber-50 border-amber-200/60'}`}>
-                                                            {inv.status === 'Processed' ? <CheckCircle size={12} className="stroke-[2.5]" /> :
-                                                                inv.status === 'Cancelled' ? <XCircle size={12} className="stroke-[2.5]" /> :
-                                                                    <AlertCircle size={12} className="stroke-[2.5]" />}
-                                                            {t(`filters.status.${inv.status.toLowerCase()}`)}
-                                                        </span>
-                                                    )}
-                                                </td>
-                                                <td className="px-6 py-4 text-slate-600">
-                                                    {isEditing ? (
-                                                        <DateInput
-                                                            value={editForm.invoice_date || ""}
-                                                            onChange={val => setEditForm({ ...editForm, invoice_date: val })}
-                                                            className="border border-slate-300 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
-                                                        />
-                                                    ) : (
-                                                        <span className="font-mono text-xs whitespace-nowrap text-slate-500 bg-slate-100/50 px-2 py-1 rounded">
-                                                            {inv.invoice_date ? new Date(inv.invoice_date).toLocaleDateString('en-GB') : '-'}
-                                                        </span>
-                                                    )}
-                                                </td>
-                                                <td className="px-6 py-4 font-semibold text-slate-800">
-                                                    {isEditing ? (
+                                                            inv.status === 'Cancelled' ? 'text-red-700 bg-red-50 border-red-200/60' :
+                                                                'text-amber-700 bg-amber-50 border-amber-200/60'}`}>
+                                                        {inv.status === 'Processed' ? <CheckCircle size={12} className="stroke-[2.5]" /> :
+                                                            inv.status === 'Cancelled' ? <XCircle size={12} className="stroke-[2.5]" /> :
+                                                                <AlertCircle size={12} className="stroke-[2.5]" />}
+                                                        {t(`filters.status.${inv.status.toLowerCase()}`)}
+                                                    </span>
+                                                )}
+                                            </td>
+                                            <td className="px-6 py-4 text-slate-600">
+                                                {isEditing ? (
+                                                    <DateInput
+                                                        value={editForm.invoice_date || ""}
+                                                        onChange={val => setEditForm({ ...editForm, invoice_date: val })}
+                                                        className="border border-slate-300 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
+                                                    />
+                                                ) : (
+                                                    <span className="font-mono text-xs whitespace-nowrap text-slate-500 bg-slate-100/50 px-2 py-1 rounded">
+                                                        {inv.invoice_date ? new Date(inv.invoice_date).toLocaleDateString('en-GB') : '-'}
+                                                    </span>
+                                                )}
+                                            </td>
+                                            <td className="px-6 py-4 font-semibold text-slate-800">
+                                                {isEditing ? (
+                                                    <input
+                                                        type="text"
+                                                        value={editForm.vendor_name || ""}
+                                                        onChange={e => setEditForm({ ...editForm, vendor_name: e.target.value })}
+                                                        className="border border-slate-300 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                                    />
+                                                ) : inv.vendor_name}
+                                            </td>
+                                            <td className="px-6 py-4 text-slate-500 max-w-xs truncate text-[13px]" title={inv.subject}>{inv.subject}</td>
+                                            <td className="px-6 py-4 text-end font-medium text-slate-900 tabular-nums">
+                                                {isEditing ? (
+                                                    <div className="flex items-center gap-1 justify-end">
                                                         <input
-                                                            type="text"
-                                                            value={editForm.vendor_name || ""}
-                                                            onChange={e => setEditForm({ ...editForm, vendor_name: e.target.value })}
-                                                            className="border border-slate-300 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                                            type="number"
+                                                            step="0.01"
+                                                            value={editForm.total_amount || ""}
+                                                            onChange={e => setEditForm({ ...editForm, total_amount: e.target.value ? parseFloat(e.target.value) : null })}
+                                                            className="border border-slate-300 rounded px-1 py-1 w-20 text-right focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
                                                         />
-                                                    ) : inv.vendor_name}
-                                                </td>
-                                                <td className="px-6 py-4 text-slate-500 max-w-xs truncate text-[13px]" title={inv.subject}>{inv.subject}</td>
-                                                <td className="px-6 py-4 text-end font-medium text-slate-900 tabular-nums">
-                                                    {isEditing ? (
-                                                        <div className="flex items-center gap-1 justify-end">
-                                                            <input
-                                                                type="number"
-                                                                step="0.01"
-                                                                value={editForm.total_amount || ""}
-                                                                onChange={e => setEditForm({ ...editForm, total_amount: e.target.value ? parseFloat(e.target.value) : null })}
-                                                                className="border border-slate-300 rounded px-1 py-1 w-20 text-right focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
-                                                            />
-                                                            <span className="text-xs text-slate-400">{inv.currency}</span>
-                                                        </div>
-                                                    ) : (
-                                                        `${Number(inv.total_amount || 0).toFixed(2)} ${inv.currency}`
-                                                    )}
-                                                </td>
+                                                        <span className="text-xs text-slate-400">{inv.currency}</span>
+                                                    </div>
+                                                ) : (
+                                                    `${Number(inv.total_amount || 0).toFixed(2)} ${inv.currency}`
+                                                )}
+                                            </td>
 
-                                                <td className="px-6 py-4 text-end text-slate-500 tabular-nums text-[13px]">
-                                                    {isEditing ? (
-                                                        <div className="flex items-center gap-1 justify-end">
-                                                            <input
-                                                                type="number"
-                                                                step="0.01"
-                                                                value={editForm.vat_amount || ""}
-                                                                onChange={e => setEditForm({ ...editForm, vat_amount: e.target.value ? parseFloat(e.target.value) : null })}
-                                                                className="border border-slate-300 rounded px-1 py-1 w-16 text-right focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
-                                                            />
-                                                            <span className="text-xs text-slate-400">{inv.currency}</span>
-                                                        </div>
-                                                    ) : (
-                                                        `${Number(inv.vat_amount || 0).toFixed(2)} ${inv.currency}`
-                                                    )}
-                                                </td>
-
-                                                {/* TAGS COLUMN */}
-                                                <td className="px-6 py-4">
-                                                    {isEditing ? (
-                                                        <div className="flex flex-wrap gap-1.5 max-w-[200px]">
-                                                            {availableLabels.map(label => {
-                                                                const isSelected = (editForm.labels || []).includes(label);
-                                                                return (
-                                                                    <span
-                                                                        key={label}
-                                                                        onClick={() => {
-                                                                            const currentLabels = editForm.labels || [];
-                                                                            const newLabels = isSelected
-                                                                                ? currentLabels.filter(l => l !== label)
-                                                                                : [...currentLabels, label];
-                                                                            setEditForm({ ...editForm, labels: newLabels });
-                                                                        }}
-                                                                        className={`cursor-pointer px-2 py-0.5 rounded text-[10px] border select-none transition-all ${isSelected
-                                                                            ? 'bg-blue-100 text-blue-700 border-blue-200 font-medium'
-                                                                            : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-slate-100'
-                                                                            }`}
-                                                                    >
-                                                                        {label}
-                                                                    </span>
-                                                                )
-                                                            })}
-                                                        </div>
-                                                    ) : (
-                                                        <div className="flex flex-wrap gap-1.5">
-                                                            {(inv.labels && inv.labels.length > 0) ? (
-                                                                inv.labels.map(l => (
-                                                                    <span key={l} className="px-2 py-0.5 bg-blue-50/50 text-blue-600 rounded text-[10px] font-medium border border-blue-100">
-                                                                        {l}
-                                                                    </span>
-                                                                ))
-                                                            ) : (
-                                                                <span className="text-slate-300 text-xs italic tracking-wide">{t('table.no_labels')}</span>
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </td>
-
-                                                <td className="px-6 py-4">
-                                                    {isEditing ? (
-                                                        <textarea
-                                                            value={editForm.comments || ""}
-                                                            onChange={e => setEditForm({ ...editForm, comments: e.target.value })}
-                                                            className="border border-slate-300 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs min-h-[2.5rem] resize-y"
-                                                            placeholder={t('table.add_comment')}
+                                            <td className="px-6 py-4 text-end text-slate-500 tabular-nums text-[13px]">
+                                                {isEditing ? (
+                                                    <div className="flex items-center gap-1 justify-end">
+                                                        <input
+                                                            type="number"
+                                                            step="0.01"
+                                                            value={editForm.vat_amount || ""}
+                                                            onChange={e => setEditForm({ ...editForm, vat_amount: e.target.value ? parseFloat(e.target.value) : null })}
+                                                            className="border border-slate-300 rounded px-1 py-1 w-16 text-right focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
                                                         />
-                                                    ) : (
-                                                        <div className="max-w-xs text-xs text-slate-600 truncate" title={inv.comments}>
-                                                            {inv.comments || <span className="text-slate-300 italic">-</span>}
-                                                        </div>
-                                                    )}
-                                                </td>
+                                                        <span className="text-xs text-slate-400">{inv.currency}</span>
+                                                    </div>
+                                                ) : (
+                                                    `${Number(inv.vat_amount || 0).toFixed(2)} ${inv.currency}`
+                                                )}
+                                            </td>
 
-                                                <td className="px-6 py-4">
-                                                    <div className="flex items-center gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                                        {isEditing ? (
-                                                            <>
-                                                                <button onClick={() => saveEdit(inv)} className="text-green-600 hover:bg-green-100 p-2 rounded-lg transition-colors" title={t('actions.save')}><Check size={16} /></button>
-                                                                <button onClick={cancelEdit} className="text-red-500 hover:bg-red-100 p-2 rounded-lg transition-colors" title={t('actions.cancel')}><X size={16} /></button>
-                                                            </>
+                                            {/* TAGS COLUMN */}
+                                            <td className="px-6 py-4">
+                                                {isEditing ? (
+                                                    <div className="flex flex-wrap gap-1.5 max-w-[200px]">
+                                                        {availableLabels.map(label => {
+                                                            const isSelected = (editForm.labels || []).includes(label);
+                                                            return (
+                                                                <span
+                                                                    key={label}
+                                                                    onClick={() => {
+                                                                        const currentLabels = editForm.labels || [];
+                                                                        const newLabels = isSelected
+                                                                            ? currentLabels.filter(l => l !== label)
+                                                                            : [...currentLabels, label];
+                                                                        setEditForm({ ...editForm, labels: newLabels });
+                                                                    }}
+                                                                    className={`cursor-pointer px-2 py-0.5 rounded text-[10px] border select-none transition-all ${isSelected
+                                                                        ? 'bg-blue-100 text-blue-700 border-blue-200 font-medium'
+                                                                        : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-slate-100'
+                                                                        }`}
+                                                                >
+                                                                    {label}
+                                                                </span>
+                                                            )
+                                                        })}
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex flex-wrap gap-1.5">
+                                                        {(inv.labels && inv.labels.length > 0) ? (
+                                                            inv.labels.map(l => (
+                                                                <span key={l} className="px-2 py-0.5 bg-blue-50/50 text-blue-600 rounded text-[10px] font-medium border border-blue-100">
+                                                                    {l}
+                                                                </span>
+                                                            ))
                                                         ) : (
-                                                            <>
-                                                                <button onClick={() => startEdit(inv)} className="text-slate-400 hover:text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-colors" title={t('actions.edit')}><Edit2 size={16} /></button>
-
-                                                                {onDeleteInvoice && (
-                                                                    <button onClick={() => handleDelete(inv)} className="text-slate-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors" title={t('actions.delete')}><Trash2 size={16} /></button>
-                                                                )}
-
-                                                                {inv.download_url && (
-                                                                    <a
-                                                                        href={inv.download_url}
-                                                                        target="_blank"
-                                                                        rel="noopener noreferrer"
-                                                                        className="text-slate-400 hover:text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-colors"
-                                                                        title={t('common.full_preview')}
-                                                                    >
-                                                                        <FileText size={16} />
-                                                                    </a>
-                                                                )}
-                                                            </>
+                                                            <span className="text-slate-300 text-xs italic tracking-wide">{t('table.no_labels')}</span>
                                                         )}
                                                     </div>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })
-                                ) : (
-                                    <tr>
-                                        <td colSpan="10" className="px-6 py-12 text-center text-slate-400 italic">
-                                            <div className="flex flex-col items-center gap-2">
-                                                <Search className="opacity-20 inline-block mb-1" size={32} />
-                                                <span>{t('table.no_invoices')}</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
+                                                )}
+                                            </td>
+
+                                            <td className="px-6 py-4">
+                                                {isEditing ? (
+                                                    <textarea
+                                                        value={editForm.comments || ""}
+                                                        onChange={e => setEditForm({ ...editForm, comments: e.target.value })}
+                                                        className="border border-slate-300 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs min-h-[2.5rem] resize-y"
+                                                        placeholder={t('table.add_comment')}
+                                                    />
+                                                ) : (
+                                                    <div className="max-w-xs text-xs text-slate-600 truncate" title={inv.comments}>
+                                                        {inv.comments || <span className="text-slate-300 italic">-</span>}
+                                                    </div>
+                                                )}
+                                            </td>
+
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                                    {isEditing ? (
+                                                        <>
+                                                            <button onClick={() => saveEdit(inv)} className="text-green-600 hover:bg-green-100 p-2 rounded-lg transition-colors" title={t('actions.save')}><Check size={16} /></button>
+                                                            <button onClick={cancelEdit} className="text-red-500 hover:bg-red-100 p-2 rounded-lg transition-colors" title={t('actions.cancel')}><X size={16} /></button>
+
+                                                            {/* File Upload Button (Hidden Input + Trigger) */}
+                                                            <label className="cursor-pointer text-blue-600 hover:bg-blue-100 p-2 rounded-lg transition-colors relative" title="Replace File">
+                                                                <Upload size={16} />
+                                                                <input
+                                                                    type="file"
+                                                                    className="hidden"
+                                                                    accept=".pdf,image/*"
+                                                                    onChange={(e) => {
+                                                                        if (e.target.files?.[0]) {
+                                                                            setEditForm(prev => ({ ...prev, file: e.target.files[0] }));
+                                                                            // Optional: Show some visual indicator that file is selected?
+                                                                            // For now the updated state will be used on save.
+                                                                            // Maybe change icon color?
+                                                                        }
+                                                                    }}
+                                                                />
+                                                                {editForm.file && (
+                                                                    <span className="absolute top-0 right-0 w-2 h-2 bg-blue-500 rounded-full border border-white"></span>
+                                                                )}
+                                                            </label>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <button onClick={() => startEdit(inv)} className="text-slate-400 hover:text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-colors" title={t('actions.edit')}><Edit2 size={16} /></button>
+
+                                                            {onDeleteInvoice && (
+                                                                <button onClick={() => handleDelete(inv)} className="text-slate-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors" title={t('actions.delete')}><Trash2 size={16} /></button>
+                                                            )}
+
+                                                            {inv.download_url && (
+                                                                <a
+                                                                    href={inv.download_url}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="text-slate-400 hover:text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-colors"
+                                                                    title={t('common.full_preview')}
+                                                                >
+                                                                    <FileText size={16} />
+                                                                </a>
+                                                            )}
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })
+                            ) : (
+                                <tr>
+                                    <td colSpan="10" className="px-6 py-12 text-center text-slate-400 italic">
+                                        <div className="flex flex-col items-center gap-2">
+                                            <Search className="opacity-20 inline-block mb-1" size={32} />
+                                            <span>{t('table.no_invoices')}</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            );
+        </div>
+    );
 }
