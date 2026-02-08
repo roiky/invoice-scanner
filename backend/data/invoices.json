@@ -1,270 +1,151 @@
 {
-  "19979ab58675f921": {
-    "id": "19979ab58675f921",
-    "filename": "34871.pdf",
+  "19bee2a40d1812b9": {
+    "id": "19bee2a40d1812b9",
+    "filename": "37989.pdf",
     "sender_email": "do-not-reply@kavanu.co",
     "subject": "קבלה מה קבענו בע\"מ",
-    "invoice_date": "2025-09-24",
+    "invoice_date": "2026-01-24",
     "vendor_name": "do-not-reply@kavanu.co",
     "total_amount": 224.2,
     "currency": "ILS",
     "vat_amount": 34.2,
-    "download_url": "http://127.0.0.1:8000/files/19979ab58675f921_34871.pdf",
+    "download_url": "http://127.0.0.1:8000/files/19bee2a40d1812b9_37989.pdf",
+    "labels": [
+      "עסק"
+    ],
+    "comments": "",
+    "status": "Processed"
+  },
+  "19bdb9dcbded21a3": {
+    "id": "19bdb9dcbded21a3",
+    "filename": "manual_19bdb9dcbded21a3_1770560338_022131429_DOCUMENT_2_9168.pdf",
+    "sender_email": "zehavasade2@gmail.com",
+    "subject": "זהבה שדה - חשבונית מס קבלה מספר 9168",
+    "invoice_date": "2026-01-20",
+    "vendor_name": "zehavasade2@gmail.com",
+    "total_amount": 500.0,
+    "currency": "ILS",
+    "vat_amount": 76.27,
+    "download_url": "http://127.0.0.1:8000/files/manual_19bdb9dcbded21a3_1770560338_022131429_DOCUMENT_2_9168.pdf",
+    "labels": [
+      "עסק"
+    ],
+    "comments": "",
+    "status": "Processed"
+  },
+  "19bd8a15d993d901": {
+    "id": "19bd8a15d993d901",
+    "filename": "Invoice-ZMDSZUVY-0002.pdf",
+    "sender_email": "\"Eleven Labs Inc.\" <invoice+statements+acct_1M07hSLmdOdiMXBs@stripe.com>",
+    "subject": "Your receipt from Eleven Labs Inc. #2353-2194-8961",
+    "invoice_date": "2026-01-20",
+    "vendor_name": "Eleven Labs Inc.",
+    "total_amount": 5.0,
+    "currency": "USD",
+    "vat_amount": 0.76,
+    "download_url": "http://127.0.0.1:8000/files/19bd8a15d993d901_Invoice-ZMDSZUVY-0002.pdf",
+    "labels": [
+      "עסק"
+    ],
+    "comments": "",
+    "status": "Processed"
+  },
+  "19bc152d45138d40": {
+    "id": "19bc152d45138d40",
+    "filename": "Print Receipt - RCD26900086.pdf",
+    "sender_email": "\"אלה מולכו\" <ella.moleco@havazingboim.com>",
+    "subject": "דרמה שירותי אסתטיקה בע\"מ  בברכה,  מצורפת קבלה מס' RCD26900086  שלום,",
+    "invoice_date": "2026-01-15",
+    "vendor_name": "אלה מולכו",
+    "total_amount": 500.0,
+    "currency": "ILS",
+    "vat_amount": 76.27,
+    "download_url": "http://127.0.0.1:8000/files/19bc152d45138d40_Print Receipt - RCD26900086.pdf",
     "labels": [
       "עסק"
     ],
     "comments": null,
     "status": "Processed"
   },
-  "1996d9cafb7977b4": {
-    "id": "1996d9cafb7977b4",
-    "filename": "unknown.pdf",
-    "sender_email": "Temu <temu@commerce.temuemail.com>",
-    "subject": "(פרסומת)תודה על הזמנתך",
-    "invoice_date": "2025-09-21",
-    "vendor_name": "Temu",
-    "total_amount": null,
+  "19bc0cfe2ba59ec1": {
+    "id": "19bc0cfe2ba59ec1",
+    "filename": "Print Receipt - RCD26900081.pdf",
+    "sender_email": "\"אלה מולכו\" <ella.moleco@havazingboim.com>",
+    "subject": "דרמה שירותי אסתטיקה בע\"מ  בברכה,  מצורפת קבלה מס' RCD26900081  שלום,",
+    "invoice_date": "2026-01-15",
+    "vendor_name": "אלה מולכו",
+    "total_amount": 17150.0,
     "currency": "ILS",
-    "vat_amount": null,
-    "download_url": "http://localhost:8000/files/generated_1996d9cafb7977b4.pdf",
+    "vat_amount": 2616.1,
+    "download_url": "http://127.0.0.1:8000/files/19bc0cfe2ba59ec1_Print Receipt - RCD26900081.pdf",
     "labels": [
-      "ספאם"
+      "עסק"
     ],
     "comments": null,
-    "status": "Cancelled"
-  },
-  "19963740054d515f": {
-    "id": "19963740054d515f",
-    "filename": "3cf83bbc-2731-4f3f-a951-4b5a0ea66bdd.pdf",
-    "sender_email": "\"חברת חשמל לישראל\" <noreplys@iec.co.il>",
-    "subject": "אקנין ספיר קבלה לחשבון חוזה 347416318",
-    "invoice_date": "2025-09-19",
-    "vendor_name": "חברת חשמל לישראל",
-    "total_amount": 1111.75,
-    "currency": "ILS",
-    "vat_amount": 169.59,
-    "download_url": "http://127.0.0.1:8000/files/19963740054d515f_3cf83bbc-2731-4f3f-a951-4b5a0ea66bdd.pdf",
-    "labels": [
-      "בית"
-    ],
-    "comments": "",
     "status": "Processed"
   },
-  "19960f3350aed8a8": {
-    "id": "19960f3350aed8a8",
-    "filename": "unknown.pdf",
-    "sender_email": "Temu <temu@commerce.temuemail.com>",
-    "subject": "(פרסומת)וואו, ההטבות שנפתחו פשוט מדהימות! 🎈",
-    "invoice_date": "2025-09-19",
-    "vendor_name": "Temu",
-    "total_amount": null,
+  "19bbccf9a3ff365e": {
+    "id": "19bbccf9a3ff365e",
+    "filename": "Print Receipt - RCD26900079.pdf",
+    "sender_email": "Arie Tokar <arie.tokar@havazingboim.com>",
+    "subject": "דרמה שירותי אסתטיקה בע\"מ  בברכה,  מצורפת קבלה מס' RCD26900079  שלום,",
+    "invoice_date": "2026-01-14",
+    "vendor_name": "Arie Tokar",
+    "total_amount": 500.0,
     "currency": "ILS",
-    "vat_amount": null,
-    "download_url": "http://localhost:8000/files/generated_19960f3350aed8a8.pdf",
+    "vat_amount": 76.27,
+    "download_url": "http://127.0.0.1:8000/files/19bbccf9a3ff365e_Print Receipt - RCD26900079.pdf",
     "labels": [
-      "ספאם"
+      "עסק"
     ],
     "comments": null,
-    "status": "Cancelled"
+    "status": "Processed"
   },
-  "1995c718c2fdce04": {
-    "id": "1995c718c2fdce04",
-    "filename": "unknown.pdf",
-    "sender_email": "Temu <temu@shop.temuemail.com>",
-    "subject": "(פרסומת)כמעט אזל!",
-    "invoice_date": "2025-09-18",
-    "vendor_name": "Temu",
-    "total_amount": null,
-    "currency": "ILS",
-    "vat_amount": null,
-    "download_url": "http://localhost:8000/files/generated_1995c718c2fdce04.pdf",
-    "labels": [
-      "ספאם"
-    ],
-    "comments": null,
-    "status": "Cancelled"
-  },
-  "1995b5df4654cd1c": {
-    "id": "1995b5df4654cd1c",
-    "filename": "unknown.pdf",
-    "sender_email": "Temu <temu@commerce.temuemail.com>",
-    "subject": "(פרסומת)₪1 פותח לכם חוויית קנייה קסומה!",
-    "invoice_date": "2025-09-18",
-    "vendor_name": "Temu",
-    "total_amount": null,
-    "currency": "ILS",
-    "vat_amount": null,
-    "download_url": "http://localhost:8000/files/generated_1995b5df4654cd1c.pdf",
-    "labels": [
-      "ספאם"
-    ],
-    "comments": null,
-    "status": "Cancelled"
-  },
-  "199498ff344166a0": {
-    "id": "199498ff344166a0",
-    "filename": "unknown.pdf",
-    "sender_email": "Temu <temu@commerce.temuemail.com>",
-    "subject": "(פרסומת)פתחו מבצעים במחיר מדהים של ₪1!",
-    "invoice_date": "2025-09-14",
-    "vendor_name": "Temu",
-    "total_amount": null,
-    "currency": "ILS",
-    "vat_amount": null,
-    "download_url": "http://localhost:8000/files/generated_199498ff344166a0.pdf",
-    "labels": [
-      "ספאם"
-    ],
-    "comments": null,
-    "status": "Cancelled"
-  },
-  "19946fc6653ad3c0": {
-    "id": "19946fc6653ad3c0",
-    "filename": "unknown.pdf",
-    "sender_email": "Temu <temu@commerce.temuemail.com>",
-    "subject": "(פרסומת)₪1 פותח לכם חוויית קנייה קסומה!",
-    "invoice_date": "2025-09-14",
-    "vendor_name": "Temu",
-    "total_amount": null,
-    "currency": "ILS",
-    "vat_amount": null,
-    "download_url": "http://localhost:8000/files/generated_19946fc6653ad3c0.pdf",
-    "labels": [
-      "ספאם"
-    ],
-    "comments": null,
-    "status": "Cancelled"
-  },
-  "19940ee3477755de": {
-    "id": "19940ee3477755de",
+  "19bbbec860b3f6ae": {
+    "id": "19bbbec860b3f6ae",
     "filename": "unknown.pdf",
     "sender_email": "Apple <no_reply@email.apple.com>",
     "subject": "‫הקבלה שלך מ‑Apple‬",
-    "invoice_date": "2025-09-13",
+    "invoice_date": "2026-01-14",
+    "vendor_name": "Apple",
+    "total_amount": 33.9,
+    "currency": "ILS",
+    "vat_amount": 5.17,
+    "download_url": "http://localhost:8000/files/generated_19bbbec860b3f6ae.pdf",
+    "labels": [
+      "אישי"
+    ],
+    "comments": null,
+    "status": "Processed"
+  },
+  "19bbb3258cbb95b8": {
+    "id": "19bbb3258cbb95b8",
+    "filename": "unknown.pdf",
+    "sender_email": "Apple <no_reply@email.apple.com>",
+    "subject": "‫הקבלה שלך מ‑Apple‬",
+    "invoice_date": "2026-01-14",
     "vendor_name": "Apple",
     "total_amount": 11.9,
     "currency": "ILS",
     "vat_amount": 1.82,
-    "download_url": "http://localhost:8000/files/generated_19946fc6653ad3c0.pdf",
-    "labels": [
-      "עסק"
-    ],
-    "comments": "",
-    "status": "Processed"
-  },
-  "1993e4b300829273": {
-    "id": "1993e4b300829273",
-    "filename": "manual_1993e4b300829273_1770555788_rivhit.pdf",
-    "sender_email": "donotreply@rivhit.co.il",
-    "subject": "nh שיווק והפצה - חשבונית מס קבלה מספר 889",
-    "invoice_date": "2025-09-12",
-    "vendor_name": "donotreply@rivhit.co.il",
-    "total_amount": 352.0,
-    "currency": "ILS",
-    "vat_amount": 53.69,
-    "download_url": "http://127.0.0.1:8000/files/manual_1993e4b300829273_1770555788_rivhit.pdf",
-    "labels": [
-      "עסק"
-    ],
-    "comments": "",
-    "status": "Processed"
-  },
-  "1993a1cb0b17cf72": {
-    "id": "1993a1cb0b17cf72",
-    "filename": "unknown.pdf",
-    "sender_email": "Temu <temu@commerce.temuemail.com>",
-    "subject": "(פרסומת)₪1 פותח לכם חוויית קנייה קסומה!",
-    "invoice_date": "2025-09-11",
-    "vendor_name": "Temu",
-    "total_amount": null,
-    "currency": "ILS",
-    "vat_amount": null,
-    "download_url": "http://localhost:8000/files/generated_1993a1cb0b17cf72.pdf",
-    "labels": [
-      "ספאם"
-    ],
-    "comments": null,
-    "status": "Cancelled"
-  },
-  "19922b87f08cc246": {
-    "id": "19922b87f08cc246",
-    "filename": "unknown.pdf",
-    "sender_email": "Temu <temu@commerce.temuemail.com>",
-    "subject": "(פרסומת)₪1 פותח לכם חוויית קנייה קסומה!",
-    "invoice_date": "2025-09-07",
-    "vendor_name": "Temu",
-    "total_amount": null,
-    "currency": "ILS",
-    "vat_amount": null,
-    "download_url": "http://localhost:8000/files/generated_19922b87f08cc246.pdf",
-    "labels": [
-      "ספאם"
-    ],
-    "comments": null,
-    "status": "Cancelled"
-  },
-  "1990fd7cb02ea5df": {
-    "id": "1990fd7cb02ea5df",
-    "filename": "unknown.pdf",
-    "sender_email": "Apple <no_reply@email.apple.com>",
-    "subject": "‫הקבלה שלך מ‑Apple‬",
-    "invoice_date": "2025-09-03",
-    "vendor_name": "Apple",
-    "total_amount": 33.9,
-    "currency": "ILS",
-    "vat_amount": 5.17,
-    "download_url": "http://localhost:8000/files/generated_1990fd7cb02ea5df.pdf",
-    "labels": [
-      "עסק"
-    ],
-    "comments": null,
-    "status": "Processed"
-  },
-  "1991dc9510cbaa07": {
-    "id": "1991dc9510cbaa07",
-    "filename": "unknown.pdf",
-    "sender_email": "Temu <temu@commerce.temuemail.com>",
-    "subject": "(פרסומת)מביעים תודה עם הפתעה ב־₪1 🎉",
-    "invoice_date": "2025-09-06",
-    "vendor_name": "Temu",
-    "total_amount": null,
-    "currency": "ILS",
-    "vat_amount": null,
-    "download_url": "http://localhost:8000/files/generated_1991dc9510cbaa07.pdf",
-    "labels": [
-      "ספאם"
-    ],
-    "comments": null,
-    "status": "Cancelled"
-  },
-  "19c24dc9fdefee8c": {
-    "id": "19c24dc9fdefee8c",
-    "filename": "unknown.pdf",
-    "sender_email": "Apple <no_reply@email.apple.com>",
-    "subject": "‫הקבלה שלך מ‑Apple‬",
-    "invoice_date": "2026-02-03",
-    "vendor_name": "Apple",
-    "total_amount": 33.9,
-    "currency": "ILS",
-    "vat_amount": 5.17,
-    "download_url": "http://localhost:8000/files/generated_19c24dc9fdefee8c.pdf",
+    "download_url": "http://localhost:8000/files/generated_19bbbec860b3f6ae.pdf",
     "labels": [
       "אישי"
     ],
-    "comments": "",
+    "comments": null,
     "status": "Processed"
   },
-  "19c225be4dcf66ef": {
-    "id": "19c225be4dcf66ef",
-    "filename": "manual_19c225be4dcf66ef_1770555700_חשבוניתמסקבלהמספר3029095-YehudaLeib46-03.02.2026.pdf",
+  "19b82bd33e41240d": {
+    "id": "19b82bd33e41240d",
+    "filename": "manual_19b82bd33e41240d_1770560391_TaxInvoiceReceiptNumber3026837-YehudaLeib46-03.01.2026.pdf",
     "sender_email": "Cloud Be <no-reply@payplus.co.il>",
-    "subject": "חשבונית מס קבלה - Cloud Be",
-    "invoice_date": "2026-02-03",
+    "subject": "Tax Invoice Receipt - Cloud Be",
+    "invoice_date": "2026-01-03",
     "vendor_name": "Cloud Be",
     "total_amount": 74.54,
     "currency": "ILS",
     "vat_amount": 11.37,
-    "download_url": "http://127.0.0.1:8000/files/manual_19c225be4dcf66ef_1770555700_חשבוניתמסקבלהמספר3029095-YehudaLeib46-03.02.2026.pdf",
+    "download_url": "http://127.0.0.1:8000/files/manual_19b82bd33e41240d_1770560391_TaxInvoiceReceiptNumber3026837-YehudaLeib46-03.01.2026.pdf",
     "labels": [
       "עסק"
     ],

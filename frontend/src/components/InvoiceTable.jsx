@@ -544,7 +544,15 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                             }}
                                                             className="border border-slate-300 rounded px-1 py-1 w-20 text-right focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
                                                         />
-                                                        <span className="text-xs text-slate-400">{inv.currency}</span>
+                                                        <select
+                                                            value={editForm.currency}
+                                                            onChange={e => setEditForm({ ...editForm, currency: e.target.value })}
+                                                            className="border border-slate-300 rounded px-0 py-1 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white w-12"
+                                                        >
+                                                            <option value="ILS">ILS</option>
+                                                            <option value="USD">USD</option>
+                                                            <option value="EUR">EUR</option>
+                                                        </select>
                                                     </div>
                                                 ) : (
                                                     `${Number(inv.total_amount || 0).toFixed(2)} ${inv.currency}`
@@ -561,7 +569,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                             onChange={e => setEditForm({ ...editForm, vat_amount: e.target.value ? parseFloat(e.target.value) : null })}
                                                             className="border border-slate-300 rounded px-1 py-1 w-16 text-right focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
                                                         />
-                                                        <span className="text-xs text-slate-400">{inv.currency}</span>
+                                                        <span className="text-xs text-slate-400">{editForm.currency}</span>
                                                     </div>
                                                 ) : (
                                                     `${Number(inv.vat_amount || 0).toFixed(2)} ${inv.currency}`
