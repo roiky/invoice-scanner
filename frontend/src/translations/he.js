@@ -20,12 +20,22 @@ export const he = {
     scan: {
         title: "סריקה חדשה",
         subtitle: "בחר טווח תאריכים לסריקת חשבוניות ב-Gmail.",
+        date_range: "טווח תאריכים",
         start_date: "תאריך התחלה",
         end_date: "תאריך סיום",
         button: "סרוק עכשיו",
         scanning: "סורק...",
         results_title: "סורק את תיבת הדואר...",
-        results_desc: "זה עשוי לקחת רגע, תלוי בטווח התאריכים ובכמות המיילים."
+        results_desc: "זה עשוי לקחת רגע, תלוי בטווח התאריכים ובכמות המיילים.",
+        shortcuts: {
+            this_month: "החודש",
+            last_month: "חודש שעבר",
+            this_year: "השנה",
+            last_year: "שנה שעברה"
+        },
+        clear_selection: "נקה בחירה",
+        done: "סיום",
+        quick_select: "בחירה מהירה"
     },
     history: {
         title: "היסטוריית חשבוניות",

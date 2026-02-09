@@ -2,9 +2,10 @@ import React, { useState, useMemo } from 'react';
 import { FileText, CheckCircle, AlertCircle, Download, Search, XCircle, Edit2, Trash2, Check, X, ArrowUp, ArrowDown, ArrowUpDown, Calendar, Tag, Upload } from 'lucide-react';
 import { updateInvoice, deleteInvoice, uploadInvoiceFile } from '../api';
 import { DateInput } from './DateInput';
+import { DateRangePicker } from './DateRangePicker';
 import { getLabelColor } from '../utils/colors';
 
-export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, onDeleteInvoice, onBulkDelete, onBulkStatusChange, onBulkAddLabel, t = (s) => s }) {
+export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, onDeleteInvoice, onBulkDelete, onBulkStatusChange, onBulkAddLabel, t = (s) => s, dir = 'ltr' }) {
     const [filterText, setFilterText] = useState("");
     const [filterStatus, setFilterStatus] = useState([]); // Array of strings
     const [filterLabel, setFilterLabel] = useState([]); // Array of strings
@@ -347,22 +348,17 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
 
                 {/* Bottom Row: Date Filter & Bulk Actions */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-between items-center pt-4 border-t border-slate-50">
-                    <div className="flex items-center gap-3 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+                    <div className="flex items-center gap-3 w-full sm:w-auto pb-1 sm:pb-0">
                         <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap">
                             <Calendar size={14} /> {t('table.date')}:
                         </span>
-                        <DateInput
-                            value={dateRange.start}
-                            onChange={(val) => setDateRange(prev => ({ ...prev, start: val }))}
-                            placeholder={t('scan.start_date')}
-                            className="w-32 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-md text-sm focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
-                        />
-                        <span className="text-slate-300">/</span>
-                        <DateInput
-                            value={dateRange.end}
-                            onChange={(val) => setDateRange(prev => ({ ...prev, end: val }))}
-                            placeholder={t('scan.end_date')}
-                            className="w-32 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-md text-sm focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all"
+                        <DateRangePicker
+                            startDate={dateRange.start}
+                            endDate={dateRange.end}
+                            onChange={(range) => setDateRange({ start: range.start, end: range.end })}
+                            className="w-full sm:w-72"
+                            t={t}
+                            dir={dir}
                         />
 
 

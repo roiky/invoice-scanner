@@ -19,13 +19,23 @@ export const en = {
     },
     scan: {
         title: "Run New Scan",
-        subtitle: "Select a date range to find invoices in your Gmail.",
+        subtitle: "Select a date range to check for invoices in your Gmail",
+        date_range: "Date Range",
         start_date: "Start Date",
         end_date: "End Date",
         button: "Scan Now",
         scanning: "Scanning...",
         results_title: "Scanning your inbox...",
-        results_desc: "This might take a moment depending on the date range and number of emails."
+        results_desc: "This might take a moment depending on the date range and number of emails.",
+        shortcuts: {
+            this_month: "This Month",
+            last_month: "Last Month",
+            this_year: "This Year",
+            last_year: "Last Year"
+        },
+        clear_selection: "Clear Selection",
+        done: "Done",
+        quick_select: "Quick Select"
     },
     history: {
         title: "Invoice History",

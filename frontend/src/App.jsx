@@ -18,8 +18,18 @@ function AppContent() {
   const [stats, setStats] = useState(null)
   const [scanResults, setScanResults] = useState([])
   // Date state for scan form
-  const [startDate, setStartDate] = useState(new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0])
-  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0])
+  const [startDate, setStartDate] = useState(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-01-01`;
+  });
+  const [endDate, setEndDate] = useState(() => {
+    const now = new Date();
+    // Format to YYYY-MM-DD using local time
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  });
 
   // Labels state
   const [labels, setLabels] = useState([])
@@ -378,6 +388,7 @@ function AppContent() {
               setStartDate={setStartDate}
               setEndDate={setEndDate}
               t={t} // Pass t function
+              dir={dir}
             />
 
             {/* Results Section */}
@@ -425,6 +436,7 @@ function AppContent() {
                   onBulkStatusChange={handleBulkStatusChange}
                   onBulkAddLabel={handleBulkAddLabel}
                   t={t}
+                  dir={dir}
                 />
               </div>
             )}
@@ -464,6 +476,7 @@ function AppContent() {
               onBulkStatusChange={handleBulkStatusChange}
               onBulkAddLabel={handleBulkAddLabel}
               t={t}
+              dir={dir}
             />
           </div>
         ) : activeTab === 'rules' ? (
