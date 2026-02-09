@@ -221,5 +221,22 @@
     ],
     "comments": null,
     "status": "Processed"
+  },
+  "19bf5466616557ae": {
+    "id": "19bf5466616557ae",
+    "filename": "Print Receipt - RC2630042961.pdf",
+    "sender_email": "tabula <PazGasDoNotReply@pazgas.co.il>",
+    "subject": "קבלה חדשה מפזגז מספר RC2630042961",
+    "invoice_date": "2026-01-25",
+    "vendor_name": "פזגז",
+    "total_amount": 126.59,
+    "currency": "ILS",
+    "vat_amount": 19.31,
+    "download_url": "http://127.0.0.1:8000/files/19bf5466616557ae_Print Receipt - RC2630042961.pdf",
+    "labels": [
+      "בית"
+    ],
+    "comments": "",
+    "status": "Processed"
   }
 }
