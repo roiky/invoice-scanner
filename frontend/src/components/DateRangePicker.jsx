@@ -228,17 +228,6 @@ export function DateRangePicker({
 
                         {/* Calendar */}
                         <div className={`flex-1 border-slate-50 pt-2 sm:pt-0 ${dir === 'rtl' ? 'sm:border-r sm:pr-4' : 'sm:border-l sm:pl-4'}`}>
-                            <style>{`
-                                .rdp-day_selected:not(.rdp-day_range_start):not(.rdp-day_range_end) {
-                                    background-color: #faa685ff !important;
-                                    color: #af1e1eff !important;
-                                    font-weight: 600;
-                                }
-                                .rdp-day_selected:hover:not(.rdp-day_range_start):not(.rdp-day_range_end) {
-                                    background-color: #faa685ff !important;
-                                    color: #8a1e1eff !important;
-                                }
-                            `}</style>
                             <DayPicker
                                 mode="range"
                                 selected={selectedRange}
@@ -254,9 +243,9 @@ export function DateRangePicker({
                                     head_cell: { width: '32px', fontSize: '0.75rem' }
                                 }}
                                 classNames={{
-                                    selected: "bg-blue-600 text-white hover:bg-blue-600 hover:text-white",
-                                    range_start: dir === 'rtl' ? "rounded-r-lg" : "rounded-l-lg",
-                                    range_end: dir === 'rtl' ? "rounded-l-lg" : "rounded-r-lg",
+                                    selected: "bg-blue-50 text-slate-900 font-semibold hover:bg-blue-100 hover:text-slate-900",
+                                    range_start: dir === 'rtl' ? "rounded-r-lg !bg-blue-600 !text-white hover:!bg-blue-700 hover:!text-white" : "rounded-l-lg !bg-blue-600 !text-white hover:!bg-blue-700 hover:!text-white",
+                                    range_end: dir === 'rtl' ? "rounded-l-lg !bg-blue-600 !text-white hover:!bg-blue-700 hover:!text-white" : "rounded-r-lg !bg-blue-600 !text-white hover:!bg-blue-700 hover:!text-white",
                                     today: "font-bold text-blue-600",
                                     months: "justify-center",
                                 }}
