@@ -8,9 +8,13 @@ import { StatsCard } from './components/StatsCard'
 import { LabelManager } from './components/LabelManager'
 import { RulesTab } from './components/RulesTab'
 import { LanguageProvider, useLanguage } from './context/LanguageContext'
+import { ThemeProvider } from './context/ThemeContext';
+import { useTheme } from './hooks/useTheme';
+import { Moon, Sun } from 'lucide-react'
 
 function AppContent() {
   const { t, language, setLanguage, dir } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState('dashboard')
   const [invoices, setInvoices] = useState([])
   const [loading, setLoading] = useState(false)
@@ -228,9 +232,9 @@ function AppContent() {
   const historyInvoices = invoices;
 
   return (
-    <div className={`min-h-screen bg-slate-50 font-sans text-slate-900 ${language === 'he' ? 'font-hebrew' : ''}`}>
+    <div className={`min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 transition-colors duration-300 ${language === 'he' ? 'font-hebrew' : ''}`}>
       {/* Navbar */}
-      <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-sm transition-all duration-300">
+      <header className="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-800/60 shadow-sm transition-all duration-300">
         <div className="max-w-[80%] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-2 rounded-lg shadow-lg shadow-blue-500/20">
@@ -250,7 +254,7 @@ function AppContent() {
                 onClick={() => setActiveTab('dashboard')}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 ${activeTab === 'dashboard'
                   ? 'bg-white text-blue-700 shadow-sm ring-1 ring-slate-200'
-                  : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
                   }`}
               >
                 <LayoutDashboard size={18} />
@@ -260,7 +264,7 @@ function AppContent() {
                 onClick={() => setActiveTab('history')}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 ${activeTab === 'history'
                   ? 'bg-white text-blue-700 shadow-sm ring-1 ring-slate-200'
-                  : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
                   }`}
               >
                 <History size={18} />
@@ -270,7 +274,7 @@ function AppContent() {
                 onClick={() => setActiveTab('rules')}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 ${activeTab === 'rules'
                   ? 'bg-white text-blue-700 shadow-sm ring-1 ring-slate-200'
-                  : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
                   }`}
               >
                 <Gavel size={18} />
@@ -278,11 +282,23 @@ function AppContent() {
               </button>
             </nav>
 
+            {/* Theme Toggle */}
+            <button
+              onClick={() => {
+                console.log('Theme toggle button clicked');
+                toggleTheme();
+              }}
+              className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
+              title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+            >
+              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+
             {/* Language Switcher */}
             <div className="relative">
               <button
                 onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-                className="p-2 rounded-lg hover:bg-slate-100 text-slate-600 transition-colors flex items-center gap-2"
+                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors flex items-center gap-2"
               >
                 <Globe size={20} />
                 <span className="text-sm font-medium uppercase">{language}</span>
@@ -353,8 +369,8 @@ function AppContent() {
             <div className="space-y-6">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                  <h2 className="text-3xl font-bold text-slate-800 font-display">{t('dashboard.welcome')}</h2>
-                  <p className="text-slate-500 mt-1">{t('dashboard.subtitle')}</p>
+                  <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 font-display">{t('dashboard.welcome')}</h2>
+                  <p className="text-slate-500 dark:text-slate-400 mt-1">{t('dashboard.subtitle')}</p>
                 </div>
               </div>
 
@@ -400,8 +416,8 @@ function AppContent() {
                     <Scan className="text-blue-600 animate-pulse" size={32} />
                   </div>
                 </div>
-                <h3 className="text-lg font-semibold text-slate-800 mt-6">{t('scan.results_title')}</h3>
-                <p className="text-slate-400 text-sm mt-1">{t('scan.results_desc')}</p>
+                <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mt-6">{t('scan.results_title')}</h3>
+                <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">{t('scan.results_desc')}</p>
               </div>
             )}
 
@@ -446,8 +462,8 @@ function AppContent() {
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div>
-                <h2 className="text-3xl font-bold text-slate-800 font-display">{t('history.title')}</h2>
-                <p className="text-slate-500 mt-1">{t('history.subtitle')}</p>
+                <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 font-display">{t('history.title')}</h2>
+                <p className="text-slate-500 dark:text-slate-400 mt-1">{t('history.subtitle')}</p>
               </div>
 
               <button
@@ -498,7 +514,9 @@ function AppContent() {
 function App() {
   return (
     <LanguageProvider>
-      <AppContent />
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
     </LanguageProvider>
   )
 }

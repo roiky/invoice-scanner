@@ -81,9 +81,9 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
-                <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                    <h3 className="font-semibold text-lg text-slate-800">{t('manual.title')}</h3>
+            <div className="bg-white dark:bg-slate-900 rounded-xl shadow-xl dark:shadow-slate-950/50 w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+                <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
+                    <h3 className="font-semibold text-lg text-slate-800 dark:text-slate-100">{t('manual.title')}</h3>
                     <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition-colors">
                         <X size={20} />
                     </button>
@@ -92,18 +92,18 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
 
                     {/* File Upload Area */}
-                    <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:bg-slate-50 transition-colors cursor-pointer relative">
+                    <div className="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg p-6 text-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer relative">
                         <input
                             type="file"
                             className="absolute inset-0 opacity-0 cursor-pointer"
                             accept=".pdf,image/*"
                             onChange={(e) => setFile(e.target.files[0])}
                         />
-                        <div className="flex flex-col items-center gap-2 text-slate-500">
+                        <div className="flex flex-col items-center gap-2 text-slate-500 dark:text-slate-400">
                             {file ? (
                                 <>
                                     <FileText className="text-blue-500" size={32} />
-                                    <span className="text-sm font-medium text-slate-700">{file.name}</span>
+                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{file.name}</span>
                                     <span className="text-xs text-blue-600">{t('manual.file_change')}</span>
                                 </>
                             ) : (
@@ -117,20 +117,20 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1">
-                            <label className="text-xs font-semibold text-slate-500 uppercase">{t('table.date')}</label>
+                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">{t('table.date')}</label>
                             <DateInput
                                 required
                                 value={formData.invoice_date}
                                 onChange={val => setFormData({ ...formData, invoice_date: val })}
-                                className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                             />
                         </div>
                         <div className="space-y-1">
-                            <label className="text-xs font-semibold text-slate-500 uppercase">{t('manual.currency')}</label>
+                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">{t('manual.currency')}</label>
                             <select
                                 value={formData.currency}
                                 onChange={e => setFormData({ ...formData, currency: e.target.value })}
-                                className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                             >
                                 <option value="ILS">ILS (₪)</option>
                                 <option value="USD">USD ($)</option>
@@ -140,19 +140,19 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
                     </div>
 
                     <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500 uppercase">{t('table.vendor')}</label>
+                        <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">{t('table.vendor')}</label>
                         <input
                             required
                             type="text"
                             placeholder={t('manual.vendor_placeholder')}
                             value={formData.vendor_name}
                             onChange={e => setFormData({ ...formData, vendor_name: e.target.value })}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                         />
                     </div>
 
                     <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500 uppercase">{t('table.amount')}</label>
+                        <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">{t('table.amount')}</label>
                         <div className="relative">
                             <input
                                 required
@@ -170,14 +170,14 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
                                     }
                                     setFormData({ ...formData, total_amount: val, vat_amount: vat });
                                 }}
-                                className="w-full rtl:pl-3 rtl:pr-8 ltr:pl-8 ltr:pr-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                className="w-full rtl:pl-3 rtl:pr-8 ltr:pl-8 ltr:pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                             />
                             <DollarSign className="absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-400" size={16} />
                         </div>
                     </div>
 
                     <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500 uppercase">VAT (18%)</label>
+                        <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">VAT (18%)</label>
                         <div className="relative">
                             <input
                                 type="number"
@@ -185,26 +185,26 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
                                 placeholder="0.00"
                                 value={formData.vat_amount || ''}
                                 onChange={e => setFormData({ ...formData, vat_amount: e.target.value })}
-                                className="w-full rtl:pl-3 rtl:pr-8 ltr:pl-8 ltr:pr-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                className="w-full rtl:pl-3 rtl:pr-8 ltr:pl-8 ltr:pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                             />
                             <DollarSign className="absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-400" size={16} />
                         </div>
                     </div>
 
                     <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500 uppercase">{t('manual.subject')}</label>
+                        <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">{t('manual.subject')}</label>
                         <input
                             type="text"
                             placeholder={t('manual.subject_placeholder')}
                             value={formData.subject}
                             onChange={e => setFormData({ ...formData, subject: e.target.value })}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                         />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1">
-                            <label className="text-xs font-semibold text-slate-500 uppercase">{t('table.status')}</label>
+                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">{t('table.status')}</label>
                             <div className="flex flex-col gap-2">
                                 {[
                                     { val: 'Processed', color: 'green', icon: <div className="w-2 h-2 rounded-full bg-green-500" /> },
@@ -218,8 +218,8 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
                                         onClick={() => setFormData({ ...formData, status: val })}
                                         className={`px-3 py-2 rounded-lg text-xs font-bold border transition-all flex items-center justify-start gap-2
                                         ${formData.status === val
-                                                ? `bg-${color}-50 text-${color}-700 border-${color}-200 shadow-sm ring-1 ring-${color}-200`
-                                                : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`}
+                                                ? `bg-${color}-50 dark:bg-${color}-900/20 text-${color}-700 dark:text-${color}-400 border-${color}-200 dark:border-${color}-900/30 shadow-sm ring-1 ring-${color}-200 dark:ring-${color}-900/50`
+                                                : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'}`}
                                     >
                                         {icon}
                                         {val}
@@ -228,7 +228,7 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <label className="text-xs font-semibold text-slate-500 uppercase">{t('table.labels')}</label>
+                            <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">{t('table.labels')}</label>
                             <div className="flex flex-wrap gap-2 min-h-[42px] content-center">
                                 {availableLabels.length > 0 ? availableLabels.map(label => {
                                     const color = getLabelColor(label);
@@ -245,8 +245,8 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
                                                 setFormData({ ...formData, labels: newLabels });
                                             }}
                                             className={`px-2.5 py-1 rounded text-xs border transition-all ${isSelected
-                                                ? `${color.bg} ${color.text} ${color.border} font-bold shadow-sm ring-1 ring-offset-1 ring-${color.border.replace('border-', '')}`
-                                                : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:border-slate-300'
+                                                ? `${color.bg} ${color.text} ${color.border} font-bold shadow-sm ring-1 ring-offset-1 dark:ring-offset-slate-900 ring-${color.border.replace('border-', '')}`
+                                                : 'bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
                                                 }`}
                                         >
                                             {label}

@@ -172,10 +172,10 @@ export function DateRangePicker({
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className={`flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg shadow-sm hover:bg-slate-50 transition-all w-full md:w-auto justify-between md:justify-start ${isOpen ? 'ring-2 ring-blue-500/10 border-blue-500' : ''}`}
+                className={`flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-all w-full md:w-auto justify-between md:justify-start ${isOpen ? 'ring-2 ring-blue-500/10 border-blue-500 dark:border-blue-500' : ''}`}
             >
-                <div className="flex items-center gap-2 text-slate-700 text-sm">
-                    <CalendarIcon size={16} className="text-slate-400" />
+                <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200 text-sm">
+                    <CalendarIcon size={16} className="text-slate-400 dark:text-slate-500" />
                     <span className="font-medium">{displayText}</span>
                 </div>
                 <div className="flex items-center gap-1">
@@ -186,7 +186,7 @@ export function DateRangePicker({
                                 e.stopPropagation();
                                 onChange({ start: null, end: null });
                             }}
-                            className="p-1 hover:bg-slate-200 rounded-full text-slate-400 hover:text-red-500 transition-colors"
+                            className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 transition-colors"
                             title={t ? t('scan.clear_selection') : 'Clear Selection'}
                         >
                             <X size={14} />
@@ -197,52 +197,52 @@ export function DateRangePicker({
             </button>
 
             {isOpen && (
-                <div className={`absolute top-full mt-2 z-50 bg-white rounded-xl shadow-xl border border-slate-100 p-3 w-[340px] sm:w-[580px] animate-in fade-in zoom-in-95 duration-200 ${align === 'right' ? 'right-0' : (dir === 'rtl' ? 'right-0' : 'left-0')}`}>
+                <div className={`absolute top-full mt-2 z-50 bg-white dark:bg-slate-900 rounded-xl shadow-xl dark:shadow-slate-950/50 border border-slate-100 dark:border-slate-800 p-3 w-[340px] sm:w-[580px] animate-in fade-in zoom-in-95 duration-200 ${align === 'right' ? 'right-0' : (dir === 'rtl' ? 'right-0' : 'left-0')}`}>
                     <div className="flex flex-col sm:flex-row gap-4">
                         {/* Sidebar / Shortcuts */}
                         <div className="w-full sm:w-36 flex flex-col gap-1.5 shrink-0">
-                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">{t ? t('scan.quick_select') : 'Quick Select'}</div>
-                            <button type="button" onClick={() => applyShortcut('thisMonth')} className="text-left px-2.5 py-1.5 text-xs text-slate-600 hover:bg-slate-50 hover:text-blue-600 rounded-md transition-colors flex items-center justify-between group">
+                            <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">{t ? t('scan.quick_select') : 'Quick Select'}</div>
+                            <button type="button" onClick={() => applyShortcut('thisMonth')} className="text-left px-2.5 py-1.5 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 rounded-md transition-colors flex items-center justify-between group">
                                 {t ? t('scan.shortcuts.this_month') : 'This Month'}
                             </button>
-                            <button type="button" onClick={() => applyShortcut('lastMonth')} className="text-left px-2.5 py-1.5 text-xs text-slate-600 hover:bg-slate-50 hover:text-blue-600 rounded-md transition-colors">
+                            <button type="button" onClick={() => applyShortcut('lastMonth')} className="text-left px-2.5 py-1.5 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 rounded-md transition-colors">
                                 {t ? t('scan.shortcuts.last_month') : 'Last Month'}
                             </button>
-                            <button type="button" onClick={() => applyShortcut('thisYear')} className="text-left px-2.5 py-1.5 text-xs text-slate-600 hover:bg-slate-50 hover:text-blue-600 rounded-md transition-colors">
+                            <button type="button" onClick={() => applyShortcut('thisYear')} className="text-left px-2.5 py-1.5 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 rounded-md transition-colors">
                                 {t ? t('scan.shortcuts.this_year') : 'This Year'}
                             </button>
-                            <button type="button" onClick={() => applyShortcut('lastYear')} className="text-left px-2.5 py-1.5 text-xs text-slate-600 hover:bg-slate-50 hover:text-blue-600 rounded-md transition-colors">
+                            <button type="button" onClick={() => applyShortcut('lastYear')} className="text-left px-2.5 py-1.5 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-blue-600 dark:hover:text-blue-400 rounded-md transition-colors">
                                 {t ? t('scan.shortcuts.last_year') : 'Last Year'}
                             </button>
 
-                            <div className="h-px bg-slate-100 my-1"></div>
+                            <div className="h-px bg-slate-100 dark:bg-slate-800 my-1"></div>
 
                             <div className="space-y-2">
                                 <div className="space-y-0.5">
-                                    <label className="text-[10px] font-semibold text-slate-500">{t ? t('scan.start_date') : 'Start Date'}</label>
+                                    <label className="text-[10px] font-semibold text-slate-500 dark:text-slate-500">{t ? t('scan.start_date') : 'Start Date'}</label>
                                     <input
                                         type="text"
                                         placeholder="DD/MM/YYYY"
                                         value={startInput}
                                         onChange={(e) => handleManualInputChange('start', e.target.value)}
-                                        className="w-full px-2 py-1 border border-slate-200 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                        className="w-full px-2 py-1 border border-slate-200 dark:border-slate-700 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                                     />
                                 </div>
                                 <div className="space-y-0.5">
-                                    <label className="text-[10px] font-semibold text-slate-500">{t ? t('scan.end_date') : 'End Date'}</label>
+                                    <label className="text-[10px] font-semibold text-slate-500 dark:text-slate-500">{t ? t('scan.end_date') : 'End Date'}</label>
                                     <input
                                         type="text"
                                         placeholder="DD/MM/YYYY"
                                         value={endInput}
                                         onChange={(e) => handleManualInputChange('end', e.target.value)}
-                                        className="w-full px-2 py-1 border border-slate-200 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                        className="w-full px-2 py-1 border border-slate-200 dark:border-slate-700 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                                     />
                                 </div>
                             </div>
                         </div>
 
                         {/* Calendar */}
-                        <div className={`flex-1 border-slate-50 pt-2 sm:pt-0 ${dir === 'rtl' ? 'sm:border-r sm:pr-4' : 'sm:border-l sm:pl-4'}`}>
+                        <div className={`flex-1 border-slate-50 dark:border-slate-800 pt-2 sm:pt-0 ${dir === 'rtl' ? 'sm:border-r sm:pr-4' : 'sm:border-l sm:pl-4'}`}>
                             <DayPicker
                                 mode="range"
                                 selected={selectedRange}
@@ -251,17 +251,17 @@ export function DateRangePicker({
                                 onMonthChange={setMonth}
                                 showOutsideDays
                                 dir={dir}
-                                className="border-0 p-0 m-0"
+                                className="border-0 p-0 m-0 dark:text-slate-200"
                                 styles={{
                                     day: { width: '32px', height: '32px', fontSize: '0.8rem' },
                                     caption: { fontSize: '0.9rem', marginBottom: '0.5rem' },
                                     head_cell: { width: '32px', fontSize: '0.75rem' }
                                 }}
                                 classNames={{
-                                    selected: "bg-blue-50 text-slate-900 font-semibold hover:bg-blue-100 hover:text-slate-900",
+                                    selected: "bg-blue-50 dark:bg-blue-900/40 text-slate-900 dark:text-slate-100 font-semibold hover:bg-blue-100 dark:hover:bg-blue-900/60 hover:text-slate-900 dark:hover:text-slate-100",
                                     range_start: dir === 'rtl' ? "rounded-r-lg !bg-blue-600 !text-white hover:!bg-blue-700 hover:!text-white" : "rounded-l-lg !bg-blue-600 !text-white hover:!bg-blue-700 hover:!text-white",
                                     range_end: dir === 'rtl' ? "rounded-l-lg !bg-blue-600 !text-white hover:!bg-blue-700 hover:!text-white" : "rounded-r-lg !bg-blue-600 !text-white hover:!bg-blue-700 hover:!text-white",
-                                    today: "font-bold text-blue-600",
+                                    today: "font-bold text-blue-600 dark:text-blue-400",
                                     months: "justify-center",
                                 }}
                             />
@@ -269,16 +269,16 @@ export function DateRangePicker({
                     </div>
 
                     {/* Footer */}
-                    <div className="flex items-center justify-between pt-4 mt-4 border-t border-slate-50">
+                    <div className="flex items-center justify-between pt-4 mt-4 border-t border-slate-50 dark:border-slate-800">
                         <button
                             onClick={() => onChange({ start: null, end: null })}
-                            className="text-xs text-slate-400 hover:text-red-500 transition-colors font-medium"
+                            className="text-xs text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 transition-colors font-medium"
                         >
                             {t ? t('scan.clear_selection') : 'Clear Selection'}
                         </button>
                         <button
                             onClick={() => setIsOpen(false)}
-                            className="bg-slate-900 text-white px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-slate-800 transition-colors shadow-sm"
+                            className="bg-slate-900 dark:bg-blue-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-slate-800 dark:hover:bg-blue-500 transition-colors shadow-sm"
                         >
                             {t ? t('scan.done') : 'Done'}
                         </button>

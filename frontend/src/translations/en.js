@@ -68,7 +68,6 @@ export const en = {
         status: "Status",
         actions: "Actions",
         subject: "Subject",
-        amount: "Amount",
         labels: "Labels",
         comments: "Comments",
         add_comment: "Add a comment...",

@@ -68,7 +68,6 @@ export const he = {
         status: "סטטוס",
         actions: "פעולות",
         subject: "נושא",
-        amount: "סכום",
         labels: "תגיות",
         comments: "הערות",
         add_comment: "הוסף הערה...",

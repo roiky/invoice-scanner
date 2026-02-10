@@ -225,7 +225,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
 
     if (!invoices || invoices.length === 0) {
         return (
-            <div className="text-center py-12 text-slate-500 bg-white rounded-lg border border-dashed border-slate-300">
+            <div className="text-center py-12 text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900 rounded-lg border border-dashed border-slate-300 dark:border-slate-700">
                 <FileText size={48} className="mx-auto mb-3 opacity-20" />
                 <p>{t('table.no_invoices')}</p>
             </div>
@@ -240,7 +240,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
     return (
         <div className="space-y-6">
             {/* Controls */}
-            <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] space-y-4">
+            <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-100 dark:border-slate-800 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] space-y-4">
                 {/* Top Row: General Filters */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
                     <div className="flex items-center gap-2 w-full sm:w-auto relative group">
@@ -250,13 +250,13 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                             placeholder={t('filters.search_placeholder')}
                             value={filterText}
                             onChange={(e) => setFilterText(e.target.value)}
-                            className="ps-10 pe-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none w-full sm:w-72 text-sm font-medium text-slate-700 placeholder:font-normal"
+                            className="ps-10 pe-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:bg-white dark:focus:bg-slate-900 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none w-full sm:w-72 text-sm font-medium text-slate-700 dark:text-slate-200 placeholder:font-normal"
                         />
                     </div>
 
                     <div className="flex items-center gap-3 w-full sm:w-auto flex-wrap">
                         {/* Status Multi-Select */}
-                        <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
+                        <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700">
                             {['Processed', 'Pending', 'Warning', 'Cancelled'].map(status => {
                                 const isSelected = filterStatus.includes(status);
                                 return (
@@ -267,14 +267,14 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                             else setFilterStatus(prev => [...prev, status]);
                                         }}
                                         className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${isSelected
-                                            ? (status === 'Processed' ? 'bg-white text-green-700 shadow-sm ring-1 ring-green-200' :
-                                                status === 'Pending' ? 'bg-white text-amber-700 shadow-sm ring-1 ring-amber-200' :
-                                                    status === 'Warning' ? 'bg-white text-orange-700 shadow-sm ring-1 ring-orange-200' :
-                                                        'bg-white text-red-700 shadow-sm ring-1 ring-red-200')
-                                            : (status === 'Processed' ? 'text-slate-500 hover:bg-white hover:text-green-700 hover:shadow-sm hover:ring-1 hover:ring-green-200' :
-                                                status === 'Pending' ? 'text-slate-500 hover:bg-white hover:text-amber-700 hover:shadow-sm hover:ring-1 hover:ring-amber-200' :
-                                                    status === 'Warning' ? 'text-slate-500 hover:bg-white hover:text-orange-700 hover:shadow-sm hover:ring-1 hover:ring-orange-200' :
-                                                        'text-slate-500 hover:bg-white hover:text-red-700 hover:shadow-sm hover:ring-1 hover:ring-red-200')
+                                            ? (status === 'Processed' ? 'bg-white dark:bg-slate-700 text-green-700 dark:text-green-400 shadow-sm ring-1 ring-green-200 dark:ring-green-900/50' :
+                                                status === 'Pending' ? 'bg-white dark:bg-slate-700 text-amber-700 dark:text-amber-400 shadow-sm ring-1 ring-amber-200 dark:ring-amber-900/50' :
+                                                    status === 'Warning' ? 'bg-white dark:bg-slate-700 text-orange-700 dark:text-orange-400 shadow-sm ring-1 ring-orange-200 dark:ring-orange-900/50' :
+                                                        'bg-white dark:bg-slate-700 text-red-700 dark:text-red-400 shadow-sm ring-1 ring-red-200 dark:ring-red-900/50')
+                                            : (status === 'Processed' ? 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700 hover:text-green-700 dark:hover:text-green-400 hover:shadow-sm hover:ring-1 hover:ring-green-200 dark:hover:ring-green-900/50' :
+                                                status === 'Pending' ? 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700 hover:text-amber-700 dark:hover:text-amber-400 hover:shadow-sm hover:ring-1 hover:ring-amber-200 dark:hover:ring-amber-900/50' :
+                                                    status === 'Warning' ? 'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700 hover:text-orange-700 dark:hover:text-orange-400 hover:shadow-sm hover:ring-1 hover:ring-orange-200 dark:hover:ring-orange-900/50' :
+                                                        'text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700 hover:text-red-700 dark:hover:text-red-400 hover:shadow-sm hover:ring-1 hover:ring-red-200 dark:hover:ring-red-900/50')
                                             }`}
                                     >
                                         {t(`status.${status.toLowerCase()}`)}
@@ -295,7 +295,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                         {/* Labels Multi-select Dropdown */}
                         <div className="relative group">
                             <div className="flex items-center gap-1">
-                                <button className={`flex items-center gap-2 px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium transition-all ${filterLabel.length > 0 ? 'text-blue-600 bg-blue-50 border-blue-200' : 'text-slate-700 hover:bg-slate-100'}`}>
+                                <button className={`flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium transition-all ${filterLabel.length > 0 ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'}`}>
                                     <span>{filterLabel.length === 0 ? t('filters.all_labels') : `${filterLabel.length} ${t('table.labels')}`}</span>
                                     <ArrowDown size={14} className="opacity-50" />
                                 </button>
@@ -312,14 +312,14 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
 
                             {/* Dropdown with padding-top to bridge the gap */}
                             <div className="absolute top-full inset-inline-start-0 pt-2 hidden group-hover:block z-20 w-48">
-                                <div className="bg-white rounded-xl shadow-xl border border-slate-100 p-2">
+                                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 p-2">
                                     {availableLabels.length === 0 ? (
                                         <p className="text-xs text-slate-400 p-2 text-center">No labels available</p>
                                     ) : (
                                         availableLabels.map(l => {
                                             const color = getLabelColor(l);
                                             return (
-                                                <label key={l} className="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer">
+                                                <label key={l} className="flex items-center gap-2 p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded cursor-pointer">
                                                     <input
                                                         type="checkbox"
                                                         checked={filterLabel.includes(l)}
@@ -459,10 +459,10 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
 
 
             {/* Table */}
-            <div className="bg-white rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-slate-100 overflow-hidden flex flex-col">
+            <div className="bg-white dark:bg-slate-900 rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-slate-100 dark:border-slate-800 overflow-hidden flex flex-col">
                 <div className="overflow-x-auto min-h-[400px] flex-grow">
-                    <table className="w-full text-sm text-start">
-                        <thead className="bg-slate-50/50 text-slate-500 font-semibold border-b border-slate-100 select-none uppercase text-xs tracking-wider">
+                    <table className="w-full text-sm text-start text-slate-600 dark:text-slate-300">
+                        <thead className="bg-slate-50/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-100 dark:border-slate-800 select-none uppercase text-xs tracking-wider">
                             <tr>
                                 <th className="px-4 py-4 w-12 text-center">
                                     <input
@@ -497,7 +497,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                 <th className="px-6 py-4 w-20 text-center">{t('table.actions')}</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-50">
+                        <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
                             {filteredInvoices.length > 0 ? (
                                 filteredInvoices
                                     .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
@@ -509,8 +509,8 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                             <tr
                                                 key={inv.id}
                                                 className={`group transition-all duration-200 
-                                                ${isSelected ? 'bg-blue-50/40 hover:bg-blue-50/60' : 'hover:bg-slate-50/80'} 
-                                                ${isEditing ? 'bg-blue-50/60' : ''}
+                                                ${isSelected ? 'bg-blue-50/40 dark:bg-blue-900/20 hover:bg-blue-50/60 dark:hover:bg-blue-900/30' : 'hover:bg-slate-50/80 dark:hover:bg-slate-800/50'} 
+                                                ${isEditing ? 'bg-blue-50/60 dark:bg-blue-900/40' : ''}
                                             `}
                                             >
                                                 <td className="px-4 py-4 text-center">
@@ -518,7 +518,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                         type="checkbox"
                                                         checked={selectedIds.has(inv.id)}
                                                         onChange={() => toggleSelection(inv.id)}
-                                                        className="rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500 cursor-pointer w-4 h-4"
+                                                        className="rounded border-slate-300 dark:border-slate-600 text-blue-600 focus:ring-2 focus:ring-blue-500 cursor-pointer w-4 h-4 bg-white dark:bg-slate-800"
                                                     />
                                                 </td>
                                                 <td className="px-6 py-4">
@@ -529,7 +529,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                                 className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all flex items-center justify-center gap-1
                                                             ${editForm.status === 'Processed'
                                                                         ? 'bg-green-100 text-green-700 border-green-300 shadow-sm'
-                                                                        : 'bg-white text-slate-400 border-slate-200 hover:border-green-300 hover:text-green-600'}`}
+                                                                        : 'bg-white dark:bg-slate-800 text-slate-400 border-slate-200 dark:border-slate-700 hover:border-green-300 hover:text-green-600'}`}
                                                             >
                                                                 <CheckCircle size={10} /> Processed
                                                             </button>
@@ -538,7 +538,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                                 className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all flex items-center justify-center gap-1
                                                             ${editForm.status === 'Pending'
                                                                         ? 'bg-amber-100 text-amber-700 border-amber-300 shadow-sm'
-                                                                        : 'bg-white text-slate-400 border-slate-200 hover:border-amber-300 hover:text-amber-600'}`}
+                                                                        : 'bg-white dark:bg-slate-800 text-slate-400 border-slate-200 dark:border-slate-700 hover:border-amber-300 hover:text-amber-600'}`}
                                                             >
                                                                 <AlertCircle size={10} /> Pending
                                                             </button>
@@ -547,7 +547,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                                 className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all flex items-center justify-center gap-1
                                                             ${editForm.status === 'Warning'
                                                                         ? 'bg-orange-100 text-orange-700 border-orange-300 shadow-sm'
-                                                                        : 'bg-white text-slate-400 border-slate-200 hover:border-orange-300 hover:text-orange-600'}`}
+                                                                        : 'bg-white dark:bg-slate-800 text-slate-400 border-slate-200 dark:border-slate-700 hover:border-orange-300 hover:text-orange-600'}`}
                                                             >
                                                                 <TriangleAlert size={10} /> Warning
                                                             </button>
@@ -556,7 +556,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                                 className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all flex items-center justify-center gap-1
                                                             ${editForm.status === 'Cancelled'
                                                                         ? 'bg-red-100 text-red-700 border-red-300 shadow-sm'
-                                                                        : 'bg-white text-slate-400 border-slate-200 hover:border-red-300 hover:text-red-600'}`}
+                                                                        : 'bg-white dark:bg-slate-800 text-slate-400 border-slate-200 dark:border-slate-700 hover:border-red-300 hover:text-red-600'}`}
                                                             >
                                                                 <XCircle size={10} /> Cancelled
                                                             </button>
@@ -564,12 +564,12 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                     ) : (
                                                         <span className={`inline-flex items-center gap-1.5 pl-2 pr-3 py-1 rounded-full text-xs font-semibold border shadow-sm
                                                         ${inv.status === 'Processed'
-                                                                ? 'bg-green-50 text-green-700 border-green-200'
+                                                                ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border-green-200 dark:border-green-900/30'
                                                                 : inv.status === 'Pending'
-                                                                    ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                                                    ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900/30'
                                                                     : inv.status === 'Warning'
-                                                                        ? 'bg-orange-50 text-orange-700 border-orange-200'
-                                                                        : 'bg-red-50 text-red-700 border-red-200'
+                                                                        ? 'bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-900/30'
+                                                                        : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border-red-200 dark:border-red-900/30'
                                                             }`}>
                                                             {inv.status === 'Processed' && <CheckCircle size={12} />}
                                                             {inv.status === 'Pending' && <AlertCircle size={12} />}
@@ -579,31 +579,31 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                         </span>
                                                     )}
                                                 </td>
-                                                <td className="px-6 py-4 text-slate-600">
+                                                <td className="px-6 py-4 text-slate-600 dark:text-slate-400">
                                                     {isEditing ? (
                                                         <DateInput
                                                             value={editForm.invoice_date || ""}
                                                             onChange={val => setEditForm({ ...editForm, invoice_date: val })}
-                                                            className="border border-slate-300 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
+                                                            className="border border-slate-300 dark:border-slate-600 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                                                         />
                                                     ) : (
-                                                        <span className="font-mono text-xs whitespace-nowrap text-slate-500 bg-slate-100/50 px-2 py-1 rounded">
+                                                        <span className="font-mono text-xs whitespace-nowrap text-slate-500 dark:text-slate-400 bg-slate-100/50 dark:bg-slate-800/50 px-2 py-1 rounded">
                                                             {inv.invoice_date ? new Date(inv.invoice_date).toLocaleDateString('en-GB') : '-'}
                                                         </span>
                                                     )}
                                                 </td>
-                                                <td className="px-6 py-4 font-semibold text-slate-800">
+                                                <td className="px-6 py-4 font-semibold text-slate-800 dark:text-slate-200">
                                                     {isEditing ? (
                                                         <input
                                                             type="text"
                                                             value={editForm.vendor_name || ""}
                                                             onChange={e => setEditForm({ ...editForm, vendor_name: e.target.value })}
-                                                            className="border border-slate-300 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                                            className="border border-slate-300 dark:border-slate-600 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                                                         />
                                                     ) : inv.vendor_name}
                                                 </td>
-                                                <td className="px-6 py-4 text-slate-500 max-w-xs truncate text-[13px]" title={inv.subject}>{inv.subject}</td>
-                                                <td className="px-6 py-4 text-end font-medium text-slate-900 tabular-nums">
+                                                <td className="px-6 py-4 text-slate-500 dark:text-slate-400 max-w-xs truncate text-[13px]" title={inv.subject}>{inv.subject}</td>
+                                                <td className="px-6 py-4 text-end font-medium text-slate-900 dark:text-slate-100 tabular-nums">
                                                     {isEditing ? (
                                                         <div className="flex items-center gap-1 justify-end">
                                                             <input
@@ -619,12 +619,12 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                                     }
                                                                     setEditForm({ ...editForm, total_amount: val, vat_amount: vat });
                                                                 }}
-                                                                className="border border-slate-300 rounded px-1 py-1 w-20 text-right focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
+                                                                className="border border-slate-300 dark:border-slate-600 rounded px-1 py-1 w-20 text-right focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                                                             />
                                                             <select
                                                                 value={editForm.currency}
                                                                 onChange={e => setEditForm({ ...editForm, currency: e.target.value })}
-                                                                className="border border-slate-300 rounded px-0 py-1 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white w-12"
+                                                                className="border border-slate-300 dark:border-slate-600 rounded px-0 py-1 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white dark:bg-slate-800 w-12 text-slate-900 dark:text-slate-100"
                                                             >
                                                                 <option value="ILS">ILS</option>
                                                                 <option value="USD">USD</option>
@@ -636,7 +636,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                     )}
                                                 </td>
 
-                                                <td className="px-6 py-4 text-end text-slate-500 tabular-nums text-[13px]">
+                                                <td className="px-6 py-4 text-end text-slate-500 dark:text-slate-400 tabular-nums text-[13px]">
                                                     {isEditing ? (
                                                         <div className="flex items-center gap-1 justify-end">
                                                             <input
@@ -644,7 +644,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                                 step="0.01"
                                                                 value={editForm.vat_amount || ""}
                                                                 onChange={e => setEditForm({ ...editForm, vat_amount: e.target.value ? parseFloat(e.target.value) : null })}
-                                                                className="border border-slate-300 rounded px-1 py-1 w-16 text-right focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
+                                                                className="border border-slate-300 dark:border-slate-600 rounded px-1 py-1 w-16 text-right focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                                                             />
                                                             <span className="text-xs text-slate-400">{editForm.currency}</span>
                                                         </div>
@@ -685,7 +685,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                                         }}
                                                                         className={`px-2 py-0.5 rounded text-[9px] border transition-all truncate text-center max-w-[80px] ${isSelected
                                                                             ? `${color.bg} ${color.text} ${color.border} font-bold shadow-sm`
-                                                                            : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100'
+                                                                            : 'bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-slate-100 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
                                                                             }`}
                                                                         title={label}
                                                                     >
@@ -706,7 +706,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                                     )
                                                                 })
                                                             ) : (
-                                                                <span className="col-span-3 text-slate-300 text-xs italic tracking-wide text-center">-</span>
+                                                                <span className="col-span-3 text-slate-300 dark:text-slate-600 text-xs italic tracking-wide text-center">-</span>
                                                             )}
                                                         </div>
                                                     )}
@@ -779,8 +779,8 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
 
                 {/* Pagination Footer */}
                 {filteredInvoices.length > 0 && (
-                    <div className="border-t border-slate-100 bg-slate-50/50 p-3 flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <div className="border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 p-3 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
                             <span>{t ? t('pagination.rows_per_page') : "Rows per page"}:</span>
                             <select
                                 value={itemsPerPage}
@@ -788,7 +788,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                     setItemsPerPage(Number(e.target.value));
                                     setCurrentPage(1);
                                 }}
-                                className="border border-slate-300 rounded px-2 py-1 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white"
+                                className="border border-slate-300 dark:border-slate-600 rounded px-2 py-1 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                             >
                                 <option value={10}>10</option>
                                 <option value={20}>20</option>
@@ -798,7 +798,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <span className="text-sm text-slate-600">
+                            <span className="text-sm text-slate-600 dark:text-slate-400">
                                 {t ? t('pagination.page_x_of_y')
                                     .replace('{current}', currentPage)
                                     .replace('{total}', Math.ceil(filteredInvoices.length / itemsPerPage))
@@ -809,7 +809,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                 <button
                                     onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                                     disabled={currentPage === 1}
-                                    className="p-1 rounded-md hover:bg-slate-200 disabled:opacity-50 disabled:hover:bg-transparent transition-colors text-slate-600"
+                                    className="p-1 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50 disabled:hover:bg-transparent transition-colors text-slate-600 dark:text-slate-400"
                                     title={t ? t('pagination.previous') : "Previous"}
                                 >
                                     <ChevronLeft size={20} />
@@ -817,7 +817,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                 <button
                                     onClick={() => setCurrentPage(Math.min(Math.ceil(filteredInvoices.length / itemsPerPage), currentPage + 1))}
                                     disabled={currentPage === Math.ceil(filteredInvoices.length / itemsPerPage)}
-                                    className="p-1 rounded-md hover:bg-slate-200 disabled:opacity-50 disabled:hover:bg-transparent transition-colors text-slate-600"
+                                    className="p-1 rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50 disabled:hover:bg-transparent transition-colors text-slate-600 dark:text-slate-400"
                                     title={t ? t('pagination.next') : "Next"}
                                 >
                                     <ChevronRight size={20} />
