@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Save, X, Edit2, Check, Download, AlertCircle, TriangleAlert, CheckCircle, XCircle, Search, Trash2 } from 'lucide-react';
+import { Save, X, Edit2, Check, Download, AlertCircle, TriangleAlert, CheckCircle, XCircle, Search, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getInvoices, updateInvoice, deleteInvoice } from '../api';
 
 export function HistoryTable() {
@@ -7,6 +7,10 @@ export function HistoryTable() {
     const [loading, setLoading] = useState(true);
     const [filterText, setFilterText] = useState("");
     const [selectedStatuses, setSelectedStatuses] = useState(["Pending", "Warning", "Processed", "Cancelled"]);
+
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(20);
 
     const [editingId, setEditingId] = useState(null);
     const [editForm, setEditForm] = useState({});
@@ -35,7 +39,13 @@ export function HistoryTable() {
         } else {
             setSelectedStatuses([...selectedStatuses, status]);
         }
+        setCurrentPage(1); // Reset to first page
     };
+
+    // Reset pagination when search text changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filterText]);
 
     const filteredInvoices = invoices.filter(inv => {
         const matchesText = (inv.vendor_name?.toLowerCase() || "").includes(filterText.toLowerCase()) ||
@@ -179,140 +189,196 @@ export function HistoryTable() {
             </div>
 
             {/* Table */}
-            <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-x-auto min-h-[400px]">
-                <table className="w-full text-sm text-left">
-                    <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-200">
-                        <tr>
-                            <th className="px-6 py-3 w-32">Status</th>
-                            <th className="px-6 py-3 w-32">Date</th>
-                            <th className="px-6 py-3">Vendor</th>
-                            <th className="px-6 py-3">Subject</th>
-                            <th className="px-6 py-3 text-right">Amount</th>
-                            <th className="px-6 py-3 text-right">VAT</th>
-                            <th className="px-6 py-3 w-32 text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                        {filteredInvoices.length > 0 ? filteredInvoices.map(inv => {
-                            const isEditing = editingId === inv.id;
-                            return (
-                                <tr key={inv.id} className={`hover:bg-slate-50 group ${isEditing ? 'bg-blue-50/50' : ''}`}>
-                                    <td className="px-6 py-3">
-                                        {isEditing ? (
-                                            <select
-                                                value={editForm.status || "Pending"}
-                                                onChange={e => setEditForm({ ...editForm, status: e.target.value })}
-                                                className="border border-slate-300 rounded px-2 py-1 text-xs w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                            >
-                                                <option value="Pending">Pending</option>
-                                                <option value="Warning">Warning</option>
-                                                <option value="Processed">Processed</option>
-                                                <option value="Cancelled">Cancelled</option>
-                                            </select>
-                                        ) : (
-                                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border
-                                                ${inv.status === 'Processed' ? 'text-green-700 bg-green-50 border-green-100' :
-                                                    inv.status === 'Pending' ? 'text-amber-700 bg-amber-50 border-amber-100' :
-                                                        inv.status === 'Warning' ? 'text-orange-700 bg-orange-50 border-orange-100' :
-                                                            'text-red-700 bg-red-50 border-red-100'}`}>
-                                                {inv.status === 'Processed' ? <CheckCircle size={12} /> :
-                                                    inv.status === 'Pending' ? <AlertCircle size={12} /> :
-                                                        inv.status === 'Warning' ? <TriangleAlert size={12} /> :
-                                                            <XCircle size={12} />}
-                                                {inv.status}
-                                            </span>
-                                        )}
-                                    </td>
-                                    <td className="px-6 py-3">
-                                        {isEditing ? (
-                                            <input
-                                                type="date"
-                                                lang="en-GB"
-                                                value={editForm.invoice_date || ""}
-                                                onChange={e => setEditForm({ ...editForm, invoice_date: e.target.value || null })}
-                                                className="border border-slate-300 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                            />
-                                        ) : (
-                                            <span className="text-slate-600 font-mono text-xs whitespace-nowrap">
-                                                {inv.invoice_date ? new Date(inv.invoice_date).toLocaleDateString('en-GB') : '-'}
-                                            </span>
-                                        )}
-                                    </td>
-                                    <td className="px-6 py-3 font-medium text-slate-900">
-                                        {isEditing ? (
-                                            <input
-                                                type="text"
-                                                value={editForm.vendor_name || ""}
-                                                onChange={e => setEditForm({ ...editForm, vendor_name: e.target.value })}
-                                                className="border border-slate-300 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                            />
-                                        ) : inv.vendor_name}
-                                    </td>
-                                    <td className="px-6 py-3 text-slate-500 max-w-xs truncate" title={inv.subject}>
-                                        {inv.subject}
-                                    </td>
-                                    <td className="px-6 py-3 text-right font-mono text-slate-700">
-                                        {isEditing ? (
-                                            <input
-                                                type="number"
-                                                step="0.01"
-                                                value={editForm.total_amount || ""}
-                                                onChange={e => setEditForm({ ...editForm, total_amount: e.target.value === "" ? null : parseFloat(e.target.value) })}
-                                                className="border border-slate-300 rounded px-2 py-1 w-24 text-right focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                            />
-                                        ) : `${inv.total_amount?.toFixed(2) || '0.00'} ${inv.currency}`}
-                                    </td>
-                                    <td className="px-6 py-3 text-right text-slate-500 font-mono">
-                                        {isEditing ? (
-                                            <input
-                                                type="number"
-                                                step="0.01"
-                                                value={editForm.vat_amount || ""}
-                                                onChange={e => setEditForm({ ...editForm, vat_amount: e.target.value === "" ? null : parseFloat(e.target.value) })}
-                                                className="border border-slate-300 rounded px-2 py-1 w-20 text-right focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                            />
-                                        ) : `${inv.vat_amount?.toFixed(2) || '0.00'} ${inv.currency}`}
-                                    </td>
-                                    <td className="px-6 py-3">
-                                        <div className="flex items-center gap-1 justify-end">
-                                            {isEditing ? (
-                                                <>
-                                                    <button onClick={() => saveEdit(inv.id)} className="text-green-600 hover:bg-green-100 p-1.5 rounded-md transition-colors" title="Save"><Check size={16} /></button>
-                                                    <button onClick={cancelEdit} className="text-red-500 hover:bg-red-100 p-1.5 rounded-md transition-colors" title="Cancel"><X size={16} /></button>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <button onClick={() => startEdit(inv)} className="text-slate-400 hover:text-blue-600 hover:bg-blue-50 p-1.5 rounded-md transition-colors" title="Edit"><Edit2 size={16} /></button>
-                                                    <button onClick={async () => {
-                                                        if (window.confirm("Are you sure you want to delete this invoice?")) {
-                                                            try {
-                                                                await deleteInvoice(inv.id);
-                                                                setInvoices(invoices.filter(i => i.id !== inv.id));
-                                                            } catch (err) {
-                                                                alert("Failed to delete");
-                                                            }
-                                                        }
-                                                    }} className="text-slate-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-md transition-colors" title="Delete"><Trash2 size={16} /></button>
-                                                    {inv.download_url && (
-                                                        <a href={inv.download_url} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-blue-600 hover:bg-blue-50 p-1.5 rounded-md transition-colors" title="Download PDF">
-                                                            <Download size={16} />
-                                                        </a>
+            <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden min-h-[400px] flex flex-col">
+                <div className="overflow-x-auto flex-grow">
+                    <table className="w-full text-sm text-left">
+                        <thead className="bg-slate-50 text-slate-600 font-medium border-b border-slate-200">
+                            <tr>
+                                <th className="px-6 py-3 w-32">Status</th>
+                                <th className="px-6 py-3 w-32">Date</th>
+                                <th className="px-6 py-3">Vendor</th>
+                                <th className="px-6 py-3">Subject</th>
+                                <th className="px-6 py-3 text-right">Amount</th>
+                                <th className="px-6 py-3 text-right">VAT</th>
+                                <th className="px-6 py-3 w-32 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                            {filteredInvoices.length > 0 ? (
+                                filteredInvoices
+                                    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                                    .map(inv => {
+                                        const isEditing = editingId === inv.id;
+                                        return (
+                                            <tr key={inv.id} className={`hover:bg-slate-50 group ${isEditing ? 'bg-blue-50/50' : ''}`}>
+                                                <td className="px-6 py-3">
+                                                    {isEditing ? (
+                                                        <select
+                                                            value={editForm.status || "Pending"}
+                                                            onChange={e => setEditForm({ ...editForm, status: e.target.value })}
+                                                            className="border border-slate-300 rounded px-2 py-1 text-xs w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                                        >
+                                                            <option value="Pending">Pending</option>
+                                                            <option value="Warning">Warning</option>
+                                                            <option value="Processed">Processed</option>
+                                                            <option value="Cancelled">Cancelled</option>
+                                                        </select>
+                                                    ) : (
+                                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border
+                                                            ${inv.status === 'Processed' ? 'text-green-700 bg-green-50 border-green-100' :
+                                                                inv.status === 'Pending' ? 'text-amber-700 bg-amber-50 border-amber-100' :
+                                                                    inv.status === 'Warning' ? 'text-orange-700 bg-orange-50 border-orange-100' :
+                                                                        'text-red-700 bg-red-50 border-red-100'}`}>
+                                                            {inv.status === 'Processed' ? <CheckCircle size={12} /> :
+                                                                inv.status === 'Pending' ? <AlertCircle size={12} /> :
+                                                                    inv.status === 'Warning' ? <TriangleAlert size={12} /> :
+                                                                        <XCircle size={12} />}
+                                                            {inv.status}
+                                                        </span>
                                                     )}
-                                                </>
-                                            )}
-                                        </div>
+                                                </td>
+                                                <td className="px-6 py-3">
+                                                    {isEditing ? (
+                                                        <input
+                                                            type="date"
+                                                            lang="en-GB"
+                                                            value={editForm.invoice_date || ""}
+                                                            onChange={e => setEditForm({ ...editForm, invoice_date: e.target.value || null })}
+                                                            className="border border-slate-300 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                                        />
+                                                    ) : (
+                                                        <span className="text-slate-600 font-mono text-xs whitespace-nowrap">
+                                                            {inv.invoice_date ? new Date(inv.invoice_date).toLocaleDateString('en-GB') : '-'}
+                                                        </span>
+                                                    )}
+                                                </td>
+                                                <td className="px-6 py-3 font-medium text-slate-900">
+                                                    {isEditing ? (
+                                                        <input
+                                                            type="text"
+                                                            value={editForm.vendor_name || ""}
+                                                            onChange={e => setEditForm({ ...editForm, vendor_name: e.target.value })}
+                                                            className="border border-slate-300 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                                        />
+                                                    ) : inv.vendor_name}
+                                                </td>
+                                                <td className="px-6 py-3 text-slate-500 max-w-xs truncate" title={inv.subject}>
+                                                    {inv.subject}
+                                                </td>
+                                                <td className="px-6 py-3 text-right font-mono text-slate-700">
+                                                    {isEditing ? (
+                                                        <input
+                                                            type="number"
+                                                            step="0.01"
+                                                            value={editForm.total_amount || ""}
+                                                            onChange={e => setEditForm({ ...editForm, total_amount: e.target.value === "" ? null : parseFloat(e.target.value) })}
+                                                            className="border border-slate-300 rounded px-2 py-1 w-24 text-right focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                                        />
+                                                    ) : `${inv.total_amount?.toFixed(2) || '0.00'} ${inv.currency}`}
+                                                </td>
+                                                <td className="px-6 py-3 text-right text-slate-500 font-mono">
+                                                    {isEditing ? (
+                                                        <input
+                                                            type="number"
+                                                            step="0.01"
+                                                            value={editForm.vat_amount || ""}
+                                                            onChange={e => setEditForm({ ...editForm, vat_amount: e.target.value === "" ? null : parseFloat(e.target.value) })}
+                                                            className="border border-slate-300 rounded px-2 py-1 w-20 text-right focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                                        />
+                                                    ) : `${inv.vat_amount?.toFixed(2) || '0.00'} ${inv.currency}`}
+                                                </td>
+                                                <td className="px-6 py-3">
+                                                    <div className="flex items-center gap-1 justify-end">
+                                                        {isEditing ? (
+                                                            <>
+                                                                <button onClick={() => saveEdit(inv.id)} className="text-green-600 hover:bg-green-100 p-1.5 rounded-md transition-colors" title="Save"><Check size={16} /></button>
+                                                                <button onClick={cancelEdit} className="text-red-500 hover:bg-red-100 p-1.5 rounded-md transition-colors" title="Cancel"><X size={16} /></button>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <button onClick={() => startEdit(inv)} className="text-slate-400 hover:text-blue-600 hover:bg-blue-50 p-1.5 rounded-md transition-colors" title="Edit"><Edit2 size={16} /></button>
+                                                                <button onClick={async () => {
+                                                                    if (window.confirm("Are you sure you want to delete this invoice?")) {
+                                                                        try {
+                                                                            await deleteInvoice(inv.id);
+                                                                            setInvoices(invoices.filter(i => i.id !== inv.id));
+                                                                        } catch (err) {
+                                                                            alert("Failed to delete");
+                                                                        }
+                                                                    }
+                                                                }} className="text-slate-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded-md transition-colors" title="Delete"><Trash2 size={16} /></button>
+                                                                {inv.download_url && (
+                                                                    <a href={inv.download_url} target="_blank" rel="noreferrer" className="text-slate-400 hover:text-blue-600 hover:bg-blue-50 p-1.5 rounded-md transition-colors" title="Download PDF">
+                                                                        <Download size={16} />
+                                                                    </a>
+                                                                )}
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
+                            ) : (
+                                <tr>
+                                    <td colSpan="7" className="text-center py-12 text-slate-400 italic">
+                                        No invoices match the current filters.
                                     </td>
                                 </tr>
-                            );
-                        }) : (
-                            <tr>
-                                <td colSpan="7" className="text-center py-12 text-slate-400 italic">
-                                    No invoices match the current filters.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Pagination Footer */}
+                {filteredInvoices.length > 0 && (
+                    <div className="border-t border-slate-200 bg-slate-50 p-3 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                            <span>{t ? t('pagination.rows_per_page') : "Rows per page"}:</span>
+                            <select
+                                value={itemsPerPage}
+                                onChange={e => {
+                                    setItemsPerPage(Number(e.target.value));
+                                    setCurrentPage(1);
+                                }}
+                                className="border border-slate-300 rounded px-2 py-1 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white"
+                            >
+                                <option value={10}>10</option>
+                                <option value={20}>20</option>
+                                <option value={50}>50</option>
+                                <option value={100}>100</option>
+                            </select>
+                        </div>
+
+                        <div className="flex items-center gap-4">
+                            <span className="text-sm text-slate-600">
+                                {t ? t('pagination.page_x_of_y')
+                                    .replace('{current}', currentPage)
+                                    .replace('{total}', Math.ceil(filteredInvoices.length / itemsPerPage))
+                                    : `Page ${currentPage} of ${Math.ceil(filteredInvoices.length / itemsPerPage)}`
+                                }
+                            </span>
+                            <div className="flex items-center gap-1">
+                                <button
+                                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                                    disabled={currentPage === 1}
+                                    className="p-1 rounded-md hover:bg-slate-200 disabled:opacity-50 disabled:hover:bg-transparent transition-colors"
+                                    title={t ? t('pagination.previous') : "Previous"}
+                                >
+                                    <ChevronLeft size={20} />
+                                </button>
+                                <button
+                                    onClick={() => setCurrentPage(Math.min(Math.ceil(filteredInvoices.length / itemsPerPage), currentPage + 1))}
+                                    disabled={currentPage === Math.ceil(filteredInvoices.length / itemsPerPage)}
+                                    className="p-1 rounded-md hover:bg-slate-200 disabled:opacity-50 disabled:hover:bg-transparent transition-colors"
+                                    title={t ? t('pagination.next') : "Next"}
+                                >
+                                    <ChevronRight size={20} />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

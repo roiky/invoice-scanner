@@ -47,7 +47,7 @@
     "is_active": true
   },
   {
-    "id": "7098bd77-1286-4ba9-a9be-2511cabe75ea",
+    "id": "3bdb4376-e898-4c9d-9c17-c9f21fff3f2e",
     "name": "Expensive",
     "logic": "AND",
     "conditions": [
@@ -59,12 +59,12 @@
     ],
     "actions": [
       {
-        "action_type": "add_label",
-        "value": "Warning,\u05dc\u05d1\u05d3\u05d9\u05e7\u05d4 \u05d9\u05d3\u05e0\u05d9\u05ea"
-      },
-      {
         "action_type": "set_status",
         "value": "Warning"
+      },
+      {
+        "action_type": "add_label",
+        "value": "\u05dc\u05d1\u05d3\u05d9\u05e7\u05d4 \u05d9\u05d3\u05e0\u05d9\u05ea"
       }
     ],
     "is_active": true

@@ -150,6 +150,12 @@ export const he = {
         select_operator: "בחר אופרטור",
         select_action: "בחר פעולה",
         select_label: "בחר תגית..."
+    },
+    pagination: {
+        rows_per_page: "שורות בעמוד",
+        page_x_of_y: "עמוד {current} מתוך {total}",
+        previous: "הקודם",
+        next: "הבא"
     }
 };
 

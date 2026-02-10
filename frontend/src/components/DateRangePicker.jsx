@@ -178,7 +178,22 @@ export function DateRangePicker({
                     <CalendarIcon size={16} className="text-slate-400" />
                     <span className="font-medium">{displayText}</span>
                 </div>
-                <ChevronDown size={14} className={`text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                <div className="flex items-center gap-1">
+                    {(startDate || endDate) && (
+                        <div
+                            role="button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onChange({ start: null, end: null });
+                            }}
+                            className="p-1 hover:bg-slate-200 rounded-full text-slate-400 hover:text-red-500 transition-colors"
+                            title={t ? t('scan.clear_selection') : 'Clear Selection'}
+                        >
+                            <X size={14} />
+                        </div>
+                    )}
+                    <ChevronDown size={14} className={`text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                </div>
             </button>
 
             {isOpen && (

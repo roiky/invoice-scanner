@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { FileText, CheckCircle, AlertCircle, TriangleAlert, Download, Search, XCircle, Edit2, Trash2, Check, X, ArrowUp, ArrowDown, ArrowUpDown, Calendar, Tag, Upload } from 'lucide-react';
+import { FileText, CheckCircle, AlertCircle, TriangleAlert, Download, Search, XCircle, Edit2, Trash2, Check, X, ArrowUp, ArrowDown, ArrowUpDown, Calendar, Tag, Upload, ChevronLeft, ChevronRight } from 'lucide-react';
 import { updateInvoice, deleteInvoice, uploadInvoiceFile } from '../api';
 import { DateInput } from './DateInput';
 import { DateRangePicker } from './DateRangePicker';
@@ -23,6 +23,10 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
 
     // Bulk Label State
     const [isBulkLabelOpen, setIsBulkLabelOpen] = useState(false);
+
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(20);
 
     // Filter Logic
     const filteredInvoices = useMemo(() => {
@@ -76,6 +80,11 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
 
         return result;
     }, [invoices, filterText, filterStatus, filterLabel, dateRange, sortConfig]);
+
+    // Reset pagination when filters change
+    React.useEffect(() => {
+        setCurrentPage(1);
+    }, [filterText, filterStatus, filterLabel, dateRange]);
 
 
     // Handlers
@@ -450,8 +459,8 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
 
 
             {/* Table */}
-            <div className="bg-white rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-slate-100 overflow-hidden">
-                <div className="overflow-x-auto min-h-[400px]">
+            <div className="bg-white rounded-xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] border border-slate-100 overflow-hidden flex flex-col">
+                <div className="overflow-x-auto min-h-[400px] flex-grow">
                     <table className="w-full text-sm text-start">
                         <thead className="bg-slate-50/50 text-slate-500 font-semibold border-b border-slate-100 select-none uppercase text-xs tracking-wider">
                             <tr>
@@ -490,159 +499,161 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                         </thead>
                         <tbody className="divide-y divide-slate-50">
                             {filteredInvoices.length > 0 ? (
-                                filteredInvoices.map((inv) => {
-                                    const isEditing = editingId === inv.id;
-                                    const isSelected = selectedIds.has(inv.id);
+                                filteredInvoices
+                                    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                                    .map((inv) => {
+                                        const isEditing = editingId === inv.id;
+                                        const isSelected = selectedIds.has(inv.id);
 
-                                    return (
-                                        <tr
-                                            key={inv.id}
-                                            className={`group transition-all duration-200 
+                                        return (
+                                            <tr
+                                                key={inv.id}
+                                                className={`group transition-all duration-200 
                                                 ${isSelected ? 'bg-blue-50/40 hover:bg-blue-50/60' : 'hover:bg-slate-50/80'} 
                                                 ${isEditing ? 'bg-blue-50/60' : ''}
                                             `}
-                                        >
-                                            <td className="px-4 py-4 text-center">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={selectedIds.has(inv.id)}
-                                                    onChange={() => toggleSelection(inv.id)}
-                                                    className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4"
-                                                />
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                {isEditing ? (
-                                                    <div className="flex flex-col gap-1">
-                                                        <button
-                                                            onClick={() => setEditForm({ ...editForm, status: "Processed" })}
-                                                            className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all flex items-center justify-center gap-1
-                                                            ${editForm.status === 'Processed'
-                                                                    ? 'bg-green-100 text-green-700 border-green-300 shadow-sm'
-                                                                    : 'bg-white text-slate-400 border-slate-200 hover:border-green-300 hover:text-green-600'}`}
-                                                        >
-                                                            <CheckCircle size={10} /> Processed
-                                                        </button>
-                                                        <button
-                                                            onClick={() => setEditForm({ ...editForm, status: "Pending" })}
-                                                            className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all flex items-center justify-center gap-1
-                                                            ${editForm.status === 'Pending'
-                                                                    ? 'bg-amber-100 text-amber-700 border-amber-300 shadow-sm'
-                                                                    : 'bg-white text-slate-400 border-slate-200 hover:border-amber-300 hover:text-amber-600'}`}
-                                                        >
-                                                            <AlertCircle size={10} /> Pending
-                                                        </button>
-                                                        <button
-                                                            onClick={() => setEditForm({ ...editForm, status: "Warning" })}
-                                                            className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all flex items-center justify-center gap-1
-                                                            ${editForm.status === 'Warning'
-                                                                    ? 'bg-orange-100 text-orange-700 border-orange-300 shadow-sm'
-                                                                    : 'bg-white text-slate-400 border-slate-200 hover:border-orange-300 hover:text-orange-600'}`}
-                                                        >
-                                                            <TriangleAlert size={10} /> Warning
-                                                        </button>
-                                                        <button
-                                                            onClick={() => setEditForm({ ...editForm, status: "Cancelled" })}
-                                                            className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all flex items-center justify-center gap-1
-                                                            ${editForm.status === 'Cancelled'
-                                                                    ? 'bg-red-100 text-red-700 border-red-300 shadow-sm'
-                                                                    : 'bg-white text-slate-400 border-slate-200 hover:border-red-300 hover:text-red-600'}`}
-                                                        >
-                                                            <XCircle size={10} /> Cancelled
-                                                        </button>
-                                                    </div>
-                                                ) : (
-                                                    <span className={`inline-flex items-center gap-1.5 pl-2 pr-3 py-1 rounded-full text-xs font-semibold border shadow-sm
-                                                        ${inv.status === 'Processed'
-                                                            ? 'bg-green-50 text-green-700 border-green-200'
-                                                            : inv.status === 'Pending'
-                                                                ? 'bg-amber-50 text-amber-700 border-amber-200'
-                                                                : inv.status === 'Warning'
-                                                                    ? 'bg-orange-50 text-orange-700 border-orange-200'
-                                                                    : 'bg-red-50 text-red-700 border-red-200'
-                                                        }`}>
-                                                        {inv.status === 'Processed' && <CheckCircle size={12} />}
-                                                        {inv.status === 'Pending' && <AlertCircle size={12} />}
-                                                        {inv.status === 'Warning' && <TriangleAlert size={12} />}
-                                                        {inv.status === 'Cancelled' && <XCircle size={12} />}
-                                                        {t(`status.${(inv.status || 'pending').toLowerCase()}`)}
-                                                    </span>
-                                                )}
-                                            </td>
-                                            <td className="px-6 py-4 text-slate-600">
-                                                {isEditing ? (
-                                                    <DateInput
-                                                        value={editForm.invoice_date || ""}
-                                                        onChange={val => setEditForm({ ...editForm, invoice_date: val })}
-                                                        className="border border-slate-300 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
-                                                    />
-                                                ) : (
-                                                    <span className="font-mono text-xs whitespace-nowrap text-slate-500 bg-slate-100/50 px-2 py-1 rounded">
-                                                        {inv.invoice_date ? new Date(inv.invoice_date).toLocaleDateString('en-GB') : '-'}
-                                                    </span>
-                                                )}
-                                            </td>
-                                            <td className="px-6 py-4 font-semibold text-slate-800">
-                                                {isEditing ? (
+                                            >
+                                                <td className="px-4 py-4 text-center">
                                                     <input
-                                                        type="text"
-                                                        value={editForm.vendor_name || ""}
-                                                        onChange={e => setEditForm({ ...editForm, vendor_name: e.target.value })}
-                                                        className="border border-slate-300 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                                        type="checkbox"
+                                                        checked={selectedIds.has(inv.id)}
+                                                        onChange={() => toggleSelection(inv.id)}
+                                                        className="rounded border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500 cursor-pointer w-4 h-4"
                                                     />
-                                                ) : inv.vendor_name}
-                                            </td>
-                                            <td className="px-6 py-4 text-slate-500 max-w-xs truncate text-[13px]" title={inv.subject}>{inv.subject}</td>
-                                            <td className="px-6 py-4 text-end font-medium text-slate-900 tabular-nums">
-                                                {isEditing ? (
-                                                    <div className="flex items-center gap-1 justify-end">
-                                                        <input
-                                                            type="number"
-                                                            step="0.01"
-                                                            value={editForm.total_amount || ""}
-                                                            onChange={e => {
-                                                                const val = e.target.value ? parseFloat(e.target.value) : null;
-                                                                let vat = editForm.vat_amount;
-                                                                if (val !== null) {
-                                                                    // Auto calc VAT 18%
-                                                                    vat = parseFloat((val - (val / 1.18)).toFixed(2));
-                                                                }
-                                                                setEditForm({ ...editForm, total_amount: val, vat_amount: vat });
-                                                            }}
-                                                            className="border border-slate-300 rounded px-1 py-1 w-20 text-right focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    {isEditing ? (
+                                                        <div className="flex flex-col gap-1">
+                                                            <button
+                                                                onClick={() => setEditForm({ ...editForm, status: "Processed" })}
+                                                                className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all flex items-center justify-center gap-1
+                                                            ${editForm.status === 'Processed'
+                                                                        ? 'bg-green-100 text-green-700 border-green-300 shadow-sm'
+                                                                        : 'bg-white text-slate-400 border-slate-200 hover:border-green-300 hover:text-green-600'}`}
+                                                            >
+                                                                <CheckCircle size={10} /> Processed
+                                                            </button>
+                                                            <button
+                                                                onClick={() => setEditForm({ ...editForm, status: "Pending" })}
+                                                                className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all flex items-center justify-center gap-1
+                                                            ${editForm.status === 'Pending'
+                                                                        ? 'bg-amber-100 text-amber-700 border-amber-300 shadow-sm'
+                                                                        : 'bg-white text-slate-400 border-slate-200 hover:border-amber-300 hover:text-amber-600'}`}
+                                                            >
+                                                                <AlertCircle size={10} /> Pending
+                                                            </button>
+                                                            <button
+                                                                onClick={() => setEditForm({ ...editForm, status: "Warning" })}
+                                                                className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all flex items-center justify-center gap-1
+                                                            ${editForm.status === 'Warning'
+                                                                        ? 'bg-orange-100 text-orange-700 border-orange-300 shadow-sm'
+                                                                        : 'bg-white text-slate-400 border-slate-200 hover:border-orange-300 hover:text-orange-600'}`}
+                                                            >
+                                                                <TriangleAlert size={10} /> Warning
+                                                            </button>
+                                                            <button
+                                                                onClick={() => setEditForm({ ...editForm, status: "Cancelled" })}
+                                                                className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all flex items-center justify-center gap-1
+                                                            ${editForm.status === 'Cancelled'
+                                                                        ? 'bg-red-100 text-red-700 border-red-300 shadow-sm'
+                                                                        : 'bg-white text-slate-400 border-slate-200 hover:border-red-300 hover:text-red-600'}`}
+                                                            >
+                                                                <XCircle size={10} /> Cancelled
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <span className={`inline-flex items-center gap-1.5 pl-2 pr-3 py-1 rounded-full text-xs font-semibold border shadow-sm
+                                                        ${inv.status === 'Processed'
+                                                                ? 'bg-green-50 text-green-700 border-green-200'
+                                                                : inv.status === 'Pending'
+                                                                    ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                                                    : inv.status === 'Warning'
+                                                                        ? 'bg-orange-50 text-orange-700 border-orange-200'
+                                                                        : 'bg-red-50 text-red-700 border-red-200'
+                                                            }`}>
+                                                            {inv.status === 'Processed' && <CheckCircle size={12} />}
+                                                            {inv.status === 'Pending' && <AlertCircle size={12} />}
+                                                            {inv.status === 'Warning' && <TriangleAlert size={12} />}
+                                                            {inv.status === 'Cancelled' && <XCircle size={12} />}
+                                                            {t(`status.${(inv.status || 'pending').toLowerCase()}`)}
+                                                        </span>
+                                                    )}
+                                                </td>
+                                                <td className="px-6 py-4 text-slate-600">
+                                                    {isEditing ? (
+                                                        <DateInput
+                                                            value={editForm.invoice_date || ""}
+                                                            onChange={val => setEditForm({ ...editForm, invoice_date: val })}
+                                                            className="border border-slate-300 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
                                                         />
-                                                        <select
-                                                            value={editForm.currency}
-                                                            onChange={e => setEditForm({ ...editForm, currency: e.target.value })}
-                                                            className="border border-slate-300 rounded px-0 py-1 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white w-12"
-                                                        >
-                                                            <option value="ILS">ILS</option>
-                                                            <option value="USD">USD</option>
-                                                            <option value="EUR">EUR</option>
-                                                        </select>
-                                                    </div>
-                                                ) : (
-                                                    `${Number(inv.total_amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${inv.currency}`
-                                                )}
-                                            </td>
-
-                                            <td className="px-6 py-4 text-end text-slate-500 tabular-nums text-[13px]">
-                                                {isEditing ? (
-                                                    <div className="flex items-center gap-1 justify-end">
+                                                    ) : (
+                                                        <span className="font-mono text-xs whitespace-nowrap text-slate-500 bg-slate-100/50 px-2 py-1 rounded">
+                                                            {inv.invoice_date ? new Date(inv.invoice_date).toLocaleDateString('en-GB') : '-'}
+                                                        </span>
+                                                    )}
+                                                </td>
+                                                <td className="px-6 py-4 font-semibold text-slate-800">
+                                                    {isEditing ? (
                                                         <input
-                                                            type="number"
-                                                            step="0.01"
-                                                            value={editForm.vat_amount || ""}
-                                                            onChange={e => setEditForm({ ...editForm, vat_amount: e.target.value ? parseFloat(e.target.value) : null })}
-                                                            className="border border-slate-300 rounded px-1 py-1 w-16 text-right focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
+                                                            type="text"
+                                                            value={editForm.vendor_name || ""}
+                                                            onChange={e => setEditForm({ ...editForm, vendor_name: e.target.value })}
+                                                            className="border border-slate-300 rounded px-2 py-1 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                                         />
-                                                        <span className="text-xs text-slate-400">{editForm.currency}</span>
-                                                    </div>
-                                                ) : (
-                                                    `${Number(inv.vat_amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${inv.currency}`
-                                                )}
-                                            </td>
+                                                    ) : inv.vendor_name}
+                                                </td>
+                                                <td className="px-6 py-4 text-slate-500 max-w-xs truncate text-[13px]" title={inv.subject}>{inv.subject}</td>
+                                                <td className="px-6 py-4 text-end font-medium text-slate-900 tabular-nums">
+                                                    {isEditing ? (
+                                                        <div className="flex items-center gap-1 justify-end">
+                                                            <input
+                                                                type="number"
+                                                                step="0.01"
+                                                                value={editForm.total_amount || ""}
+                                                                onChange={e => {
+                                                                    const val = e.target.value ? parseFloat(e.target.value) : null;
+                                                                    let vat = editForm.vat_amount;
+                                                                    if (val !== null) {
+                                                                        // Auto calc VAT 18%
+                                                                        vat = parseFloat((val - (val / 1.18)).toFixed(2));
+                                                                    }
+                                                                    setEditForm({ ...editForm, total_amount: val, vat_amount: vat });
+                                                                }}
+                                                                className="border border-slate-300 rounded px-1 py-1 w-20 text-right focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
+                                                            />
+                                                            <select
+                                                                value={editForm.currency}
+                                                                onChange={e => setEditForm({ ...editForm, currency: e.target.value })}
+                                                                className="border border-slate-300 rounded px-0 py-1 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white w-12"
+                                                            >
+                                                                <option value="ILS">ILS</option>
+                                                                <option value="USD">USD</option>
+                                                                <option value="EUR">EUR</option>
+                                                            </select>
+                                                        </div>
+                                                    ) : (
+                                                        `${Number(inv.total_amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${inv.currency}`
+                                                    )}
+                                                </td>
 
-                                            {/* <td className="px-6 py-4 text-slate-500 max-w-xs truncate text-[13px]">
+                                                <td className="px-6 py-4 text-end text-slate-500 tabular-nums text-[13px]">
+                                                    {isEditing ? (
+                                                        <div className="flex items-center gap-1 justify-end">
+                                                            <input
+                                                                type="number"
+                                                                step="0.01"
+                                                                value={editForm.vat_amount || ""}
+                                                                onChange={e => setEditForm({ ...editForm, vat_amount: e.target.value ? parseFloat(e.target.value) : null })}
+                                                                className="border border-slate-300 rounded px-1 py-1 w-16 text-right focus:ring-2 focus:ring-blue-500 focus:outline-none text-xs"
+                                                            />
+                                                            <span className="text-xs text-slate-400">{editForm.currency}</span>
+                                                        </div>
+                                                    ) : (
+                                                        `${Number(inv.vat_amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${inv.currency}`
+                                                    )}
+                                                </td>
+
+                                                {/* <td className="px-6 py-4 text-slate-500 max-w-xs truncate text-[13px]">
                                                 {isEditing ? (
                                                     <textarea
                                                         value={editForm.comments || ""}
@@ -655,103 +666,103 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                 )}
                                             </td> */}
 
-                                            {/* TAGS COLUMN */}
-                                            <td className="px-6 py-4">
-                                                {isEditing ? (
-                                                    <div className="grid grid-cols-3 gap-1 min-w-[180px]">
-                                                        {availableLabels.map(label => {
-                                                            const isSelected = (editForm.labels || []).includes(label);
-                                                            const color = getLabelColor(label);
-                                                            return (
-                                                                <button
-                                                                    key={label}
-                                                                    onClick={() => {
-                                                                        const currentLabels = editForm.labels || [];
-                                                                        const newLabels = isSelected
-                                                                            ? currentLabels.filter(l => l !== label)
-                                                                            : [...currentLabels, label];
-                                                                        setEditForm({ ...editForm, labels: newLabels });
-                                                                    }}
-                                                                    className={`px-1 py-0.5 rounded text-[9px] border transition-all truncate w-full text-center ${isSelected
-                                                                        ? `${color.bg} ${color.text} ${color.border} font-bold shadow-sm`
-                                                                        : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100'
-                                                                        }`}
-                                                                    title={label}
-                                                                >
-                                                                    {label}
-                                                                </button>
-                                                            )
-                                                        })}
-                                                    </div>
-                                                ) : (
-                                                    <div className="grid grid-cols-3 gap-1 min-w-[180px]">
-                                                        {(inv.labels && inv.labels.length > 0) ? (
-                                                            inv.labels.map(l => {
-                                                                const color = getLabelColor(l);
+                                                {/* TAGS COLUMN */}
+                                                <td className="px-6 py-4 text-center">
+                                                    {isEditing ? (
+                                                        <div className="flex flex-wrap justify-center gap-1 min-w-[180px] mx-auto">
+                                                            {availableLabels.map(label => {
+                                                                const isSelected = (editForm.labels || []).includes(label);
+                                                                const color = getLabelColor(label);
                                                                 return (
-                                                                    <span key={l} title={l} className={`px-1 py-0.5 ${color.bg} ${color.text} rounded text-[9px] font-medium border ${color.border} shadow-sm truncate text-center block`}>
-                                                                        {l}
-                                                                    </span>
+                                                                    <button
+                                                                        key={label}
+                                                                        onClick={() => {
+                                                                            const currentLabels = editForm.labels || [];
+                                                                            const newLabels = isSelected
+                                                                                ? currentLabels.filter(l => l !== label)
+                                                                                : [...currentLabels, label];
+                                                                            setEditForm({ ...editForm, labels: newLabels });
+                                                                        }}
+                                                                        className={`px-2 py-0.5 rounded text-[9px] border transition-all truncate text-center max-w-[80px] ${isSelected
+                                                                            ? `${color.bg} ${color.text} ${color.border} font-bold shadow-sm`
+                                                                            : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100'
+                                                                            }`}
+                                                                        title={label}
+                                                                    >
+                                                                        {label}
+                                                                    </button>
                                                                 )
-                                                            })
+                                                            })}
+                                                        </div>
+                                                    ) : (
+                                                        <div className="flex flex-wrap justify-center gap-1 min-w-[180px] mx-auto">
+                                                            {(inv.labels && inv.labels.length > 0) ? (
+                                                                inv.labels.map(l => {
+                                                                    const color = getLabelColor(l);
+                                                                    return (
+                                                                        <span key={l} title={l} className={`px-2 py-0.5 ${color.bg} ${color.text} rounded text-[9px] font-medium border ${color.border} shadow-sm truncate text-center block max-w-[80px]`}>
+                                                                            {l}
+                                                                        </span>
+                                                                    )
+                                                                })
+                                                            ) : (
+                                                                <span className="col-span-3 text-slate-300 text-xs italic tracking-wide text-center">-</span>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </td>
+
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                                        {isEditing ? (
+                                                            <>
+                                                                <button onClick={() => saveEdit(inv)} className="text-green-600 hover:bg-green-100 p-2 rounded-lg transition-colors" title={t('actions.save')}><Check size={16} /></button>
+                                                                <button onClick={cancelEdit} className="text-red-500 hover:bg-red-100 p-2 rounded-lg transition-colors" title={t('actions.cancel')}><X size={16} /></button>
+
+                                                                {/* File Upload Button (Hidden Input + Trigger) */}
+                                                                <label className="cursor-pointer text-blue-600 hover:bg-blue-100 p-2 rounded-lg transition-colors relative" title="Replace File">
+                                                                    <Upload size={16} />
+                                                                    <input
+                                                                        type="file"
+                                                                        className="hidden"
+                                                                        accept=".pdf,image/*"
+                                                                        onChange={(e) => {
+                                                                            if (e.target.files?.[0]) {
+                                                                                setEditForm(prev => ({ ...prev, file: e.target.files[0] }));
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                    {editForm.file && (
+                                                                        <span className="absolute top-0 right-0 w-2 h-2 bg-blue-500 rounded-full border border-white"></span>
+                                                                    )}
+                                                                </label>
+                                                            </>
                                                         ) : (
-                                                            <span className="col-span-3 text-slate-300 text-xs italic tracking-wide text-center">-</span>
+                                                            <>
+                                                                <button onClick={() => startEdit(inv)} className="text-slate-400 hover:text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-colors" title={t('actions.edit')}><Edit2 size={16} /></button>
+
+                                                                {onDeleteInvoice && (
+                                                                    <button onClick={() => handleDelete(inv)} className="text-slate-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors" title={t('actions.delete')}><Trash2 size={16} /></button>
+                                                                )}
+
+                                                                {inv.download_url && (
+                                                                    <a
+                                                                        href={inv.download_url}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className="text-slate-400 hover:text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-colors"
+                                                                        title={t('common.full_preview')}
+                                                                    >
+                                                                        <FileText size={16} />
+                                                                    </a>
+                                                                )}
+                                                            </>
                                                         )}
                                                     </div>
-                                                )}
-                                            </td>
-
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                                    {isEditing ? (
-                                                        <>
-                                                            <button onClick={() => saveEdit(inv)} className="text-green-600 hover:bg-green-100 p-2 rounded-lg transition-colors" title={t('actions.save')}><Check size={16} /></button>
-                                                            <button onClick={cancelEdit} className="text-red-500 hover:bg-red-100 p-2 rounded-lg transition-colors" title={t('actions.cancel')}><X size={16} /></button>
-
-                                                            {/* File Upload Button (Hidden Input + Trigger) */}
-                                                            <label className="cursor-pointer text-blue-600 hover:bg-blue-100 p-2 rounded-lg transition-colors relative" title="Replace File">
-                                                                <Upload size={16} />
-                                                                <input
-                                                                    type="file"
-                                                                    className="hidden"
-                                                                    accept=".pdf,image/*"
-                                                                    onChange={(e) => {
-                                                                        if (e.target.files?.[0]) {
-                                                                            setEditForm(prev => ({ ...prev, file: e.target.files[0] }));
-                                                                        }
-                                                                    }}
-                                                                />
-                                                                {editForm.file && (
-                                                                    <span className="absolute top-0 right-0 w-2 h-2 bg-blue-500 rounded-full border border-white"></span>
-                                                                )}
-                                                            </label>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <button onClick={() => startEdit(inv)} className="text-slate-400 hover:text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-colors" title={t('actions.edit')}><Edit2 size={16} /></button>
-
-                                                            {onDeleteInvoice && (
-                                                                <button onClick={() => handleDelete(inv)} className="text-slate-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition-colors" title={t('actions.delete')}><Trash2 size={16} /></button>
-                                                            )}
-
-                                                            {inv.download_url && (
-                                                                <a
-                                                                    href={inv.download_url}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                    className="text-slate-400 hover:text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-colors"
-                                                                    title={t('common.full_preview')}
-                                                                >
-                                                                    <FileText size={16} />
-                                                                </a>
-                                                            )}
-                                                        </>
-                                                    )}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    );
-                                })
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
                             ) : (
                                 <tr>
                                     <td colSpan="9" className="px-6 py-12 text-center text-slate-400 italic">
@@ -765,6 +776,56 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                         </tbody>
                     </table>
                 </div>
+
+                {/* Pagination Footer */}
+                {filteredInvoices.length > 0 && (
+                    <div className="border-t border-slate-100 bg-slate-50/50 p-3 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                            <span>{t ? t('pagination.rows_per_page') : "Rows per page"}:</span>
+                            <select
+                                value={itemsPerPage}
+                                onChange={e => {
+                                    setItemsPerPage(Number(e.target.value));
+                                    setCurrentPage(1);
+                                }}
+                                className="border border-slate-300 rounded px-2 py-1 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white"
+                            >
+                                <option value={10}>10</option>
+                                <option value={20}>20</option>
+                                <option value={50}>50</option>
+                                <option value={100}>100</option>
+                            </select>
+                        </div>
+
+                        <div className="flex items-center gap-4">
+                            <span className="text-sm text-slate-600">
+                                {t ? t('pagination.page_x_of_y')
+                                    .replace('{current}', currentPage)
+                                    .replace('{total}', Math.ceil(filteredInvoices.length / itemsPerPage))
+                                    : `Page ${currentPage} of ${Math.ceil(filteredInvoices.length / itemsPerPage)}`
+                                }
+                            </span>
+                            <div className="flex items-center gap-1">
+                                <button
+                                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                                    disabled={currentPage === 1}
+                                    className="p-1 rounded-md hover:bg-slate-200 disabled:opacity-50 disabled:hover:bg-transparent transition-colors text-slate-600"
+                                    title={t ? t('pagination.previous') : "Previous"}
+                                >
+                                    <ChevronLeft size={20} />
+                                </button>
+                                <button
+                                    onClick={() => setCurrentPage(Math.min(Math.ceil(filteredInvoices.length / itemsPerPage), currentPage + 1))}
+                                    disabled={currentPage === Math.ceil(filteredInvoices.length / itemsPerPage)}
+                                    className="p-1 rounded-md hover:bg-slate-200 disabled:opacity-50 disabled:hover:bg-transparent transition-colors text-slate-600"
+                                    title={t ? t('pagination.next') : "Next"}
+                                >
+                                    <ChevronRight size={20} />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div >
     );

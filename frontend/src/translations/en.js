@@ -149,6 +149,12 @@ export const en = {
         select_operator: "Select Operator",
         select_action: "Select Action",
         select_label: "Select Label..."
+    },
+    pagination: {
+        rows_per_page: "Rows per page",
+        page_x_of_y: "Page {current} of {total}",
+        previous: "Previous",
+        next: "Next"
     }
 };
 
