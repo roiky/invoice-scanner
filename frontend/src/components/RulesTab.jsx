@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, Save, X, AlertCircle, Play, CheckCircle, XCircle } from 'lucide-react';
+import { Plus, Trash2, Save, X, AlertCircle, TriangleAlert, Play, CheckCircle, XCircle } from 'lucide-react';
 import { getRules, createRule, updateRule, deleteRule } from '../api';
 import { getLabelColor } from '../utils/colors';
 
@@ -381,6 +381,7 @@ export function RulesTab({ t, labels }) {
                                             {[
                                                 { val: 'Processed', color: 'green', icon: <CheckCircle size={12} /> },
                                                 { val: 'Pending', color: 'amber', icon: <AlertCircle size={12} /> },
+                                                { val: 'Warning', color: 'orange', icon: <TriangleAlert size={12} /> },
                                                 { val: 'Cancelled', color: 'red', icon: <XCircle size={12} /> }
                                             ].map(({ val, color, icon }) => (
                                                 <button

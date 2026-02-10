@@ -19,7 +19,7 @@ class InvoiceData(BaseModel):
     comments: Optional[str] = None
     
     # Status
-    status: str = "Pending" # Pending, Processed, Cancelled
+    status: str = "Pending" # Pending, Warning, Processed, Cancelled
     
 class ScanResult(BaseModel):
     total_emails_scanned: int

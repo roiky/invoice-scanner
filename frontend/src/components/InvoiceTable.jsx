@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { FileText, CheckCircle, AlertCircle, Download, Search, XCircle, Edit2, Trash2, Check, X, ArrowUp, ArrowDown, ArrowUpDown, Calendar, Tag, Upload } from 'lucide-react';
+import { FileText, CheckCircle, AlertCircle, TriangleAlert, Download, Search, XCircle, Edit2, Trash2, Check, X, ArrowUp, ArrowDown, ArrowUpDown, Calendar, Tag, Upload } from 'lucide-react';
 import { updateInvoice, deleteInvoice, uploadInvoiceFile } from '../api';
 import { DateInput } from './DateInput';
 import { DateRangePicker } from './DateRangePicker';
@@ -248,7 +248,7 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                     <div className="flex items-center gap-3 w-full sm:w-auto flex-wrap">
                         {/* Status Multi-Select */}
                         <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
-                            {['Processed', 'Pending', 'Cancelled'].map(status => {
+                            {['Processed', 'Pending', 'Warning', 'Cancelled'].map(status => {
                                 const isSelected = filterStatus.includes(status);
                                 return (
                                     <button
@@ -260,11 +260,15 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                         className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${isSelected
                                             ? (status === 'Processed' ? 'bg-white text-green-700 shadow-sm ring-1 ring-green-200' :
                                                 status === 'Pending' ? 'bg-white text-amber-700 shadow-sm ring-1 ring-amber-200' :
-                                                    'bg-white text-red-700 shadow-sm ring-1 ring-red-200')
-                                            : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
+                                                    status === 'Warning' ? 'bg-white text-orange-700 shadow-sm ring-1 ring-orange-200' :
+                                                        'bg-white text-red-700 shadow-sm ring-1 ring-red-200')
+                                            : (status === 'Processed' ? 'text-slate-500 hover:bg-white hover:text-green-700 hover:shadow-sm hover:ring-1 hover:ring-green-200' :
+                                                status === 'Pending' ? 'text-slate-500 hover:bg-white hover:text-amber-700 hover:shadow-sm hover:ring-1 hover:ring-amber-200' :
+                                                    status === 'Warning' ? 'text-slate-500 hover:bg-white hover:text-orange-700 hover:shadow-sm hover:ring-1 hover:ring-orange-200' :
+                                                        'text-slate-500 hover:bg-white hover:text-red-700 hover:shadow-sm hover:ring-1 hover:ring-red-200')
                                             }`}
                                     >
-                                        {t(`filters.status.${status.toLowerCase()}`)}
+                                        {t(`status.${status.toLowerCase()}`)}
                                     </button>
                                 );
                             })}
@@ -429,9 +433,10 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                             </div>
                             <div className="w-px h-4 bg-blue-200 mx-1"></div>
 
-                            <button onClick={() => handleBulkStatusChange("Processed")} className="h-8 px-3 text-xs font-medium bg-white text-green-700 border border-green-200 hover:bg-green-50 hover:border-green-300 rounded-lg shadow-sm transition-all">{t('actions.mark_processed')}</button>
-                            <button onClick={() => handleBulkStatusChange("Pending")} className="h-8 px-3 text-xs font-medium bg-white text-amber-700 border border-amber-200 hover:bg-amber-50 hover:border-amber-300 rounded-lg shadow-sm transition-all">{t('actions.mark_pending')}</button>
-                            <button onClick={() => handleBulkStatusChange("Cancelled")} className="h-8 px-3 text-xs font-medium bg-white text-red-700 border border-red-200 hover:bg-red-50 hover:border-red-300 rounded-lg shadow-sm transition-all">{t('actions.mark_cancelled')}</button>
+                            <button onClick={() => handleBulkStatusChange("Processed")} className="h-8 px-3 text-xs font-medium bg-white text-green-700 border border-green-200 hover:bg-green-600 hover:text-white hover:border-green-600 rounded-lg shadow-sm transition-all">{t('actions.mark_processed')}</button>
+                            <button onClick={() => handleBulkStatusChange("Pending")} className="h-8 px-3 text-xs font-medium bg-white text-amber-700 border border-amber-200 hover:bg-amber-600 hover:text-white hover:border-amber-600 rounded-lg shadow-sm transition-all">{t('actions.mark_pending')}</button>
+                            <button onClick={() => handleBulkStatusChange("Warning")} className="h-8 px-3 text-xs font-medium bg-white text-orange-700 border border-orange-200 hover:bg-orange-600 hover:text-white hover:border-orange-600 rounded-lg shadow-sm transition-all">{t('actions.mark_warning')}</button>
+                            <button onClick={() => handleBulkStatusChange("Cancelled")} className="h-8 px-3 text-xs font-medium bg-white text-red-700 border border-red-200 hover:bg-red-600 hover:text-white hover:border-red-600 rounded-lg shadow-sm transition-all">{t('actions.mark_cancelled')}</button>
 
                             <div className="h-6 w-px bg-blue-200 mx-1"></div>
 
@@ -527,6 +532,15 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                             <AlertCircle size={10} /> Pending
                                                         </button>
                                                         <button
+                                                            onClick={() => setEditForm({ ...editForm, status: "Warning" })}
+                                                            className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all flex items-center justify-center gap-1
+                                                            ${editForm.status === 'Warning'
+                                                                    ? 'bg-orange-100 text-orange-700 border-orange-300 shadow-sm'
+                                                                    : 'bg-white text-slate-400 border-slate-200 hover:border-orange-300 hover:text-orange-600'}`}
+                                                        >
+                                                            <TriangleAlert size={10} /> Warning
+                                                        </button>
+                                                        <button
                                                             onClick={() => setEditForm({ ...editForm, status: "Cancelled" })}
                                                             className={`px-2 py-0.5 rounded text-[10px] font-bold border transition-all flex items-center justify-center gap-1
                                                             ${editForm.status === 'Cancelled'
@@ -538,13 +552,19 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                                                     </div>
                                                 ) : (
                                                     <span className={`inline-flex items-center gap-1.5 pl-2 pr-3 py-1 rounded-full text-xs font-semibold border shadow-sm
-                                                    ${inv.status === 'Processed' ? 'text-green-700 bg-green-50 border-green-200/60' :
-                                                            inv.status === 'Cancelled' ? 'text-red-700 bg-red-50 border-red-200/60' :
-                                                                'text-amber-700 bg-amber-50 border-amber-200/60'}`}>
-                                                        {inv.status === 'Processed' ? <CheckCircle size={12} className="stroke-[2.5]" /> :
-                                                            inv.status === 'Cancelled' ? <XCircle size={12} className="stroke-[2.5]" /> :
-                                                                <AlertCircle size={12} className="stroke-[2.5]" />}
-                                                        {t(`filters.status.${inv.status.toLowerCase()}`)}
+                                                        ${inv.status === 'Processed'
+                                                            ? 'bg-green-50 text-green-700 border-green-200'
+                                                            : inv.status === 'Pending'
+                                                                ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                                                : inv.status === 'Warning'
+                                                                    ? 'bg-orange-50 text-orange-700 border-orange-200'
+                                                                    : 'bg-red-50 text-red-700 border-red-200'
+                                                        }`}>
+                                                        {inv.status === 'Processed' && <CheckCircle size={12} />}
+                                                        {inv.status === 'Pending' && <AlertCircle size={12} />}
+                                                        {inv.status === 'Warning' && <TriangleAlert size={12} />}
+                                                        {inv.status === 'Cancelled' && <XCircle size={12} />}
+                                                        {t(`status.${(inv.status || 'pending').toLowerCase()}`)}
                                                     </span>
                                                 )}
                                             </td>

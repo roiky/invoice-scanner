@@ -182,7 +182,7 @@
     "download_url": "http://127.0.0.1:8000/files/19bfe6d8f921ec77_347416318.pdf",
     "labels": [
       "עסק",
-      "אישי"
+      "בית"
     ],
     "comments": "",
     "status": "Processed"
@@ -237,6 +237,142 @@
       "בית"
     ],
     "comments": "",
+    "status": "Processed"
+  },
+  "194a0c52022ecb2b": {
+    "id": "194a0c52022ecb2b",
+    "filename": "28717.pdf",
+    "sender_email": "do-not-reply@kavanu.co",
+    "subject": "קבלה מה קבענו בע\"מ",
+    "invoice_date": "2025-01-26",
+    "vendor_name": "do-not-reply@kavanu.co",
+    "total_amount": 224.2,
+    "currency": "ILS",
+    "vat_amount": 34.2,
+    "download_url": "http://127.0.0.1:8000/files/194a0c52022ecb2b_28717.pdf",
+    "labels": [
+      "עסק"
+    ],
+    "comments": null,
+    "status": "Processed"
+  },
+  "1948a1581dc13045": {
+    "id": "1948a1581dc13045",
+    "filename": "unknown.pdf",
+    "sender_email": "zehavasade2@gmail.com",
+    "subject": "זהבה שדה - חשבונית מס קבלה מספר 5891",
+    "invoice_date": "2025-01-21",
+    "vendor_name": "zehavasade2@gmail.com",
+    "total_amount": null,
+    "currency": "ILS",
+    "vat_amount": null,
+    "download_url": "http://localhost:8000/files/generated_1948a1581dc13045.pdf",
+    "labels": [
+      "עסק"
+    ],
+    "comments": null,
+    "status": "Processed"
+  },
+  "1945ff682c66906f": {
+    "id": "1945ff682c66906f",
+    "filename": "unknown.pdf",
+    "sender_email": "Apple <no_reply@email.apple.com>",
+    "subject": "‫הקבלה שלך מ‑Apple‬",
+    "invoice_date": "2025-01-13",
+    "vendor_name": "Apple",
+    "total_amount": 33.9,
+    "currency": "ILS",
+    "vat_amount": 5.17,
+    "download_url": "http://localhost:8000/files/generated_1946375815cf3d94.pdf",
+    "labels": [
+      "אישי"
+    ],
+    "comments": null,
+    "status": "Processed"
+  },
+  "1945de50f3567f52": {
+    "id": "1945de50f3567f52",
+    "filename": "unknown.pdf",
+    "sender_email": "Apple <no_reply@email.apple.com>",
+    "subject": "‫הקבלה שלך מ‑Apple‬",
+    "invoice_date": "2025-01-13",
+    "vendor_name": "Apple",
+    "total_amount": 11.9,
+    "currency": "ILS",
+    "vat_amount": 1.82,
+    "download_url": "http://localhost:8000/files/generated_1945f61b08761cda.pdf",
+    "labels": [
+      "אישי"
+    ],
+    "comments": null,
+    "status": "Processed"
+  },
+  "1945a73a11833f73": {
+    "id": "1945a73a11833f73",
+    "filename": "unknown.pdf",
+    "sender_email": "\"ספיר אקנין\" <invoice@grow.security>",
+    "subject": "קבלה עבור עסקה 50008 ב- ספיר אקנין",
+    "invoice_date": "2025-01-12",
+    "vendor_name": "ספיר אקנין",
+    "total_amount": null,
+    "currency": "ILS",
+    "vat_amount": null,
+    "download_url": "http://localhost:8000/files/generated_1945a73a11833f73.pdf",
+    "labels": [
+      "עסק"
+    ],
+    "comments": null,
+    "status": "Processed"
+  },
+  "1945a2a4dff0ef64": {
+    "id": "1945a2a4dff0ef64",
+    "filename": "61064.pdf",
+    "sender_email": "\"אין אנד די תעשיות קוסמטיקה בע״מ\" <notify@morning.co>",
+    "subject": "חשבונית מס / קבלה 61064 - אין אנד די תעשיות קוסמטיקה בע\"מ",
+    "invoice_date": "2025-01-12",
+    "vendor_name": "אין אנד די תעשיות קוסמטיקה בע״מ",
+    "total_amount": 227.0,
+    "currency": "ILS",
+    "vat_amount": 34.75,
+    "download_url": "http://127.0.0.1:8000/files/1945a2a4dff0ef64_61064.pdf",
+    "labels": [
+      "עסק"
+    ],
+    "comments": null,
+    "status": "Processed"
+  },
+  "1944b4df9f4472ae": {
+    "id": "1944b4df9f4472ae",
+    "filename": "Invoice Receipt-1047391-signed.pdf",
+    "sender_email": "\"מסיבלנד בעמ\" <outgoing@linet.org.il>",
+    "subject": "קיבלת ממסיבלנד בעמ חשבונית מס קבלה מספר 1047391",
+    "invoice_date": "2025-01-09",
+    "vendor_name": "מסיבלנד בעמ",
+    "total_amount": 189.0,
+    "currency": "ILS",
+    "vat_amount": 28.83,
+    "download_url": "http://127.0.0.1:8000/files/1944b4df9f4472ae_Invoice Receipt-1047391-signed.pdf",
+    "labels": [
+      "אישי"
+    ],
+    "comments": null,
+    "status": "Processed"
+  },
+  "194460489c0f5d95": {
+    "id": "194460489c0f5d95",
+    "filename": "Sales Order-756733-signed.pdf",
+    "sender_email": "\"מסיבלנד בעמ\" <outgoing@linet.org.il>",
+    "subject": "קיבלת ממסיבלנד בעמ הזמנת מכירות מספר 756733",
+    "invoice_date": "2025-01-08",
+    "vendor_name": "מסיבלנד בעמ",
+    "total_amount": 189.0,
+    "currency": "ILS",
+    "vat_amount": 28.83,
+    "download_url": "http://127.0.0.1:8000/files/194460489c0f5d95_Sales Order-756733-signed.pdf",
+    "labels": [
+      "אישי"
+    ],
+    "comments": null,
     "status": "Processed"
   }
 }

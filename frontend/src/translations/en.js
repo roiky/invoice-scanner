@@ -56,6 +56,7 @@ export const en = {
         status: {
             all: "All Statuses",
             pending: "Pending",
+            warning: "Warning",
             processed: "Processed",
             cancelled: "Cancelled"
         }
@@ -74,6 +75,12 @@ export const en = {
         no_labels: "No labels",
         no_invoices: "No invoices found matching your filters."
     },
+    status: {
+        pending: "Pending",
+        warning: "Warning",
+        processed: "Processed",
+        cancelled: "Cancelled"
+    },
     auth: {
         connected_as: "Connected as",
         logout: "Logout",
@@ -88,6 +95,7 @@ export const en = {
         delete_selected: "Delete Selected",
         mark_processed: "Mark Processed",
         mark_pending: "Mark Pending",
+        mark_warning: "Mark Warning",
         mark_cancelled: "Mark Cancelled",
         selected: "Selected",
         add_label: "Add Label"

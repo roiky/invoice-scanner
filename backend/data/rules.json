@@ -45,5 +45,28 @@
       }
     ],
     "is_active": true
+  },
+  {
+    "id": "7098bd77-1286-4ba9-a9be-2511cabe75ea",
+    "name": "Expensive",
+    "logic": "AND",
+    "conditions": [
+      {
+        "field": "total_amount",
+        "operator": "gt",
+        "value": "1000"
+      }
+    ],
+    "actions": [
+      {
+        "action_type": "add_label",
+        "value": "Warning,\u05dc\u05d1\u05d3\u05d9\u05e7\u05d4 \u05d9\u05d3\u05e0\u05d9\u05ea"
+      },
+      {
+        "action_type": "set_status",
+        "value": "Warning"
+      }
+    ],
+    "is_active": true
   }
 ]

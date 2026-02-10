@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Save, X, Edit2, Check, Download, AlertCircle, CheckCircle, XCircle, Search, Trash2 } from 'lucide-react';
+import { Save, X, Edit2, Check, Download, AlertCircle, TriangleAlert, CheckCircle, XCircle, Search, Trash2 } from 'lucide-react';
 import { getInvoices, updateInvoice, deleteInvoice } from '../api';
 
 export function HistoryTable() {
     const [invoices, setInvoices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filterText, setFilterText] = useState("");
-    const [selectedStatuses, setSelectedStatuses] = useState(["Pending", "Processed", "Cancelled"]);
+    const [selectedStatuses, setSelectedStatuses] = useState(["Pending", "Warning", "Processed", "Cancelled"]);
 
     const [editingId, setEditingId] = useState(null);
     const [editForm, setEditForm] = useState({});
@@ -113,11 +113,13 @@ export function HistoryTable() {
     const StatusBadge = ({ status, onClick, selected }) => {
         const styles = {
             "Pending": "text-amber-600 bg-amber-50 border-amber-100",
+            "Warning": "text-orange-600 bg-orange-50 border-orange-100",
             "Processed": "text-green-600 bg-green-50 border-green-100",
             "Cancelled": "text-red-600 bg-red-50 border-red-100"
         };
         const icons = {
             "Pending": <AlertCircle size={14} />,
+            "Warning": <TriangleAlert size={14} />,
             "Processed": <CheckCircle size={14} />,
             "Cancelled": <XCircle size={14} />
         };
@@ -148,7 +150,7 @@ export function HistoryTable() {
                     {/* Status Filters */}
                     <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-sm text-slate-500 mr-2 font-medium">Filter Status:</span>
-                        {["Pending", "Processed", "Cancelled"].map(s => (
+                        {["Pending", "Warning", "Processed", "Cancelled"].map(s => (
                             <StatusBadge
                                 key={s}
                                 status={s}
@@ -203,17 +205,20 @@ export function HistoryTable() {
                                                 className="border border-slate-300 rounded px-2 py-1 text-xs w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                             >
                                                 <option value="Pending">Pending</option>
+                                                <option value="Warning">Warning</option>
                                                 <option value="Processed">Processed</option>
                                                 <option value="Cancelled">Cancelled</option>
                                             </select>
                                         ) : (
                                             <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border
                                                 ${inv.status === 'Processed' ? 'text-green-700 bg-green-50 border-green-100' :
-                                                    inv.status === 'Cancelled' ? 'text-red-700 bg-red-50 border-red-100' :
-                                                        'text-amber-700 bg-amber-50 border-amber-100'}`}>
+                                                    inv.status === 'Pending' ? 'text-amber-700 bg-amber-50 border-amber-100' :
+                                                        inv.status === 'Warning' ? 'text-orange-700 bg-orange-50 border-orange-100' :
+                                                            'text-red-700 bg-red-50 border-red-100'}`}>
                                                 {inv.status === 'Processed' ? <CheckCircle size={12} /> :
-                                                    inv.status === 'Cancelled' ? <XCircle size={12} /> :
-                                                        <AlertCircle size={12} />}
+                                                    inv.status === 'Pending' ? <AlertCircle size={12} /> :
+                                                        inv.status === 'Warning' ? <TriangleAlert size={12} /> :
+                                                            <XCircle size={12} />}
                                                 {inv.status}
                                             </span>
                                         )}

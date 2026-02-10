@@ -209,6 +209,7 @@ export function ManualEntryModal({ isOpen, onClose, onSave, availableLabels = []
                                 {[
                                     { val: 'Processed', color: 'green', icon: <div className="w-2 h-2 rounded-full bg-green-500" /> },
                                     { val: 'Pending', color: 'amber', icon: <div className="w-2 h-2 rounded-full bg-amber-500" /> },
+                                    { val: 'Warning', color: 'orange', icon: <div className="w-2 h-2 rounded-full bg-orange-500" /> },
                                     { val: 'Cancelled', color: 'red', icon: <div className="w-2 h-2 rounded-full bg-red-500" /> }
                                 ].map(({ val, color, icon }) => (
                                     <button

@@ -56,6 +56,7 @@ export const he = {
         status: {
             all: "כל הסטטוסים",
             pending: "ממתין",
+            warning: "אזהרה",
             processed: "טופל",
             cancelled: "בוטל"
         }
@@ -74,6 +75,12 @@ export const he = {
         no_labels: "אין תגיות",
         no_invoices: "לא נמצאו חשבוניות התואמות לחיפוש."
     },
+    status: {
+        pending: "ממתין",
+        warning: "אזהרה",
+        processed: "טופל",
+        cancelled: "בוטל"
+    },
     auth: {
         connected_as: "מחובר כ-",
         logout: "התנתק",
@@ -88,6 +95,7 @@ export const he = {
         delete_selected: "מחק בחירה",
         mark_processed: "סמן כטופל",
         mark_pending: "סמן כממתין",
+        mark_warning: "סמן כאזהרה",
         mark_cancelled: "סמן כמבוטל",
         selected: "נבחרו",
         clear_filters: "נקה סינונים",
