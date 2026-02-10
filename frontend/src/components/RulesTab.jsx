@@ -368,7 +368,12 @@ export function RulesTab({ t, labels }) {
                                         value={action.action_type}
                                         onChange={e => {
                                             const newActions = [...editingRule.actions];
-                                            newActions[idx].action_type = e.target.value;
+                                            const newType = e.target.value;
+                                            newActions[idx].action_type = newType;
+                                            // Reset value based on type to prevent leakage
+                                            if (newType === 'set_status') newActions[idx].value = 'Pending';
+                                            else if (newType === 'add_label') newActions[idx].value = '';
+
                                             setEditingRule({ ...editingRule, actions: newActions });
                                         }}
                                     >
