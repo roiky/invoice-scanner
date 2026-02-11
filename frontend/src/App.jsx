@@ -241,7 +241,7 @@ function AppContent() {
               <FileText className="text-white" size={20} />
             </div>
             <div>
-              <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 font-display">
+              <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-200 font-display">
                 {t('app.name')}
               </h1>
               <p className="text-[10px] text-slate-400 font-medium tracking-wide uppercase">{t('app.workspace')}</p>
@@ -253,8 +253,8 @@ function AppContent() {
               <button
                 onClick={() => setActiveTab('dashboard')}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 ${activeTab === 'dashboard'
-                  ? 'bg-white text-blue-700 shadow-sm ring-1 ring-slate-200'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
+                  ? 'bg-white dark:bg-slate-800 text-blue-700 dark:text-blue-400 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700'
+                  : 'text-slate-500 dark:text-slate-300 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
                   }`}
               >
                 <LayoutDashboard size={18} />
@@ -263,8 +263,8 @@ function AppContent() {
               <button
                 onClick={() => setActiveTab('history')}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 ${activeTab === 'history'
-                  ? 'bg-white text-blue-700 shadow-sm ring-1 ring-slate-200'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
+                  ? 'bg-white dark:bg-slate-800 text-blue-700 dark:text-blue-400 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700'
+                  : 'text-slate-500 dark:text-slate-300 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
                   }`}
               >
                 <History size={18} />
@@ -273,8 +273,8 @@ function AppContent() {
               <button
                 onClick={() => setActiveTab('rules')}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 ${activeTab === 'rules'
-                  ? 'bg-white text-blue-700 shadow-sm ring-1 ring-slate-200'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
+                  ? 'bg-white dark:bg-slate-800 text-blue-700 dark:text-blue-400 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700'
+                  : 'text-slate-500 dark:text-slate-300 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
                   }`}
               >
                 <Gavel size={18} />
@@ -327,7 +327,7 @@ function AppContent() {
               <div className="flex items-center gap-3 ps-4 border-s border-slate-200">
                 <div className="hidden md:flex flex-col items-end">
                   <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{t('auth.connected_as')}</span>
-                  <span className="text-xs font-medium text-slate-700">{user.email}</span>
+                  <span className="text-xs font-medium text-slate-700 dark:text-slate-200">{user.email}</span>
                 </div>
                 <button
                   onClick={handleLogout}
