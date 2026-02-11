@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { FileText, CheckCircle, AlertCircle, TriangleAlert, Download, Search, XCircle, Edit2, Trash2, Check, X, ArrowUp, ArrowDown, ArrowUpDown, Calendar, Tag, Upload, ChevronLeft, ChevronRight } from 'lucide-react';
-import { updateInvoice, deleteInvoice, uploadInvoiceFile } from '../api';
+import { updateInvoice, deleteInvoice, uploadInvoiceFile, exportData } from '../api';
 import { DateInput } from './DateInput';
+import { ExportMenu } from './ExportMenu';
 import { DateRangePicker } from './DateRangePicker';
 import { getLabelColor } from '../utils/colors';
 
@@ -221,6 +222,15 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    const handleExport = async (format) => {
+        if (!filteredInvoices.length) return;
+        const ids = filteredInvoices.map(inv => inv.id);
+        await exportData(format, ids);
     };
 
     if (!invoices || invoices.length === 0) {
@@ -348,14 +358,15 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                             </div>
                         </div>
 
-                        {/* Export CSV Button - Moved outside of Labels group */}
-                        <button
-                            onClick={downloadCSV}
-                            className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-medium transition-all shadow-md hover:shadow-lg active:scale-95 ml-auto sm:ml-0 text-sm"
-                        >
-                            <Download size={16} />
-                            {t('history.export_csv')}
-                        </button>
+                        {/* Export Menu */}
+                        <div className="ml-auto sm:ml-0">
+                            <ExportMenu
+                                onExportCSV={downloadCSV}
+                                onExportPDF={() => handleExport('pdf')}
+                                onExportZIP={() => handleExport('zip')}
+                                disabled={filteredInvoices.length === 0}
+                            />
+                        </div>
                     </div>
                 </div>
 

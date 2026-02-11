@@ -281,3 +281,47 @@ async def upload_invoice_file(invoice_id: str, file: UploadFile = File(...)):
         return updated_invoice
     
     return {"download_url": download_url, "filename": new_filename}
+
+# --- Export Endpoints ---
+from .services.export_service import generate_pdf_report, generate_zip_export
+from fastapi.responses import Response
+
+class ExportRequest(BaseModel):
+    invoice_ids: List[str]
+
+@app.post("/export/pdf")
+def export_pdf(req: ExportRequest):
+    # Fetch full invoice objects
+    all_invoices = storage_service.get_all()
+    # Filter
+    invoices = [inv.model_dump() for inv in all_invoices if inv.id in req.invoice_ids]
+    
+    if not invoices:
+         from fastapi import HTTPException
+         raise HTTPException(status_code=400, detail="No invoices selected")
+
+    try:
+        pdf_content = generate_pdf_report(invoices)
+        return Response(content=pdf_content, media_type="application/pdf", headers={"Content-Disposition": "attachment; filename=invoices_report.pdf"})
+    except Exception as e:
+        print(f"PDF Export Error: {e}")
+        from fastapi import HTTPException
+        raise HTTPException(status_code=500, detail=f"PDF Generation Failed: {str(e)}")
+
+@app.post("/export/zip")
+def export_zip(req: ExportRequest):
+    # Fetch full invoice objects
+    all_invoices = storage_service.get_all()
+    invoices = [inv.model_dump() for inv in all_invoices if inv.id in req.invoice_ids]
+    
+    if not invoices:
+         from fastapi import HTTPException
+         raise HTTPException(status_code=400, detail="No invoices selected")
+
+    try:
+        zip_content = generate_zip_export(invoices, files_dir="backend/static/invoices")
+        return Response(content=zip_content, media_type="application/zip", headers={"Content-Disposition": "attachment; filename=invoices_export.zip"})
+    except Exception as e:
+        print(f"ZIP Export Error: {e}")
+        from fastapi import HTTPException
+        raise HTTPException(status_code=500, detail=f"ZIP Generation Failed: {str(e)}")

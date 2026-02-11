@@ -154,3 +154,37 @@ export const deleteRule = async (id) => {
     if (!response.ok) throw new Error('Failed to delete rule');
     return response.json();
 };
+
+export const exportData = async (format, invoiceIds) => {
+    const endpoint = format === 'pdf' ? '/export/pdf' : '/export/zip';
+    const response = await fetch(`${API_URL}${endpoint}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ invoice_ids: invoiceIds }),
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        let errorMessage = 'Export failed';
+        try {
+            const errorJson = JSON.parse(errorText);
+            errorMessage = errorJson.detail || errorMessage;
+        } catch (e) {
+            errorMessage = `Export failed: ${errorText}`;
+        }
+        throw new Error(errorMessage);
+    }
+
+    // Trigger download
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = format === 'pdf' ? 'invoices_report.pdf' : 'invoices_export.zip';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+};

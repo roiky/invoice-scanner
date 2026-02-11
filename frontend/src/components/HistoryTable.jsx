@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Save, X, Edit2, Check, Download, AlertCircle, TriangleAlert, CheckCircle, XCircle, Search, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { getInvoices, updateInvoice, deleteInvoice } from '../api';
+import { getInvoices, updateInvoice, deleteInvoice, exportData } from '../api';
+import { ExportMenu } from './ExportMenu';
 
-export function HistoryTable() {
+export function HistoryTable({ t, dir }) {
     const [invoices, setInvoices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filterText, setFilterText] = useState("");
@@ -120,6 +121,12 @@ export function HistoryTable() {
         document.body.removeChild(link);
     };
 
+    const handleExport = async (format) => {
+        if (!filteredInvoices.length) return;
+        const ids = filteredInvoices.map(inv => inv.id);
+        await exportData(format, ids);
+    };
+
     const StatusBadge = ({ status, onClick, selected }) => {
         const styles = {
             "Pending": "text-amber-600 bg-amber-50 border-amber-100",
@@ -175,16 +182,15 @@ export function HistoryTable() {
                     <div className="relative w-full md:w-64">
                         <Search size={18} className="absolute left-3 top-2.5 text-slate-400" />
                         <input
-                            type="text"
-                            placeholder="Search history..."
-                            value={filterText}
-                            onChange={e => setFilterText(e.target.value)}
                             className="pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-primary text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                         />
                     </div>
-                    <button onClick={downloadCSV} className="flex items-center gap-2 px-3 py-2 bg-slate-800 dark:bg-blue-600 text-white rounded-md hover:bg-slate-900 dark:hover:bg-blue-700 text-sm font-medium whitespace-nowrap transition-colors shadow-sm">
-                        <Download size={16} /> Export
-                    </button>
+                    <ExportMenu
+                        onExportCSV={downloadCSV}
+                        onExportPDF={() => handleExport('pdf')}
+                        onExportZIP={() => handleExport('zip')}
+                        disabled={filteredInvoices.length === 0}
+                    />
                 </div>
             </div>
 

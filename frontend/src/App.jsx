@@ -11,6 +11,7 @@ import { LanguageProvider, useLanguage } from './context/LanguageContext'
 import { ThemeProvider } from './context/ThemeContext';
 import { useTheme } from './hooks/useTheme';
 import { Moon, Sun } from 'lucide-react'
+import { HistoryTable } from './components/HistoryTable'
 
 function AppContent() {
   const { t, language, setLanguage, dir } = useLanguage();
