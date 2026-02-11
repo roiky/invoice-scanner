@@ -258,10 +258,11 @@ export function DateRangePicker({
                                     head_cell: { width: '32px', fontSize: '0.75rem' }
                                 }}
                                 classNames={{
-                                    selected: "bg-blue-50 dark:bg-blue-900/40 text-slate-900 dark:text-slate-100 font-semibold hover:bg-blue-100 dark:hover:bg-blue-900/60 hover:text-slate-900 dark:hover:text-slate-100",
+                                    selected: "![&.rdp-day_selected]:bg-blue-50 dark:![&.rdp-day_selected]:bg-slate-800 ![&.rdp-day_selected]:text-slate-900 dark:![&.rdp-day_selected]:text-slate-100 font-semibold hover:!bg-blue-100 dark:hover:!bg-slate-700",
                                     range_start: dir === 'rtl' ? "rounded-r-lg !bg-blue-600 !text-white hover:!bg-blue-700 hover:!text-white" : "rounded-l-lg !bg-blue-600 !text-white hover:!bg-blue-700 hover:!text-white",
                                     range_end: dir === 'rtl' ? "rounded-l-lg !bg-blue-600 !text-white hover:!bg-blue-700 hover:!text-white" : "rounded-r-lg !bg-blue-600 !text-white hover:!bg-blue-700 hover:!text-white",
                                     today: "font-bold text-blue-600 dark:text-blue-400",
+                                    range_middle: "!bg-blue-50 dark:!bg-slate-800 !text-slate-900 dark:!text-slate-200",
                                     months: "justify-center",
                                 }}
                             />
