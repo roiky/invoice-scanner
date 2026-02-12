@@ -3,11 +3,13 @@ import io
 import zipfile
 from datetime import datetime
 from typing import List
-from xhtml2pdf import pisa
 import arabic_reshaper
 from bidi.algorithm import get_display
+from backend.services.pdf_utils import generate_pdf_from_html
+from jinja2 import Template
 
 # Template for PDF
+# Note: Fonts are handled globally by pdf_utils, which injects the necessary CSS.
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html>
@@ -18,9 +20,8 @@ HTML_TEMPLATE = """
             size: A4;
             margin: 1cm;
         }
-        /* Font registered programmatically via ReportLab */
+        /* Body font set by pdf_utils, but we align text here */
         body {
-            font-family: 'ArialHebrew', sans-serif;
             font-size: 12px;
         }
         .header {
@@ -37,7 +38,7 @@ HTML_TEMPLATE = """
         th, td {
             border: 1px solid #ddd;
             padding: 8px;
-            text-align: left;
+            text-align: right; /* RTL alignment */
         }
         th {
             background-color: #f2f2f2;
@@ -46,7 +47,8 @@ HTML_TEMPLATE = """
             direction: rtl;
         }
         .amount {
-            text-align: right;
+            text-align: left; /* LTR for numbers looks better usually, or keep right */
+            direction: ltr;
             font-family: monospace;
         }
         .footer {
@@ -57,7 +59,7 @@ HTML_TEMPLATE = """
         }
     </style>
 </head>
-<body>
+<body dir="rtl">
     <div class="header">
         <h1>Invoice Report</h1>
         <p>Generated on: {{ generation_date }}</p>
@@ -103,9 +105,12 @@ HTML_TEMPLATE = """
 def fix_hebrew(text):
     if not text:
         return ""
-    reshaped_text = arabic_reshaper.reshape(text)
-    bidi_text = get_display(reshaped_text)
-    return bidi_text
+    try:
+        reshaped_text = arabic_reshaper.reshape(text)
+        bidi_text = get_display(reshaped_text)
+        return bidi_text
+    except Exception:
+        return text
 
 def format_currency(amount, currency="ILS"):
     if amount is None:
@@ -131,32 +136,13 @@ def generate_pdf_report(invoices: List[dict]) -> bytes:
         processed_invoices.append({
             'date': inv.get('invoice_date', ''),
             'vendor': fix_hebrew(inv.get('vendor_name', '-')),
+            # Truncate long subjects
             'subject': fix_hebrew(inv.get('subject', '')[:50] + '...' if len(inv.get('subject', '')) > 50 else inv.get('subject', '')),
             'status': inv.get('status', 'Pending'),
             'vat': f"{vat:,.2f} {currency}",
             'total': f"{amount:,.2f} {currency}"
         })
 
-    # Render HTML (using Jinja2 manually or simple string replacement for now to avoid extra dependencies if possible, but Template is better)
-    # Using simple replacement for this example to reduce complexity, or basic f-string
-    # Ideally use Jinja2
-    # Register font directly with ReportLab to bypass xhtml2pdf temp file issues
-    from reportlab.pdfbase import pdfmetrics
-    from reportlab.pdfbase.ttfonts import TTFont
-    
-    # Get absolute path to font
-    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    font_path = os.path.join(base_dir, 'backend', 'static', 'fonts', 'arial.ttf')
-    
-    if not os.path.exists(font_path):
-        font_path = "C:/Windows/Fonts/arial.ttf"
-
-    try:
-        pdfmetrics.registerFont(TTFont('ArialHebrew', font_path))
-    except Exception as e:
-        print(f"Font registration warning: {e}")
-
-    from jinja2 import Template
     template = Template(HTML_TEMPLATE)
     html_content = template.render(
         generation_date=datetime.now().strftime("%d/%m/%Y %H:%M"),
@@ -164,59 +150,10 @@ def generate_pdf_report(invoices: List[dict]) -> bytes:
         invoices=processed_invoices,
         total_sum=f"{total_sum:,.2f} ILS",
         total_vat=f"{total_vat:,.2f} ILS",
-        font_path=font_path # Not used in CSS but kept for reference
     )
 
-    # Link callback for resolving local files (kept just in case for other resources)
-    def link_callback(uri, rel):
-        """
-        Convert HTML URIs to absolute system paths so xhtml2pdf can verify them
-        """
-        sUrl = uri
-        
-        # If the URL is already absolute, strictly check
-        if os.path.isabs(sUrl):
-            if os.path.exists(sUrl):
-                return sUrl
-            return None # Fail if absolute path doesn't exist
-
-        # If not absolute, it's relative to the source.
-        # But since we provide source as string, we need to handle it.
-        # We assume resources are relative to 'backend/static' or root.
-        
-        # Try finding in backend/static
-        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        static_path = os.path.join(base_dir, 'backend', 'static')
-        
-        # If uri starts with 'backend/static/', strip it to avoid duplication if we join
-        if uri.startswith('backend/static/'):
-            full_path = os.path.join(base_dir, uri)
-        else:
-            full_path = os.path.join(static_path, uri)
-
-        if not os.path.exists(full_path):
-            # Try plain relative from project root
-            full_path = os.path.join(base_dir, uri)
-            
-        if os.path.exists(full_path):
-            return full_path
-            
-        return None
-
-    # Convert to PDF
-    pdf_file = io.BytesIO()
-    pisa_status = pisa.CreatePDF(
-        src=html_content,
-        dest=pdf_file,
-        encoding='utf-8',
-        link_callback=link_callback
-    )
-    
-    if pisa_status.err:
-        raise Exception(f"PDF generation failed: {pisa_status.err}")
-    
-    pdf_file.seek(0)
-    return pdf_file.read()
+    pdf_bytes = generate_pdf_from_html(html_content)
+    return pdf_bytes
 
 def generate_zip_export(invoices: List[dict], files_dir: str) -> bytes:
     zip_buffer = io.BytesIO()

@@ -14,7 +14,7 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 STATIC_INVOICES_DIR = "backend/static/invoices" 
 BASE_URL = "http://localhost:8000/files"
 
-from xhtml2pdf import pisa
+
 import io
 from bs4 import BeautifulSoup
 import bidi.algorithm
@@ -29,26 +29,10 @@ def process_text_for_pdf(text):
     bidi_text = bidi.algorithm.get_display(reshaped_text, base_dir='L')
     return bidi_text
 
-def convert_html_to_pdf(source_html, output_path):
-    # Ensure Hebrew/UTF-8 support is attempted
-    # using Arial which is known to support Hebrew well
-    font_path = os.path.join(os.getcwd(), 'backend', 'static', 'fonts', 'arial.ttf').replace('\\', '/')
-    
-    # Manually register the font with ReportLab
-    # Challenge: xhtml2pdf crashes with @font-face on Windows (temp file lock).
-    # Challenge: xhtml2pdf doesn't find Python-registered fonts unless mapped in CSS.
-    # Hack: Register our Hebrew font as 'Helvetica' (the default PDF font).
-    # This forces xhtml2pdf to use our font for the default text without need for @font-face.
-    try:
-        from reportlab.pdfbase import pdfmetrics
-        from reportlab.pdfbase.ttfonts import TTFont
-        
-        pdfmetrics.registerFont(TTFont('Helvetica', font_path))
-        pdfmetrics.registerFont(TTFont('Arial', font_path)) # Register as Arial too just in case
-    except Exception as e:
-        print(f"Warning: Could not register font: {e}")
+from backend.services.pdf_utils import generate_pdf_from_html
 
-    # Sanitize Source HTML
+def convert_html_to_pdf(source_html, output_path):
+    # Sanitize Source HTML & Handle Bidi
     try:
         soup = BeautifulSoup(source_html, 'html.parser')
         
@@ -58,24 +42,16 @@ def convert_html_to_pdf(source_html, output_path):
         else:
             content_soup = BeautifulSoup(source_html, 'html.parser')
 
-        # Advanced Bidi Handling (V10 - Final Strategy):
-        # 1. We use DEFAULT LTR direction for the body. This keeps English Logical ("APPLE").
-        # 2. We use python-bidi with base_dir='L' to pre-reverse Hebrew (Visual Order).
-        #    "בדיקה" -> "הקידב".
-        #    "APPLE" -> "APPLE".
-        #    "APPLE בדיקה" -> "APPLE הקידב" (Correct Visual LTR).
-        
+        # Advanced Bidi Handling:
+        # We reverse Hebrew text for Visual display in LTR context
         for element in content_soup.find_all(string=True):
             if element.parent.name not in ['script', 'style', 'pre']:
                 original_text = str(element)
                 if not original_text.strip():
                     continue
                     
-                # Reshape Arabic/Hebrew (mostly for Arabic, safe for Hebrew)
+                # Reshape and Reverse
                 reshaped_text = arabic_reshaper.reshape(original_text)
-                
-                # Apply Bidi with LTR base direction
-                # This reverses Hebrew strings for Visual display in LTR context
                 bidi_text = bidi.algorithm.get_display(reshaped_text, base_dir='L')
                 
                 element.replace_with(bidi_text)
@@ -86,18 +62,9 @@ def convert_html_to_pdf(source_html, output_path):
         print(f"Warning: HTML parsing/bidi failed, using raw: {e}")
         base_content = source_html
 
-    # Link callback to handle font loading for xhtml2pdf if needed
-    def link_callback(uri, rel):
-        # Allow loading local files from backend/static
-        if uri.startswith('backend/static/'):
-            path = os.path.join(os.getcwd(), uri)
-            return path
-        return uri
-
-    # We add a specific style to force the font usage
-    # Using 'Arial' or 'Helvetica' which are now mapped to our TTF
-    # REMOVED @font-face to avoid crash
-    # ADDED dir="rtl" back to support Hebrew visual reversing.
+    # Wrap in layout HTML
+    # We rely on pdf_utils for font registration and injection
+    # We just define layout specifics here
     styled_html = f"""
     <html>
     <head>
@@ -105,17 +72,12 @@ def convert_html_to_pdf(source_html, output_path):
         <style>
             @page {{ size: A4; margin: 1cm; }}
             body {{ 
-                font-family: 'Helvetica', 'Arial', sans-serif !important; 
-                /* CRITICAL: Force LTR direction to keep English Logical ("APPLE") */
+                /* Force LTR direction to keep English Logical */
                 direction: ltr;
                 /* Right align for Hebrew aesthetics */
                 text-align: right;
             }}
-            * {{
-                font-family: 'Helvetica', 'Arial', sans-serif !important;
-            }}
             pre {{
-                font-family: 'Helvetica', 'Arial', sans-serif !important;
                 white-space: pre-wrap;
                 text-align: right;
                 direction: ltr;
@@ -128,14 +90,12 @@ def convert_html_to_pdf(source_html, output_path):
     </html>
     """
     
-    with open(output_path, "wb") as result_file:
-        pisa_status = pisa.CreatePDF(
-            src=styled_html,
-            dest=result_file,
-            encoding='utf-8',
-            link_callback=link_callback
-        )
-    return not pisa_status.err
+    try:
+        generate_pdf_from_html(styled_html, output_path=output_path)
+        return True
+    except Exception as e:
+        print(f"Error generating PDF: {e}")
+        return False
 
 
 

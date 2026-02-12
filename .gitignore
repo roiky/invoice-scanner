@@ -16,4 +16,6 @@ frontend/.env.local
 # IDE
 .idea/
 .vscode/
-*.swp
+
+# Invoices
+backend/static/invoices/
