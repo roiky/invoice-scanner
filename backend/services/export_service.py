@@ -170,15 +170,47 @@ def generate_zip_export(invoices: List[dict], files_dir: str) -> bytes:
         # 2. Add Invoice Files
         invoices_folder = "invoices/"
         for inv in invoices:
-            if inv.get('filename'):
-                file_path = os.path.join(files_dir, inv['filename'])
-                if os.path.exists(file_path):
-                    # Clean filename for zip
-                    safe_vendor = "".join([c for c in (inv.get('vendor_name') or 'Unknown') if c.isalnum() or c in (' ', '-', '_')]).strip()
-                    date_str = inv.get('invoice_date', '0000-00-00')
-                    new_filename = f"{date_str}_{safe_vendor}_{inv['id'][-4:]}.pdf"
-                    
-                    zip_file.write(file_path, f"{invoices_folder}{new_filename}")
+            # Determine actual file path on disk
+            # Strategy:
+            # 1. Try inv['filename']
+            # 2. Try {id}_{filename}
+            # 3. Try to extract from download_url
+            
+            original_filename = inv.get('filename')
+            invoice_id = inv.get('id')
+            candidates = []
+            
+            if original_filename:
+                candidates.append(original_filename)
+                candidates.append(f"{invoice_id}_{original_filename}")
+            
+            if inv.get('download_url'):
+                try:
+                    # http://.../files/19...pdf -> 19...pdf
+                    url_filename = inv['download_url'].split('/')[-1]
+                    candidates.append(url_filename)
+                    # Also try decoding if url encoded? Usually split is enough for simple cases
+                except:
+                    pass
+            
+            final_path = None
+            for cand in candidates:
+                cand_path = os.path.join(files_dir, cand)
+                if os.path.exists(cand_path):
+                    final_path = cand_path
+                    break
+            
+            if final_path:
+                # Clean filename for zip
+                safe_vendor = "".join([c for c in (inv.get('vendor_name') or 'Unknown') if c.isalnum() or c in (' ', '-', '_')]).strip()
+                date_str = inv.get('invoice_date', '0000-00-00')
+                # Use original extension or .pdf
+                ext = os.path.splitext(final_path)[1] or ".pdf"
+                new_filename = f"{date_str}_{safe_vendor}_{invoice_id[-4:]}{ext}"
+                
+                zip_file.write(final_path, f"{invoices_folder}{new_filename}")
+            else:
+                 print(f"Warning: Could not find file for invoice {invoice_id}. Candidates: {candidates}")
     
     zip_buffer.seek(0)
     return zip_buffer.read()
