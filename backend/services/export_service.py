@@ -23,6 +23,8 @@ HTML_TEMPLATE = """
         /* Body font set by pdf_utils, but we align text here */
         body {
             font-size: 12px;
+            /* CRITICAL: Force LTR direction to prevent xhtml2pdf from reversing English text */
+            direction: ltr;
         }
         .header {
             text-align: center;
@@ -30,15 +32,17 @@ HTML_TEMPLATE = """
         }
         .meta {
             margin-bottom: 20px;
+            text-align: right;
         }
         table {
             width: 100%;
             border-collapse: collapse;
+            direction: ltr; /* Ensure table doesn't reverse columns/text */
         }
         th, td {
             border: 1px solid #ddd;
             padding: 8px;
-            text-align: right; /* RTL alignment */
+            text-align: right; /* RTL alignment for Hebrew feel */
         }
         th {
             background-color: #f2f2f2;
@@ -59,7 +63,7 @@ HTML_TEMPLATE = """
         }
     </style>
 </head>
-<body dir="rtl">
+<body dir="ltr">
     <div class="header">
         <h1>Invoice Report</h1>
         <p>Generated on: {{ generation_date }}</p>

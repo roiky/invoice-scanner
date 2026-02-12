@@ -307,21 +307,40 @@
     "comments": null,
     "status": "Processed"
   },
-  "19bbdccb042ed0bc": {
-    "id": "19bbdccb042ed0bc",
+  "19bbbec860b3f6ae": {
+    "id": "19bbbec860b3f6ae",
     "filename": "unknown.pdf",
-    "sender_email": "Temu <temu@commerce.temuemail.com>",
-    "subject": "(פרסומת)תודה על הזמנתך",
+    "sender_email": "Apple <no_reply@email.apple.com>",
+    "subject": "‫הקבלה שלך מ‑Apple‬",
     "invoice_date": "2026-01-14",
-    "vendor_name": "Temu",
-    "total_amount": null,
+    "vendor_name": "Apple",
+    "total_amount": 33.9,
     "currency": "ILS",
-    "vat_amount": null,
-    "download_url": "http://localhost:8000/files/generated_19bbdccb042ed0bc.pdf",
+    "vat_amount": 5.17,
+    "download_url": "http://localhost:8000/files/generated_19bbbec860b3f6ae.pdf",
     "labels": [
-      "ספאם"
+      "אישי",
+      "עסק"
     ],
     "comments": null,
-    "status": "Cancelled"
+    "status": "Processed"
+  },
+  "19bbb3258cbb95b8": {
+    "id": "19bbb3258cbb95b8",
+    "filename": "unknown.pdf",
+    "sender_email": "Apple <no_reply@email.apple.com>",
+    "subject": "‫הקבלה שלך מ‑Apple‬",
+    "invoice_date": "2026-01-14",
+    "vendor_name": "Apple",
+    "total_amount": 11.9,
+    "currency": "ILS",
+    "vat_amount": 1.82,
+    "download_url": "http://localhost:8000/files/generated_19bbbec860b3f6ae.pdf",
+    "labels": [
+      "אישי",
+      "עסק"
+    ],
+    "comments": null,
+    "status": "Processed"
   }
 }
