@@ -155,7 +155,18 @@ export const he = {
         page_x_of_y: "עמוד {current} מתוך {total}",
         previous: "הקודם",
         next: "הבא"
+    },
+    analytics: {
+        title: "לוח מחוונים",
+        subtitle: "סקירה כללית של הוצאות ומגמות.",
+        total_expenses: "סך הוצאות",
+        total_invoices: "סה״כ חשבוניות",
+        monthly_expenses: "הוצאות חודשיות",
+        expenses_by_category: "הוצאות לפי קטגוריה",
+        export_title: "ייצוא",
+        export_png: "תמונה (PNG)",
+        export_pdf: "דוח PDF",
+        export_excel: "אקסל (XLSX)",
+        no_data: "אין נתונים להציג עבור הטווח שנבחר."
     }
 };
-
-// Force update

@@ -154,7 +154,18 @@ export const en = {
         page_x_of_y: "Page {current} of {total}",
         previous: "Previous",
         next: "Next"
+    },
+    analytics: {
+        title: "Analytics Dashboard",
+        subtitle: "Overview of expenses and trends.",
+        total_expenses: "Total Expenses",
+        total_invoices: "Total Invoices",
+        monthly_expenses: "Monthly Expenses",
+        expenses_by_category: "Expenses by Category",
+        export_title: "Export",
+        export_png: "Image (PNG)",
+        export_pdf: "Report (PDF)",
+        export_excel: "Excel (XLSX)",
+        no_data: "No data available for the selected range."
     }
 };
-
-// Force update

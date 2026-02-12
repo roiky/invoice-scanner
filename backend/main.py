@@ -325,3 +325,13 @@ def export_zip(req: ExportRequest):
         print(f"ZIP Export Error: {e}")
         from fastapi import HTTPException
         raise HTTPException(status_code=500, detail=f"ZIP Generation Failed: {str(e)}")
+
+# --- Analytics ---
+from .services.analytics_service import analytics_service
+
+@app.get("/analytics")
+def get_analytics(start_date: date, end_date: date):
+    """
+    Returns aggregated data for charts.
+    """
+    return analytics_service.get_analytics(start_date, end_date)

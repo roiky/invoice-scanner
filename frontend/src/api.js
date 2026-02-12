@@ -188,3 +188,11 @@ export const exportData = async (format, invoiceIds) => {
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
 };
+// --- Analytics ---
+export const getAnalytics = async (startDate, endDate) => {
+    const response = await fetch(`${API_URL}/analytics?start_date=${startDate}&end_date=${endDate}`);
+    if (!response.ok) {
+        throw new Error('Failed to fetch analytics');
+    }
+    return response.json();
+};

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { LayoutDashboard, History, Settings, FileText, CheckCircle, AlertCircle, Search, ShieldCheck, DollarSign, Plus, Globe, Scan, Gavel } from 'lucide-react'
+import { LayoutDashboard, History, Settings, FileText, CheckCircle, AlertCircle, Search, ShieldCheck, DollarSign, Plus, Globe, Scan, Gavel, BarChart3 } from 'lucide-react'
 import * as api from './api'
 import { InvoiceTable } from './components/InvoiceTable'
 import { ScanForm } from './components/ScanForm'
@@ -7,6 +7,7 @@ import { ManualEntryModal } from './components/ManualEntryModal'
 import { StatsCard } from './components/StatsCard'
 import { LabelManager } from './components/LabelManager'
 import { RulesTab } from './components/RulesTab'
+import { AnalyticsTab } from './components/AnalyticsTab'
 import { LanguageProvider, useLanguage } from './context/LanguageContext'
 import { ThemeProvider } from './context/ThemeContext';
 import { useTheme } from './hooks/useTheme';
@@ -272,6 +273,16 @@ function AppContent() {
                 {t('nav.history')}
               </button>
               <button
+                onClick={() => setActiveTab('analytics')}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 ${activeTab === 'analytics'
+                  ? 'bg-white dark:bg-slate-800 text-blue-700 dark:text-blue-400 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700'
+                  : 'text-slate-500 dark:text-slate-300 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
+                  }`}
+              >
+                <BarChart3 size={18} />
+                {t('analytics.title') || "Analytics"}
+              </button>
+              <button
                 onClick={() => setActiveTab('rules')}
                 className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 ${activeTab === 'rules'
                   ? 'bg-white dark:bg-slate-800 text-blue-700 dark:text-blue-400 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700'
@@ -279,8 +290,9 @@ function AppContent() {
                   }`}
               >
                 <Gavel size={18} />
-                {t('rules.title')}
+                {t('rules.title') || "Rules"}
               </button>
+
             </nav>
 
             {/* Theme Toggle */}
@@ -498,6 +510,8 @@ function AppContent() {
           </div>
         ) : activeTab === 'rules' ? (
           <RulesTab t={t} labels={labels} />
+        ) : activeTab === 'analytics' ? (
+          <AnalyticsTab t={t} dir={dir} />
         ) : null}
       </main>
 
