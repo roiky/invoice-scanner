@@ -4,15 +4,40 @@ import { Plus, Trash2, Save, X, AlertCircle, TriangleAlert, Play, CheckCircle, X
 import { getRules, createRule, updateRule, deleteRule } from '../api';
 import { getLabelColor } from '../utils/colors';
 
+const API_BASE_URL = 'http://localhost:8000';
+
 export function RulesTab({ t, labels }) {
     const [rules, setRules] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [applying, setApplying] = useState(false);
     const [error, setError] = useState(null);
     const [editingRule, setEditingRule] = useState(null);
 
     useEffect(() => {
         fetchRules();
     }, []);
+
+    const handleApplyAll = async () => {
+        if (!window.confirm(t('rules.apply_confirm'))) return;
+
+        setApplying(true);
+        try {
+            const response = await fetch(`${API_BASE_URL}/rules/apply_all`, {
+                method: 'POST'
+            });
+            if (response.ok) {
+                const data = await response.json();
+                alert(`${t('rules.apply_success')}\n${data.message}`);
+            } else {
+                alert('Failed to apply rules');
+            }
+        } catch (error) {
+            console.error('Error applying rules:', error);
+            alert('Error applying rules');
+        } finally {
+            setApplying(false);
+        }
+    };
 
     const fetchRules = async () => {
         setLoading(true);
@@ -90,12 +115,22 @@ export function RulesTab({ t, labels }) {
                         <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 font-display">{t('rules.title')}</h2>
                         <p className="text-slate-500 dark:text-slate-400 mt-1">{t('rules.subtitle')}</p>
                     </div>
-                    <button
-                        onClick={startCreate}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-semibold shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30 hover:-translate-y-0.5 transition-all flex items-center gap-2 text-sm"
-                    >
-                        <Plus size={18} /> {t('rules.create_new')}
-                    </button>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={handleApplyAll}
+                            disabled={applying}
+                            className={`flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-lg transition-colors ${applying ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-50 dark:hover:bg-slate-700'}`}
+                        >
+                            <Play size={18} className={applying ? 'animate-spin' : ''} />
+                            <span className="font-medium">{applying ? t('common.loading') : t('rules.apply_to_all')}</span>
+                        </button>
+                        <button
+                            onClick={startCreate}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-semibold shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30 hover:-translate-y-0.5 transition-all flex items-center gap-2 text-sm"
+                        >
+                            <Plus size={18} /> {t('rules.create_new')}
+                        </button>
+                    </div>
                 </div>
 
                 {loading ? (
@@ -164,6 +199,11 @@ export function RulesTab({ t, labels }) {
                                                     <span className="truncate">
                                                         {a.action_type === 'set_status' ? (
                                                             <>Status: <span className="font-medium text-blue-700 dark:text-blue-300">{a.value}</span></>
+                                                        ) : a.action_type === 'delete_invoice' ? (
+                                                            <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
+                                                                <Trash2 size={12} />
+                                                                <span className="font-medium">{t('rules.delete_invoice')}</span>
+                                                            </div>
                                                         ) : (
                                                             (() => {
                                                                 const labels = a.value ? a.value.split(',').map(l => l.trim()).filter(l => l) : [];
@@ -372,12 +412,14 @@ export function RulesTab({ t, labels }) {
                                             // Reset value based on type to prevent leakage
                                             if (newType === 'set_status') newActions[idx].value = 'Pending';
                                             else if (newType === 'add_label') newActions[idx].value = '';
+                                            else if (newType === 'delete_invoice') newActions[idx].value = 'DELETE'; // Placeholder value
 
                                             setEditingRule({ ...editingRule, actions: newActions });
                                         }}
                                     >
                                         <option value="set_status">Set Status</option>
                                         <option value="add_label">Add Label</option>
+                                        <option value="delete_invoice">{t('rules.delete_invoice')}</option>
                                     </select>
 
                                     {action.action_type === 'set_status' ? (
@@ -404,7 +446,7 @@ export function RulesTab({ t, labels }) {
                                                 </button>
                                             ))}
                                         </div>
-                                    ) : (
+                                    ) : action.action_type === 'add_label' ? (
                                         <div className="flex flex-wrap gap-1.5 flex-grow bg-white dark:bg-slate-800 p-2 rounded-lg border border-slate-200 dark:border-slate-700">
                                             {(labels || []).map(label => {
                                                 const currentLabels = action.value ? action.value.split(',').map(l => l.trim()) : [];
@@ -437,6 +479,11 @@ export function RulesTab({ t, labels }) {
                                                 )
                                             })}
                                             {(labels || []).length === 0 && <span className="text-xs text-slate-400 italic">No labels available</span>}
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center text-xs text-red-600 bg-red-50 dark:bg-red-900/30 px-3 py-2 rounded-lg border border-red-100 dark:border-red-900/50">
+                                            <Trash2 size={14} className="mr-2" />
+                                            {t('rules.delete_invoice_desc') || "Invoice will be permanently deleted"}
                                         </div>
                                     )}
                                     <button

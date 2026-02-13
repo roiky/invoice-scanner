@@ -54,7 +54,18 @@ class RuleService:
             return True
         return False
 
-    def apply_rules(self, invoice: InvoiceData) -> InvoiceData:
+    def should_delete(self, invoice: InvoiceData) -> bool:
+        rules = self.get_all_rules()
+        active_rules = [r for r in rules if r.is_active]
+        for rule in active_rules:
+            is_match = self._check_conditions(rule, invoice)
+            if is_match:
+                for action in rule.actions:
+                    if action.action_type == "delete_invoice":
+                        return True
+        return False
+
+    def apply_rules(self, invoice: InvoiceData) -> Optional[InvoiceData]:
         rules = self.get_all_rules()
         
         # Only apply active rules
@@ -62,10 +73,25 @@ class RuleService:
         
         for rule in active_rules:
             if self._check_conditions(rule, invoice):
-                print(f"Applying rule '{rule.name}' to invoice {invoice.id}")
-                self._apply_actions(rule, invoice)
+                action_result = self._apply_actions(rule, invoice)
+                if action_result == "DELETE":
+                    return None
                 
         return invoice
+
+    def _apply_actions(self, rule: Rule, invoice: InvoiceData) -> Optional[str]:
+        for action in rule.actions:
+            if action.action_type == "set_status":
+                invoice.status = action.value
+            elif action.action_type == "add_label":
+                # Support multiple labels (comma-separated)
+                labels_to_add = [l.strip() for l in action.value.split(",") if l.strip()]
+                for label in labels_to_add:
+                    if label not in invoice.labels:
+                        invoice.labels.append(label)
+            elif action.action_type == "delete_invoice":
+                return "DELETE"
+        return None
 
     def _check_conditions(self, rule: Rule, invoice: InvoiceData) -> bool:
         if not rule.conditions:
@@ -115,15 +141,6 @@ class RuleService:
         else:
             return True # No mismatches found in AND -> Rule applies
 
-    def _apply_actions(self, rule: Rule, invoice: InvoiceData):
-        for action in rule.actions:
-            if action.action_type == "set_status":
-                invoice.status = action.value
-            elif action.action_type == "add_label":
-                # Support multiple labels (comma-separated)
-                labels_to_add = [l.strip() for l in action.value.split(",") if l.strip()]
-                for label in labels_to_add:
-                    if label not in invoice.labels:
-                        invoice.labels.append(label)
+
 
 rule_service = RuleService()

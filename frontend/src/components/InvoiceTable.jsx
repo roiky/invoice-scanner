@@ -43,7 +43,10 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
 
             const matchesLabel =
                 filterLabel.length === 0 ? true :
-                    (inv.labels && inv.labels.some(l => filterLabel.includes(l)));
+                    (
+                        (filterLabel.includes('NO_LABEL') && (!inv.labels || inv.labels.length === 0)) ||
+                        (inv.labels && inv.labels.some(l => filterLabel.includes(l)))
+                    );
 
             // Date Range Filter
             let matchesDate = true;
@@ -323,6 +326,22 @@ export function InvoiceTable({ invoices, availableLabels = [], onUpdateInvoice, 
                             {/* Dropdown with padding-top to bridge the gap */}
                             <div className="absolute top-full inset-inline-start-0 pt-2 hidden group-hover:block z-20 w-48">
                                 <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 p-2">
+                                    {/* No Label Option */}
+                                    <label className="flex items-center gap-2 p-2 hover:bg-slate-50 dark:hover:bg-slate-700 rounded cursor-pointer border-b border-slate-50 dark:border-slate-700 mb-1">
+                                        <input
+                                            type="checkbox"
+                                            checked={filterLabel.includes('NO_LABEL')}
+                                            onChange={() => {
+                                                if (filterLabel.includes('NO_LABEL')) setFilterLabel(prev => prev.filter(x => x !== 'NO_LABEL'));
+                                                else setFilterLabel(prev => [...prev, 'NO_LABEL']);
+                                            }}
+                                            className="rounded border-slate-300 text-slate-500 focus:ring-slate-500 w-3.5 h-3.5"
+                                        />
+                                        <span className="text-xs font-medium text-slate-600 dark:text-slate-300 italic">
+                                            {t('filters.no_label') || "No Label"}
+                                        </span>
+                                    </label>
+
                                     {availableLabels.length === 0 ? (
                                         <p className="text-xs text-slate-400 p-2 text-center">No labels available</p>
                                     ) : (

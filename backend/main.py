@@ -103,14 +103,22 @@ def scan_emails(start_date: date, end_date: date):
                 storage_service.update_invoice(existing.id, {"download_url": fresh_inv.download_url})
                 existing.download_url = fresh_inv.download_url
             
-            final_invoices.append(existing)
+            # Check if it should be deleted by rules (even if existing)
+            should_del = rule_service.should_delete(existing)
+            
+            if should_del:
+                storage_service.delete_invoice(existing.id)
+                # Do not add to final_invoices
+            else:
+                final_invoices.append(existing)
         else:
             # NEW Invoice found! Apply rules here.
-            rule_service.apply_rules(fresh_inv)
+            processed_inv = rule_service.apply_rules(fresh_inv)
             
-            # Save new
-            storage_service.save_invoice(fresh_inv)
-            final_invoices.append(fresh_inv)
+            if processed_inv:
+                # Save new
+                storage_service.save_invoice(processed_inv)
+                final_invoices.append(processed_inv)
             
     return ScanResult(
         total_emails_scanned=scan_result.total_emails_scanned,

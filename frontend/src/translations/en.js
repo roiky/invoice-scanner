@@ -53,6 +53,7 @@ export const en = {
         search_placeholder: "Search invoices...",
         all_vendors: "All Vendors",
         all_labels: "All Labels",
+        no_label: "No Label",
         status: {
             all: "All Statuses",
             pending: "Pending",
@@ -144,10 +145,15 @@ export const en = {
         is_active: "Active",
         conditions: "Conditions",
         actions: "Actions",
+        delete_invoice: "Delete Invoice",
+        delete_invoice_desc: "Invoice will be permanently deleted",
         select_field: "Select Field",
         select_operator: "Select Operator",
         select_action: "Select Action",
-        select_label: "Select Label..."
+        select_label: "Select Label...",
+        apply_to_all: "Run Rules on All Invoices",
+        apply_success: "Rules applied successfully",
+        apply_confirm: "Are you sure? This will apply all active rules to ALL existing invoices."
     },
     pagination: {
         rows_per_page: "Rows per page",

@@ -53,6 +53,7 @@ export const he = {
         search_placeholder: "חפש חשבוניות...",
         all_vendors: "כל הספקים",
         all_labels: "כל התגיות",
+        no_label: "ללא תגית",
         status: {
             all: "כל הסטטוסים",
             pending: "ממתין",
@@ -145,10 +146,15 @@ export const he = {
         is_active: "פעיל",
         conditions: "תנאים",
         actions: "פעולות",
+        delete_invoice: "מחק חשבונית",
+        delete_invoice_desc: "החשבונית תימחק לצמיתות",
         select_field: "בחר שדה",
         select_operator: "בחר אופרטור",
         select_action: "בחר פעולה",
-        select_label: "בחר תגית..."
+        select_label: "בחר תגית...",
+        apply_to_all: "הרץ חוקים על כל החשבוניות",
+        apply_success: "החוקים הוחלו בהצלחה",
+        apply_confirm: "האם אתה בטוח? פעולה זו תחיל את החוקים על כל החשבוניות הקיימות."
     },
     pagination: {
         rows_per_page: "שורות בעמוד",
