@@ -164,8 +164,28 @@ class GmailService:
         
         print(f"Searching Gmail with query: {full_query}")
         
-        results = current_service.users().messages().list(userId='me', q=full_query, maxResults=20).execute()
-        messages = results.get('messages', [])
+        messages = []
+        next_page_token = None
+        
+        # Safety limit to prevent infinite scanning
+        MAX_EMAILS = 500 
+        
+        while len(messages) < MAX_EMAILS:
+            results = current_service.users().messages().list(
+                userId='me', 
+                q=full_query, 
+                maxResults=min(50, MAX_EMAILS - len(messages)), # Fetch in batches
+                pageToken=next_page_token
+            ).execute()
+            
+            batch = results.get('messages', [])
+            messages.extend(batch)
+            
+            next_page_token = results.get('nextPageToken')
+            if not next_page_token or not batch:
+                break
+        
+        print(f"Found {len(messages)} potential invoice emails. Processing...")
         
         invoices = []
         
